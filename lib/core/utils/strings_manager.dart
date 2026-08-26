@@ -77,6 +77,7 @@ abstract class StringsManager {
   static const String customerTypeSale = 'customer_type_sale';
   static const String customerTypePayment = 'customer_type_payment';
   static const String customerNoTransactions = 'customer_no_transactions';
+  static const String customerPrintPdf = 'customer_print_pdf';
 
   // Add Customer
   static const String addCustomerTitle = 'add_customer_title';
@@ -137,7 +138,7 @@ abstract class StringsManager {
   static const String addProductSave = 'add_product_save';
   static const String addProductSuccess = 'add_product_success';
 
-  // Add Category
+  // Add & Manage Category
   static const String addCategoryTitle = 'add_category_title';
   static const String addCategoryName = 'add_category_name';
   static const String addCategoryExampleHint = 'add_category_example_hint';
@@ -145,6 +146,12 @@ abstract class StringsManager {
   static const String addCategoryColor = 'add_category_color';
   static const String addCategorySave = 'add_category_save';
   static const String addCategorySuccess = 'add_category_success';
+  static const String categoryEdit = 'category_edit';
+  static const String categoryDelete = 'category_delete';
+  static const String categoryDeleteConfirm = 'category_delete_confirm';
+  static const String categoryExistingList = 'category_existing_list';
+  static const String categoryColorPalette = 'category_color_palette';
+  static const String categorySaveEdit = 'category_save_edit';
 
   // Reports
   static const String reportsTitle = 'reports_title';
@@ -164,6 +171,87 @@ abstract class StringsManager {
   static const String reportsSalesOverview = 'reports_sales_overview';
   static const String reportsExport = 'reports_export';
   static const String reportsExportPdfSuccess = 'reports_export_pdf_success';
+
+  // Suppliers (إدارة الموردين)
+  static const String suppliersTitle = 'suppliers_title';
+  static const String suppliersAddSupplier = 'suppliers_add_supplier';
+  static const String suppliersTotalOwed = 'suppliers_total_owed';
+  static const String suppliersSearchHint = 'suppliers_search_hint';
+  static const String suppliersNoFound = 'suppliers_no_found';
+  static const String suppliersCount = 'suppliers_count';
+  static const String suppliersName = 'suppliers_name';
+  static const String suppliersNameHint = 'suppliers_name_hint';
+  static const String suppliersCompanyName = 'suppliers_company_name';
+  static const String suppliersCompanyNameHint = 'suppliers_company_name_hint';
+  static const String suppliersPhone = 'suppliers_phone';
+  static const String suppliersPhoneHint = 'suppliers_phone_hint';
+  static const String suppliersAddress = 'suppliers_address';
+  static const String suppliersAddressHint = 'suppliers_address_hint';
+  static const String suppliersInitialDebt = 'suppliers_initial_debt';
+  static const String suppliersInitialDebtHint = 'suppliers_initial_debt_hint';
+  static const String suppliersSave = 'suppliers_save';
+  static const String suppliersSuccess = 'suppliers_success';
+  static const String suppliersStatementTitle = 'suppliers_statement_title';
+  static const String suppliersOwed = 'suppliers_owed';
+  static const String suppliersAddInvoice = 'suppliers_add_invoice';
+  static const String suppliersInvoicesHistory = 'suppliers_invoices_history';
+  static const String suppliersPurchasedGoods = 'suppliers_purchased_goods';
+  static const String suppliersAddItem = 'suppliers_add_item';
+  static const String suppliersItemName = 'suppliers_item_name';
+  static const String suppliersItemNameHint = 'suppliers_item_name_hint';
+  static const String suppliersItemQuantity = 'suppliers_item_quantity';
+  static const String suppliersItemBuyPrice = 'suppliers_item_buy_price';
+  static const String suppliersItemSubtotal = 'suppliers_item_subtotal';
+  static const String suppliersPaymentDetails = 'suppliers_payment_details';
+  static const String suppliersPaidAmount = 'suppliers_paid_amount';
+  static const String suppliersRemainingDebt = 'suppliers_remaining_debt';
+  static const String suppliersInvoiceNotes = 'suppliers_invoice_notes';
+  static const String suppliersInvoiceNotesHint = 'suppliers_invoice_notes_hint';
+  static const String suppliersSaveAndPrint = 'suppliers_save_and_print';
+  static const String suppliersInvoiceSuccess = 'suppliers_invoice_success';
+  static const String suppliersCall = 'suppliers_call';
+  static const String suppliersWhatsapp = 'suppliers_whatsapp';
+  static const String suppliersInvoiceNo = 'suppliers_invoice_no';
+
+  // Receipts & Invoices (إيصالات وفواتير البيع)
+  static const String receiptTitle = 'receipt_title';
+  static const String receiptSaleSuccess = 'receipt_sale_success';
+  static const String receiptInvoiceNo = 'receipt_invoice_no';
+  static const String receiptCustomer = 'receipt_customer';
+  static const String receiptPaymentMethod = 'receipt_payment_method';
+  static const String receiptDate = 'receipt_date';
+  static const String receiptSoldItems = 'receipt_sold_items';
+  static const String receiptQtyPrice = 'receipt_qty_price';
+  static const String receiptTotal = 'receipt_total';
+  static const String receiptPaid = 'receipt_paid';
+  static const String receiptChange = 'receipt_change';
+  static const String receiptPrintThermal = 'receipt_print_thermal';
+  static const String receiptPrintA4 = 'receipt_print_a4';
+  static const String receiptNewSale = 'receipt_new_sale';
+  static const String receiptThankYou = 'receipt_thank_you';
+  static const String receiptDefaultCustomer = 'receipt_default_customer';
+  static const String receiptTaxInvoice = 'receipt_tax_invoice';
+  static const String receiptElectronicNote = 'receipt_electronic_note';
+  static const String receiptReceiverSignature = 'receipt_receiver_signature';
+  static const String receiptCashierSignature = 'receipt_cashier_signature';
+
+  // Printer Settings (إعدادات الطابعة)
+  static const String printerSettingsTitle = 'printer_settings_title';
+  static const String printerConnectionType = 'printer_connection_type';
+  static const String printerBluetooth = 'printer_bluetooth';
+  static const String printerNetwork = 'printer_network';
+  static const String printerUsb = 'printer_usb';
+  static const String printerPaperSize = 'printer_paper_size';
+  static const String printerPaper80 = 'printer_paper_80';
+  static const String printerPaper58 = 'printer_paper_58';
+  static const String printerIpAddress = 'printer_ip_address';
+  static const String printerIpHint = 'printer_ip_hint';
+  static const String printerAutoPrint = 'printer_auto_print';
+  static const String printerAutoPrintSubtitle = 'printer_auto_print_subtitle';
+  static const String printerTest = 'printer_test';
+  static const String printerSaveSettings = 'printer_save_settings';
+  static const String printerSavedSuccess = 'printer_saved_success';
+  static const String printerTestSuccess = 'printer_test_success';
 
   // Days
   static const String daySat = 'day_sat';
@@ -222,7 +310,7 @@ abstract class StringsManager {
   static const String barcodeProductNotFound = 'barcode_product_not_found';
   static const String barcodeScannerSimulate = 'barcode_scanner_simulate';
 
-  // Receipts & Invoices
+  // Receipts & Invoices Attachment
   static const String receiptScannerTitle = 'receipt_scanner_title';
   static const String receiptScannerCamera = 'receipt_scanner_camera';
   static const String receiptScannerGallery = 'receipt_scanner_gallery';

@@ -197,10 +197,19 @@ class _PosPageState extends State<PosPage> {
                           delegate: SliverChildBuilderDelegate(
                             (context, index) {
                               final product = state.products[index];
-                              return PosProductGridCard(
-                                product: product,
-                                onAddToCart: () {
-                                  context.read<CartBloc>().add(AddProductToCartEvent(product));
+                              return BlocBuilder<CartBloc, CartState>(
+                                builder: (context, cartState) {
+                                  final cartItem = cartState.items
+                                      .where((i) => i.product.id == product.id)
+                                      .firstOrNull;
+                                  final qty = cartItem?.quantity ?? 0;
+                                  return PosProductGridCard(
+                                    product: product,
+                                    cartQuantity: qty,
+                                    onAddToCart: () {
+                                      context.read<CartBloc>().add(AddProductToCartEvent(product));
+                                    },
+                                  );
                                 },
                               );
                             },

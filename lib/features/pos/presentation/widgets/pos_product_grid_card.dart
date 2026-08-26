@@ -10,26 +10,36 @@ import '../../domain/entities/product_entity.dart';
 class PosProductGridCard extends StatelessWidget {
   final ProductEntity product;
   final VoidCallback onAddToCart;
+  final int cartQuantity;
 
   const PosProductGridCard({
     super.key,
     required this.product,
     required this.onAddToCart,
+    this.cartQuantity = 0,
   });
 
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final isInCart = cartQuantity > 0;
 
     return Container(
       decoration: BoxDecoration(
-        color: theme.colorScheme.surfaceContainerLowest,
+        color: isInCart
+            ? theme.colorScheme.primaryContainer.withValues(alpha: 0.18)
+            : theme.colorScheme.surfaceContainerLowest,
         borderRadius: BorderRadius.circular(AppRadius.lg),
-        border: Border.all(color: theme.colorScheme.outlineVariant),
+        border: Border.all(
+          color: isInCart ? theme.colorScheme.primary : theme.colorScheme.outlineVariant,
+          width: isInCart ? 2.0 : 1.0,
+        ),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withValues(alpha: 0.03),
-            blurRadius: 6,
+            color: isInCart
+                ? theme.colorScheme.primary.withValues(alpha: 0.12)
+                : Colors.black.withValues(alpha: 0.03),
+            blurRadius: isInCart ? 10 : 6,
             offset: const Offset(0, 2),
           ),
         ],
@@ -53,6 +63,32 @@ class PosProductGridCard extends StatelessWidget {
                       )
                     : _buildPlaceholder(theme),
               ),
+              if (isInCart)
+                Positioned(
+                  top: 8,
+                  left: 8,
+                  child: Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                    decoration: BoxDecoration(
+                      color: theme.colorScheme.primary,
+                      borderRadius: BorderRadius.circular(AppRadius.full),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.black.withValues(alpha: 0.2),
+                          blurRadius: 4,
+                        ),
+                      ],
+                    ),
+                    child: Text(
+                      'x$cartQuantity',
+                      style: const TextStyle(
+                        color: Colors.white,
+                        fontSize: 12,
+                        fontWeight: FontWeight.w900,
+                      ),
+                    ),
+                  ),
+                ),
               Positioned(
                 top: 8,
                 right: 8,

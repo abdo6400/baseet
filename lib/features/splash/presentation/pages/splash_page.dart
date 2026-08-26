@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../../config/routes/app_routes.dart';
+import '../../../../core/common/widgets/logo/app_logo.dart';
 import '../../../../core/extensions/translation_extension.dart';
-import '../../../../core/utils/assets_manager.dart';
 import '../../../../core/utils/strings_manager.dart';
 
 class SplashPage extends StatefulWidget {
@@ -80,28 +80,7 @@ class _SplashPageState extends State<SplashPage> with SingleTickerProviderStateM
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     // App Icon with subtle shadow
-                    Container(
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(26),
-                        boxShadow: [
-                          BoxShadow(
-                            color: theme.colorScheme.primary.withValues(alpha: 0.2),
-                            blurRadius: 24,
-                            spreadRadius: 2,
-                            offset: const Offset(0, 8),
-                          ),
-                        ],
-                      ),
-                      child: ClipRRect(
-                        borderRadius: BorderRadius.circular(26),
-                        child: Image.asset(
-                          AssetsManager.appIcon,
-                          width: 110,
-                          height: 110,
-                          fit: BoxFit.cover,
-                        ),
-                      ),
-                    ),
+                    const AppLogo(size: 110, showText: false),
                     const SizedBox(height: 24),
                     // App Title "بسيط"
                     Text(

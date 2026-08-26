@@ -130,6 +130,45 @@ class AppDatabase {
         customPrice REAL NOT NULL
       )
     ''');
+
+    // 7. Suppliers
+    await db.execute('''
+      CREATE TABLE IF NOT EXISTS suppliers (
+        id TEXT PRIMARY KEY,
+        name TEXT NOT NULL,
+        companyName TEXT NOT NULL,
+        phone TEXT NOT NULL,
+        totalDebt REAL NOT NULL DEFAULT 0.0,
+        address TEXT,
+        lastTransactionDate TEXT
+      )
+    ''');
+
+    // 8. Supplier Invoices
+    await db.execute('''
+      CREATE TABLE IF NOT EXISTS supplier_invoices (
+        id TEXT PRIMARY KEY,
+        supplierId TEXT NOT NULL,
+        supplierName TEXT NOT NULL,
+        date TEXT NOT NULL,
+        totalAmount REAL NOT NULL,
+        paidAmount REAL NOT NULL,
+        remainingAmount REAL NOT NULL,
+        notes TEXT
+      )
+    ''');
+
+    // 9. Supplier Invoice Items
+    await db.execute('''
+      CREATE TABLE IF NOT EXISTS supplier_invoice_items (
+        id TEXT PRIMARY KEY,
+        invoiceId TEXT NOT NULL,
+        productName TEXT NOT NULL,
+        quantity INTEGER NOT NULL,
+        unitPrice REAL NOT NULL,
+        subtotal REAL NOT NULL
+      )
+    ''');
   }
 
   Future<void> _seedInitialData(Database db) async {
@@ -201,12 +240,66 @@ class AppDatabase {
           conflictAlgorithm: ConflictAlgorithm.replace);
     }
 
+    // Seed Suppliers
+    for (final sup in BaseetMockData.initialSuppliers) {
+      batch.insert(
+        'suppliers',
+        {
+          'id': sup.id,
+          'name': sup.name,
+          'companyName': sup.companyName,
+          'phone': sup.phone,
+          'totalDebt': sup.totalDebt,
+          'address': sup.address,
+          'lastTransactionDate': sup.lastTransactionDate?.toIso8601String(),
+        },
+        conflictAlgorithm: ConflictAlgorithm.replace,
+      );
+    }
+
+    // Seed Supplier Invoices & Items
+    for (final inv in BaseetMockData.initialSupplierInvoices) {
+      batch.insert(
+        'supplier_invoices',
+        {
+          'id': inv.id,
+          'supplierId': inv.supplierId,
+          'supplierName': inv.supplierName,
+          'date': inv.date.toIso8601String(),
+          'totalAmount': inv.totalAmount,
+          'paidAmount': inv.paidAmount,
+          'remainingAmount': inv.remainingAmount,
+          'notes': inv.notes,
+        },
+        conflictAlgorithm: ConflictAlgorithm.replace,
+      );
+
+      for (int i = 0; i < inv.items.length; i++) {
+        final item = inv.items[i];
+        batch.insert(
+          'supplier_invoice_items',
+          {
+            'id': 'sii_${inv.id}_$i',
+            'invoiceId': inv.id,
+            'productName': item.productName,
+            'quantity': item.quantity,
+            'unitPrice': item.unitPrice,
+            'subtotal': item.subtotal,
+          },
+          conflictAlgorithm: ConflictAlgorithm.replace,
+        );
+      }
+    }
+
     await batch.commit(noResult: true);
   }
 
   Future<void> clearAllData() async {
     final db = await database;
     await db.transaction((txn) async {
+      await txn.delete('supplier_invoice_items');
+      await txn.delete('supplier_invoices');
+      await txn.delete('suppliers');
       await txn.delete('order_items');
       await txn.delete('orders');
       await txn.delete('debt_transactions');

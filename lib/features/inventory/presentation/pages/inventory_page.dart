@@ -6,13 +6,14 @@ import 'package:baseet/core/common/widgets/feedback/empty_state_widget.dart';
 import 'package:baseet/core/common/widgets/form/app_search_field.dart';
 import 'package:baseet/core/common/widgets/icon/app_icon.dart';
 import 'package:baseet/core/extensions/translation_extension.dart';
-import 'package:baseet/core/theme/tokens/app_tokens.dart';
 import 'package:baseet/core/utils/app_icons.dart';
 import 'package:baseet/core/utils/strings_manager.dart';
 import 'package:baseet/features/inventory/presentation/blocs/inventory_list/inventory_list_bloc.dart';
 import 'package:baseet/features/inventory/presentation/blocs/inventory_list/inventory_list_event.dart';
 import 'package:baseet/features/inventory/presentation/blocs/inventory_list/inventory_list_state.dart';
 import 'package:baseet/features/pos/presentation/widgets/pos_category_filter_row.dart';
+import '../widgets/inventory_product_tile.dart';
+import '../widgets/inventory_stats_row.dart';
 
 class InventoryPage extends StatefulWidget {
   const InventoryPage({super.key});
@@ -102,7 +103,6 @@ class _InventoryPageState extends State<InventoryPage> {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        // Title
                         Text(
                           StringsManager.inventoryTitle.lang,
                           style: const TextStyle(fontSize: 20, fontWeight: FontWeight.w800),
@@ -118,91 +118,7 @@ class _InventoryPageState extends State<InventoryPage> {
                         const SizedBox(height: 14),
 
                         // Stats Summary Row
-                        Row(
-                          children: [
-                            Expanded(
-                              child: Container(
-                                padding: const EdgeInsets.all(14),
-                                decoration: BoxDecoration(
-                                  color: theme.colorScheme.surfaceContainerLowest,
-                                  borderRadius: BorderRadius.circular(AppRadius.lg),
-                                  border: Border.all(color: theme.colorScheme.outlineVariant),
-                                ),
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Text(
-                                      StringsManager.inventoryTotalProducts.lang,
-                                      style: TextStyle(
-                                        fontSize: 12,
-                                        color: theme.colorScheme.onSurfaceVariant,
-                                      ),
-                                    ),
-                                    const SizedBox(height: 4),
-                                    Text(
-                                      '${state.products.length}',
-                                      style: TextStyle(
-                                        fontSize: 20,
-                                        fontWeight: FontWeight.w800,
-                                        color: theme.colorScheme.primary,
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            ),
-                            const SizedBox(width: 12),
-                            Expanded(
-                              child: GestureDetector(
-                                onTap: () {
-                                  context.read<InventoryListBloc>().add(ToggleLowStockFilterEvent());
-                                },
-                                child: Container(
-                                  padding: const EdgeInsets.all(14),
-                                  decoration: BoxDecoration(
-                                    color: state.onlyLowStock
-                                        ? AppPrimitiveTokens.red700.withValues(alpha: 0.12)
-                                        : theme.colorScheme.surfaceContainerLowest,
-                                    borderRadius: BorderRadius.circular(AppRadius.lg),
-                                    border: Border.all(
-                                      color: state.onlyLowStock
-                                          ? AppPrimitiveTokens.red700
-                                          : theme.colorScheme.outlineVariant,
-                                    ),
-                                  ),
-                                  child: Column(
-                                    crossAxisAlignment: CrossAxisAlignment.start,
-                                    children: [
-                                      Row(
-                                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                        children: [
-                                          Text(
-                                            StringsManager.inventoryLowStock.lang,
-                                            style: TextStyle(
-                                              fontSize: 12,
-                                              color: theme.colorScheme.onSurfaceVariant,
-                                            ),
-                                          ),
-                                          if (state.onlyLowStock)
-                                            AppIcon(AppIcons.check, size: 14, color: AppPrimitiveTokens.red700),
-                                        ],
-                                      ),
-                                      const SizedBox(height: 4),
-                                      Text(
-                                        '${state.lowStockCount}',
-                                        style: const TextStyle(
-                                          fontSize: 20,
-                                          fontWeight: FontWeight.w800,
-                                          color: AppPrimitiveTokens.red700,
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
+                        InventoryStatsRow(state: state),
                         const SizedBox(height: 14),
 
                         // Search
@@ -250,101 +166,7 @@ class _InventoryPageState extends State<InventoryPage> {
                           final product = state.products[index];
                           return Padding(
                             padding: const EdgeInsets.only(bottom: 10),
-                            child: Container(
-                              padding: const EdgeInsets.all(12),
-                              decoration: BoxDecoration(
-                                color: theme.colorScheme.surfaceContainerLowest,
-                                borderRadius: BorderRadius.circular(AppRadius.lg),
-                                border: Border.all(color: theme.colorScheme.outlineVariant),
-                              ),
-                              child: Row(
-                                children: [
-                                  Container(
-                                    width: 50,
-                                    height: 50,
-                                    decoration: BoxDecoration(
-                                      color: theme.colorScheme.surfaceContainer,
-                                      borderRadius: BorderRadius.circular(AppRadius.md),
-                                    ),
-                                    clipBehavior: Clip.antiAlias,
-                                    child: product.imageUrl != null
-                                        ? Image.network(
-                                            product.imageUrl!,
-                                            fit: BoxFit.cover,
-                                            errorBuilder: (_, __, ___) => AppIcon(AppIcons.inventory, color: theme.colorScheme.onSurfaceVariant),
-                                          )
-                                        : AppIcon(AppIcons.inventory, color: theme.colorScheme.onSurfaceVariant),
-                                  ),
-                                  const SizedBox(width: 12),
-                                  Expanded(
-                                    child: Column(
-                                      crossAxisAlignment: CrossAxisAlignment.start,
-                                      children: [
-                                        Text(
-                                          product.name,
-                                          style: const TextStyle(
-                                            fontWeight: FontWeight.w700,
-                                            fontSize: 14,
-                                          ),
-                                        ),
-                                        const SizedBox(height: 2),
-                                        Row(
-                                          children: [
-                                            Text(
-                                              product.categoryName,
-                                              style: TextStyle(
-                                                fontSize: 11,
-                                                color: theme.colorScheme.onSurfaceVariant,
-                                              ),
-                                            ),
-                                            const SizedBox(width: 8),
-                                            Container(
-                                              padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
-                                              decoration: BoxDecoration(
-                                                color: product.isLowStock
-                                                    ? AppPrimitiveTokens.red700.withValues(alpha: 0.1)
-                                                    : theme.colorScheme.primary.withValues(alpha: 0.1),
-                                                borderRadius: BorderRadius.circular(AppRadius.full),
-                                              ),
-                                              child: Text(
-                                                '${StringsManager.inventoryStockQuantityLabel.lang}: ${product.stockQuantity}',
-                                                style: TextStyle(
-                                                  fontSize: 10,
-                                                  fontWeight: FontWeight.w700,
-                                                  color: product.isLowStock
-                                                      ? AppPrimitiveTokens.red700
-                                                      : theme.colorScheme.primary,
-                                                ),
-                                              ),
-                                            ),
-                                          ],
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                  Column(
-                                    crossAxisAlignment: CrossAxisAlignment.end,
-                                    children: [
-                                      Text(
-                                        '${product.sellPrice.toStringAsFixed(0)} ${StringsManager.posCurrency.lang}',
-                                        style: TextStyle(
-                                          fontSize: 16,
-                                          fontWeight: FontWeight.w800,
-                                          color: theme.colorScheme.primary,
-                                        ),
-                                      ),
-                                      Text(
-                                        '${StringsManager.inventoryBuyPriceLabel.lang}: ${product.buyPrice.toStringAsFixed(0)} ${StringsManager.posCurrency.lang}',
-                                        style: TextStyle(
-                                          fontSize: 11,
-                                          color: theme.colorScheme.onSurfaceVariant,
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ],
-                              ),
-                            ),
+                            child: InventoryProductTile(product: product),
                           );
                         },
                         childCount: state.products.length,

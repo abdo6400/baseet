@@ -9,10 +9,13 @@ import '../../features/inventory/presentation/pages/add_category_page.dart';
 import '../../features/inventory/presentation/pages/add_product_page.dart';
 import '../../features/inventory/presentation/pages/inventory_page.dart';
 import '../../features/more_settings/presentation/pages/more_page.dart';
+import '../../features/more_settings/presentation/pages/printer_settings_page.dart';
 import '../../features/pos/presentation/pages/checkout_page.dart';
 import '../../features/pos/presentation/pages/pos_page.dart';
 import '../../features/reports/presentation/pages/reports_page.dart';
 import '../../features/splash/presentation/pages/splash_page.dart';
+import '../../features/suppliers/presentation/pages/add_supplier_page.dart';
+import '../../features/suppliers/presentation/pages/suppliers_page.dart';
 import 'app_routes.dart';
 
 class AppRouter {
@@ -25,6 +28,24 @@ class AppRouter {
         parentNavigatorKey: ConstantsManager.rootNavigatorKey,
         builder: (context, state) => const SplashPage(),
       ),
+
+      // Direct Supplier Routes
+      GoRoute(
+        path: AppRoutes.suppliers,
+        parentNavigatorKey: ConstantsManager.rootNavigatorKey,
+        builder: (context, state) => const SuppliersPage(),
+      ),
+      GoRoute(
+        path: AppRoutes.addSupplier,
+        parentNavigatorKey: ConstantsManager.rootNavigatorKey,
+        builder: (context, state) => const AddSupplierPage(),
+      ),
+      GoRoute(
+        path: AppRoutes.printerSettings,
+        parentNavigatorKey: ConstantsManager.rootNavigatorKey,
+        builder: (context, state) => const PrinterSettingsPage(),
+      ),
+
       StatefulShellRoute.indexedStack(
         builder: (context, state, navigationShell) {
           return MainLayoutPage(navigationShell: navigationShell);
