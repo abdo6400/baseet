@@ -1,0 +1,74 @@
+name: baseet
+description: "بسيط - Point of Sale & Smart Arabic Debt Ledger Application"
+publish_to: 'none'
+version: 1.0.0+1
+
+environment:
+  sdk: ^3.5.0
+
+dependencies:
+  flutter:
+    sdk: flutter
+  cupertino_icons: ^1.0.8
+  go_router: ^14.8.0
+  flutter_bloc: ^9.1.1
+  nested: ^1.0.0
+  equatable: ^2.0.7
+  dartz: ^0.10.1
+  get_it: ^9.1.0
+  bloc: ^9.0.0
+  easy_localization: ^3.0.8
+  flutter_svg: ^2.0.10+1
+  flutter_form_builder: ^10.2.0
+  form_builder_validators: ^11.2.0
+  skeletonizer: ^2.1.0+1
+  dio: ^5.7.0
+  flutter_secure_storage: ^10.3.1
+  hugeicons: ^1.1.7
+  device_info_plus: ^12.4.0
+  toastification: ^3.2.0
+  shared_preferences: ^2.5.4
+  sqflite: ^2.4.1
+  path: ^1.9.0
+  intl: ^0.20.2
+  url_launcher: ^6.3.2
+  mobile_scanner: ^7.4.0
+  image_picker: ^1.2.3
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^5.0.0
+
+flutter:
+  uses-material-design: true
+
+  assets:
+    - assets/translations/
+    - assets/icons/
+    - assets/images/
+
+  fonts:
+    - family: IBM Plex Sans Arabic
+      fonts:
+        - asset: assets/fonts/IBM_Plex_Sans_Arabic/IBMPlexSansArabic-Regular.ttf
+          weight: 400
+        - asset: assets/fonts/IBM_Plex_Sans_Arabic/IBMPlexSansArabic-Medium.ttf
+          weight: 500
+        - asset: assets/fonts/IBM_Plex_Sans_Arabic/IBMPlexSansArabic-SemiBold.ttf
+          weight: 600
+        - asset: assets/fonts/IBM_Plex_Sans_Arabic/IBMPlexSansArabic-Bold.ttf
+          weight: 700
+
+    - family: Inter
+      fonts:
+        - asset: assets/fonts/inter/Inter_18pt-Regular.ttf
+          weight: 400
+        - asset: assets/fonts/inter/Inter_18pt-Medium.ttf
+          weight: 500
+        - asset: assets/fonts/inter/Inter_18pt-SemiBold.ttf
+          weight: 600
+        - asset: assets/fonts/inter/Inter_18pt-Bold.ttf
+          weight: 700
+        - asset: assets/fonts/inter/Inter_18pt-ExtraBold.ttf
+          weight: 800
