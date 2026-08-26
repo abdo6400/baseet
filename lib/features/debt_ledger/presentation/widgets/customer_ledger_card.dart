@@ -33,6 +33,13 @@ class CustomerLedgerCard extends StatelessWidget {
     }
   }
 
+  void _makePhoneCall(String phone) async {
+    final url = Uri.parse('tel:$phone');
+    if (await canLaunchUrl(url)) {
+      await launchUrl(url);
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
@@ -184,10 +191,18 @@ class CustomerLedgerCard extends StatelessWidget {
             Row(
               mainAxisAlignment: MainAxisAlignment.end,
               children: [
+                // Phone call button
+                IconButton(
+                  icon: Icon(Icons.phone, size: 20, color: theme.colorScheme.primary),
+                  onPressed: () => _makePhoneCall(customer.phone),
+                  tooltip: 'اتصال بالعميل',
+                ),
+                const SizedBox(width: 4),
+
                 // WhatsApp reminder button
                 OutlinedButton.icon(
                   style: OutlinedButton.styleFrom(
-                    padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                    padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
                     side: BorderSide(color: theme.colorScheme.outlineVariant),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(AppRadius.sm),

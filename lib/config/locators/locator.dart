@@ -4,6 +4,7 @@ import 'global_locator.dart';
 import 'inventory_locator.dart';
 import 'pos_locator.dart';
 import 'reports_locator.dart';
+import 'suppliers_locator.dart';
 
 Future<void> initLocator() async {
   final sl = GetIt.instance;
@@ -12,4 +13,5 @@ Future<void> initLocator() async {
   initDebtLocator(sl);
   initInventoryLocator(sl);
   initReportsLocator(sl);
+  initSuppliersLocator(sl);
 }

@@ -28,6 +28,9 @@ abstract class AppIcons {
   static const dynamic trendingUp = HugeIcons.strokeRoundedAnalyticsUp;
   static const dynamic wallet = HugeIcons.strokeRoundedWallet01;
   static const dynamic payments = HugeIcons.strokeRoundedMoney01;
+  static const dynamic cash = HugeIcons.strokeRoundedMoney01;
+  static const dynamic card = HugeIcons.strokeRoundedCreditCard;
+  static const dynamic creditCard = HugeIcons.strokeRoundedCreditCard;
   static const dynamic receipt = HugeIcons.strokeRoundedInvoice01;
   static const dynamic chat = HugeIcons.strokeRoundedBubbleChat;
   static const dynamic phone = HugeIcons.strokeRoundedCall;

@@ -10,6 +10,7 @@ class DebtTransactionEntity extends Equatable {
   final String? notes;
   final double remainingBalance;
   final String? receiptPath;
+  final List<String>? itemsSummary;
 
   const DebtTransactionEntity({
     required this.id,
@@ -20,6 +21,7 @@ class DebtTransactionEntity extends Equatable {
     this.notes,
     required this.remainingBalance,
     this.receiptPath,
+    this.itemsSummary,
   });
 
   @override
@@ -32,5 +34,6 @@ class DebtTransactionEntity extends Equatable {
         notes,
         remainingBalance,
         receiptPath,
+        itemsSummary,
       ];
 }

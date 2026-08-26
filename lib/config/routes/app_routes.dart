@@ -22,7 +22,15 @@ abstract class AppRoutes {
   static const String addProduct = '/inventory/add-product';
   static const String addCategory = '/inventory/add-category';
 
+  // Suppliers
+  static const String suppliers = '/suppliers';
+  static const String addSupplier = '/suppliers/add-supplier';
+  static const String supplierStatement = '/suppliers/supplier-statement/:id';
+  static String supplierStatementPath(String id) => '/suppliers/supplier-statement/$id';
+  static const String addSupplierInvoice = '/suppliers/add-invoice';
+
   // Reports & Settings
   static const String reports = '/reports';
   static const String more = '/more';
+  static const String printerSettings = '/more/printer-settings';
 }
