@@ -1,15 +1,21 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_form_builder/flutter_form_builder.dart';
 import 'package:go_router/go_router.dart';
 import 'package:baseet/config/database/local/mock_data.dart';
 import 'package:baseet/core/common/widgets/button/app_button.dart';
-import 'package:baseet/core/common/widgets/form/app_text_field.dart';
+import 'package:baseet/core/common/widgets/form/app_form.dart';
+import 'package:baseet/core/common/widgets/form/app_form_dropdown.dart';
+import 'package:baseet/core/common/widgets/form/app_form_text_field.dart';
 import 'package:baseet/core/common/widgets/icon/app_icon.dart';
+import 'package:baseet/core/common/widgets/layout/app_page_wrapper.dart';
 import 'package:baseet/core/common/widgets/layout/page_header.dart';
 import 'package:baseet/core/common/widgets/scanner/barcode_scanner_modal.dart';
+import 'package:baseet/core/extensions/spacing_extension.dart';
 import 'package:baseet/core/extensions/state_handle_extension.dart';
 import 'package:baseet/core/extensions/translation_extension.dart';
 import 'package:baseet/core/theme/tokens/app_tokens.dart';
+import 'package:baseet/core/utils/app_form_validators.dart';
 import 'package:baseet/core/utils/app_icons.dart';
 import 'package:baseet/core/utils/strings_manager.dart';
 import 'package:baseet/core/utils/uuid_generator.dart';
@@ -30,45 +36,29 @@ class AddProductPage extends StatefulWidget {
 }
 
 class _AddProductPageState extends State<AddProductPage> {
-  final _formKey = GlobalKey<FormState>();
-  final _nameController = TextEditingController();
-  final _barcodeController = TextEditingController();
-  final _buyPriceController = TextEditingController();
-  final _sellPriceController = TextEditingController();
-  final _stockController = TextEditingController(text: '10');
-  final _minStockController = TextEditingController(text: '3');
-  String _selectedCategoryId = 'cat_1';
-
-  @override
-  void dispose() {
-    _nameController.dispose();
-    _barcodeController.dispose();
-    _buyPriceController.dispose();
-    _sellPriceController.dispose();
-    _stockController.dispose();
-    _minStockController.dispose();
-    super.dispose();
-  }
+  final _formKey = GlobalKey<FormBuilderState>();
 
   void _onSave() {
-    if (_formKey.currentState?.validate() ?? false) {
+    if (_formKey.currentState?.saveAndValidate() ?? false) {
+      final values = _formKey.currentState!.value;
+      final categoryId = values['category_id']?.toString() ?? 'cat_1';
       final category = BaseetMockData.initialCategories.firstWhere(
-        (c) => c.id == _selectedCategoryId,
+        (c) => c.id == categoryId,
         orElse: () => BaseetMockData.initialCategories[1],
       );
 
+      final barcode = (values['barcode'] as String?)?.trim();
+
       final product = ProductEntity(
         id: UuidGenerator.generate('prod'),
-        name: _nameController.text.trim(),
-        barcode: _barcodeController.text.trim().isNotEmpty
-            ? _barcodeController.text.trim()
-            : UuidGenerator.generate('622'),
-        categoryId: _selectedCategoryId,
+        name: (values['name'] as String?)?.trim() ?? '',
+        barcode: (barcode != null && barcode.isNotEmpty) ? barcode : UuidGenerator.generate('622'),
+        categoryId: categoryId,
         categoryName: category.name,
-        buyPrice: double.tryParse(_buyPriceController.text) ?? 0.0,
-        sellPrice: double.tryParse(_sellPriceController.text) ?? 0.0,
-        stockQuantity: int.tryParse(_stockController.text) ?? 0,
-        minStockLimit: int.tryParse(_minStockController.text) ?? 3,
+        buyPrice: double.tryParse(values['buy_price']?.toString() ?? '0') ?? 0.0,
+        sellPrice: double.tryParse(values['sell_price']?.toString() ?? '0') ?? 0.0,
+        stockQuantity: int.tryParse(values['stock']?.toString() ?? '10') ?? 10,
+        minStockLimit: int.tryParse(values['min_stock']?.toString() ?? '3') ?? 3,
         imageUrl: 'https://images.unsplash.com/photo-1550583724-b2692b85b150?auto=format&fit=crop&w=300&q=80',
       );
 
@@ -78,7 +68,6 @@ class _AddProductPageState extends State<AddProductPage> {
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
     final categories = BaseetMockData.initialCategories.where((c) => c.id != 'cat_0').toList();
 
     return BlocConsumer<AddProductBloc, AddProductState>(
@@ -97,135 +86,148 @@ class _AddProductPageState extends State<AddProductPage> {
         );
       },
       builder: (context, state) {
-        return Scaffold(
-          backgroundColor: theme.scaffoldBackgroundColor,
+        return AppPageWrapper(
+          scrollable: true,
+          padding: const EdgeInsets.all(AppSpacing.md),
           appBar: PageHeader(
             title: StringsManager.addProductTitle.lang,
             showBackButton: true,
           ),
-          body: SingleChildScrollView(
-            padding: const EdgeInsets.all(16),
-            child: Form(
-              key: _formKey,
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  AppTextField(
-                    controller: _nameController,
-                    label: StringsManager.addProductName.lang,
-                    hint: StringsManager.addProductExampleHint.lang,
-                    validator: (val) => val == null || val.trim().isEmpty ? StringsManager.commonRequired.lang : null,
-                  ),
-                  const SizedBox(height: 16),
-                  AppTextField(
-                    controller: _barcodeController,
-                    label: StringsManager.addProductBarcode.lang,
-                    hint: StringsManager.addProductBarcodeHint.lang,
-                    suffixIcon: IconButton(
-                      icon: AppIcon(AppIcons.barcode, size: 20),
-                      tooltip: StringsManager.barcodeScannerTitle.lang,
-                      onPressed: () async {
-                        final code = await BarcodeScannerModal.show(context);
-                        if (code != null && code.isNotEmpty) {
-                          _barcodeController.text = code;
-                        }
-                      },
-                    ),
-                  ),
-                  const SizedBox(height: 16),
+          child: AppForm(
+            formKey: _formKey,
+            initialValue: const {
+              'category_id': 'cat_1',
+              'stock': '10',
+              'min_stock': '3',
+            },
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                AppFormTextField(
+                  name: 'name',
+                  label: StringsManager.addProductName.lang,
+                  hint: StringsManager.addProductExampleHint.lang,
+                  validator: AppFormValidators.required(),
+                ),
+                16.vSpace,
+                AppFormTextField(
+                  name: 'barcode',
+                  label: StringsManager.addProductBarcode.lang,
+                  hint: StringsManager.addProductBarcodeHint.lang,
+                  suffixIcon: IconButton(
+                    icon: AppIcon(AppIcons.barcode, size: 20),
+                    tooltip: StringsManager.barcodeScannerTitle.lang,
+                    onPressed: () async {
+                      final code = await BarcodeScannerModal.show(context);
+                      if (code != null && code.isNotEmpty) {
+                        final existing = BaseetMockData.initialProducts
+                            .where((p) => p.barcode == code)
+                            .firstOrNull;
 
-                  // Category Selector
-                  Text(
-                    StringsManager.addProductCategory.lang,
-                    style: const TextStyle(fontSize: 13, fontWeight: FontWeight.w600),
-                  ),
-                  const SizedBox(height: 6),
-                  Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 14),
-                    decoration: BoxDecoration(
-                      color: theme.colorScheme.surfaceContainerLowest,
-                      borderRadius: BorderRadius.circular(AppRadius.lg),
-                      border: Border.all(color: theme.colorScheme.outlineVariant),
-                    ),
-                    child: DropdownButtonHideUnderline(
-                      child: DropdownButton<String>(
-                        isExpanded: true,
-                        value: _selectedCategoryId,
-                        items: categories.map((c) {
-                          return DropdownMenuItem<String>(
-                            value: c.id,
-                            child: Text(c.name),
-                          );
-                        }).toList(),
-                        onChanged: (val) {
-                          if (val != null) {
-                            setState(() {
-                              _selectedCategoryId = val;
-                            });
+                        if (existing != null) {
+                          _formKey.currentState?.patchValue({
+                            'barcode': code,
+                            'name': existing.name,
+                            'buy_price': existing.buyPrice.toStringAsFixed(0),
+                            'sell_price': existing.sellPrice.toStringAsFixed(0),
+                            'stock': existing.stockQuantity.toString(),
+                            'min_stock': existing.minStockLimit.toString(),
+                            'category_id': existing.categoryId,
+                          });
+                          if (context.mounted) {
+                            context.showStateHandler(
+                              isLoading: false,
+                              isSuccess: true,
+                              successMessage: StringsManager.barcodeProductAdded.trArgs(args: [existing.name]),
+                            );
                           }
-                        },
+                        } else {
+                          _formKey.currentState?.patchValue({'barcode': code});
+                        }
+                      }
+                    },
+                  ),
+                ),
+                16.vSpace,
+
+                // Category Dropdown
+                AppFormDropdown<String>(
+                  name: 'category_id',
+                  label: StringsManager.addProductCategory.lang,
+                  items: categories.map((c) {
+                    return DropdownMenuItem<String>(
+                      value: c.id,
+                      child: Text(c.name),
+                    );
+                  }).toList(),
+                  validator: AppFormValidators.required(),
+                ),
+                16.vSpace,
+
+                // Prices Row
+                Row(
+                  children: [
+                    Expanded(
+                      child: AppFormTextField(
+                        name: 'buy_price',
+                        label: StringsManager.addProductBuyPrice.lang,
+                        hint: '0.0',
+                        keyboardType: TextInputType.number,
+                        validator: AppFormValidators.compose([
+                          AppFormValidators.required(),
+                          AppFormValidators.numeric(),
+                        ]),
                       ),
                     ),
-                  ),
-                  const SizedBox(height: 16),
+                    12.hSpace,
+                    Expanded(
+                      child: AppFormTextField(
+                        name: 'sell_price',
+                        label: StringsManager.addProductSellPrice.lang,
+                        hint: '0.0',
+                        keyboardType: TextInputType.number,
+                        validator: AppFormValidators.compose([
+                          AppFormValidators.required(),
+                          AppFormValidators.numeric(),
+                        ]),
+                      ),
+                    ),
+                  ],
+                ),
+                16.vSpace,
 
-                  // Prices Row
-                  Row(
-                    children: [
-                      Expanded(
-                        child: AppTextField(
-                          controller: _buyPriceController,
-                          label: StringsManager.addProductBuyPrice.lang,
-                          hint: '0.0',
-                          keyboardType: TextInputType.number,
-                          validator: (val) => val == null || val.trim().isEmpty ? StringsManager.commonRequired.lang : null,
-                        ),
+                // Stock & Min Alert Row
+                Row(
+                  children: [
+                    Expanded(
+                      child: AppFormTextField(
+                        name: 'stock',
+                        label: StringsManager.addProductInitialStock.lang,
+                        hint: '10',
+                        keyboardType: TextInputType.number,
+                        validator: AppFormValidators.numeric(),
                       ),
-                      const SizedBox(width: 12),
-                      Expanded(
-                        child: AppTextField(
-                          controller: _sellPriceController,
-                          label: StringsManager.addProductSellPrice.lang,
-                          hint: '0.0',
-                          keyboardType: TextInputType.number,
-                          validator: (val) => val == null || val.trim().isEmpty ? StringsManager.commonRequired.lang : null,
-                        ),
+                    ),
+                    12.hSpace,
+                    Expanded(
+                      child: AppFormTextField(
+                        name: 'min_stock',
+                        label: StringsManager.addProductMinStock.lang,
+                        hint: '3',
+                        keyboardType: TextInputType.number,
+                        validator: AppFormValidators.numeric(),
                       ),
-                    ],
-                  ),
-                  const SizedBox(height: 16),
+                    ),
+                  ],
+                ),
+                24.vSpace,
 
-                  // Stock & Min Alert Row
-                  Row(
-                    children: [
-                      Expanded(
-                        child: AppTextField(
-                          controller: _stockController,
-                          label: StringsManager.addProductInitialStock.lang,
-                          hint: '10',
-                          keyboardType: TextInputType.number,
-                        ),
-                      ),
-                      const SizedBox(width: 12),
-                      Expanded(
-                        child: AppTextField(
-                          controller: _minStockController,
-                          label: StringsManager.addProductMinStock.lang,
-                          hint: '3',
-                          keyboardType: TextInputType.number,
-                        ),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 32),
-
-                  AppButton(
-                    text: StringsManager.addProductSave.lang,
-                    icon: AppIcons.save,
-                    onPressed: _onSave,
-                  ),
-                ],
-              ),
+                AppButton(
+                  text: StringsManager.addProductSave.lang,
+                  icon: AppIcons.save,
+                  onPressed: _onSave,
+                ),
+              ],
             ),
           ),
         );

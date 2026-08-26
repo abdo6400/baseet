@@ -1,0 +1,55 @@
+# GitHub Actions Workflow: Firebase App Distribution (Staging)
+#
+# REQUIRED GITHUB SECRETS:
+# 1. FIREBASE_APP_ID_ANDROID: The Firebase Android App ID (e.g. 1:1234567890:android:abc123def456)
+# 2. FIREBASE_SERVICE_ACCOUNT_KEY: The full JSON contents of your downloaded Service Account key (baseet-f6bbb-*.json)
+
+name: Firebase App Distribution
+
+on:
+  push:
+    branches:
+      - stag
+  pull_request:
+    branches:
+      - stag
+  workflow_dispatch:
+
+jobs:
+  build-and-distribute:
+    name: Build & Distribute to Firebase
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+
+      - name: Set up Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+          cache: true
+
+      - name: Get dependencies
+        run: flutter pub get
+
+      - name: Build split APKs
+        run: flutter build apk --release --split-per-abi
+
+      - name: Distribute ARM64 APK
+        uses: wzieba/Firebase-Distribution-Github-Action@v1
+        with:
+          appId: ${{ secrets.FIREBASE_APP_ID_ANDROID }}
+          serviceCredentialsFileContent: ${{ secrets.FIREBASE_SERVICE_ACCOUNT_KEY }}
+          groups: q-team
+          file: build/app/outputs/flutter-apk/app-arm64-v8a-release.apk
+          releaseNotes: |
+            Staging QA build (arm64-v8a)
+            Branch: ${{ github.ref_name }}
+            Commit: ${{ github.sha }}

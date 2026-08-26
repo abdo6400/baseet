@@ -2,6 +2,8 @@ import '../../../features/debt_ledger/domain/entities/customer_entity.dart';
 import '../../../features/debt_ledger/domain/entities/debt_transaction_entity.dart';
 import '../../../features/inventory/domain/entities/category_entity.dart';
 import '../../../features/pos/domain/entities/product_entity.dart';
+import '../../../features/suppliers/domain/entities/supplier_entity.dart';
+import '../../../features/suppliers/domain/entities/supplier_invoice_entity.dart';
 import '../../../core/enums/enums.dart';
 
 class BaseetMockData {
@@ -141,8 +143,9 @@ class BaseetMockData {
       type: TransactionType.saleCredit,
       amount: 450.0,
       date: DateTime.now().subtract(const Duration(days: 14)),
-      notes: 'فاتورة مشتريات بقالة #1084',
+      notes: 'فاتورة مشتريات #1084',
       remainingBalance: 1200.0,
+      itemsSummary: const ['سكر الأسرة 1 كجم (x2)', 'زيت عافية 800 مل (x1)', 'شاي العروسة 250 جم (x2)'],
     ),
     DebtTransactionEntity(
       id: 'tx_2',
@@ -163,4 +166,52 @@ class BaseetMockData {
       remainingBalance: 850.0,
     ),
   ];
+
+  static List<SupplierEntity> initialSuppliers = [
+    SupplierEntity(
+      id: 'sup_1',
+      name: 'أحمد محمود',
+      companyName: 'شركة النيل للصناعات الغذائية',
+      phone: '01012345678',
+      totalDebt: 12500.0,
+      address: 'المنطقة الصناعية، 6 أكتوبر',
+      lastTransactionDate: DateTime.now().subtract(const Duration(days: 2)),
+    ),
+    SupplierEntity(
+      id: 'sup_2',
+      name: 'محمد عبد الله',
+      companyName: 'مؤسسة البركة لتوزيع المشروبات',
+      phone: '01123456789',
+      totalDebt: 4300.0,
+      address: 'ش الهرم، الجيزة',
+      lastTransactionDate: DateTime.now().subtract(const Duration(days: 5)),
+    ),
+    SupplierEntity(
+      id: 'sup_3',
+      name: 'خالد إبراهيم',
+      companyName: 'مصنع الأهرام للحلويات',
+      phone: '01234567890',
+      totalDebt: 0.0,
+      address: 'العاشر من رمضان',
+      lastTransactionDate: DateTime.now().subtract(const Duration(days: 10)),
+    ),
+  ];
+
+  static List<SupplierInvoiceEntity> initialSupplierInvoices = [
+    SupplierInvoiceEntity(
+      id: '1042',
+      supplierId: 'sup_1',
+      supplierName: 'أحمد محمود',
+      date: DateTime.now().subtract(const Duration(days: 3)),
+      items: const [
+        SupplierInvoiceItemEntity(productName: 'حليب جهينة 1 لتر', quantity: 30, unitPrice: 38.0),
+        SupplierInvoiceItemEntity(productName: 'جبنة دومتي بلس', quantity: 24, unitPrice: 45.0),
+        SupplierInvoiceItemEntity(productName: 'عصير بيتي برتقال', quantity: 40, unitPrice: 15.0),
+      ],
+      totalAmount: 2820.0,
+      paidAmount: 1000.0,
+      notes: 'إذن توريد رقم #44',
+    ),
+  ];
 }
+

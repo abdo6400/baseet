@@ -1,14 +1,20 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_form_builder/flutter_form_builder.dart';
 import 'package:go_router/go_router.dart';
 import '../../../../config/database/local/mock_data.dart';
 import '../../../../core/common/widgets/button/app_button.dart';
-import '../../../../core/common/widgets/form/app_text_field.dart';
+import '../../../../core/common/widgets/form/app_form.dart';
+import '../../../../core/common/widgets/form/app_form_dropdown.dart';
+import '../../../../core/common/widgets/form/app_form_text_field.dart';
 import '../../../../core/common/widgets/form/receipt_attachment_field.dart';
+import '../../../../core/common/widgets/layout/app_page_wrapper.dart';
 import '../../../../core/common/widgets/layout/page_header.dart';
+import '../../../../core/extensions/spacing_extension.dart';
 import '../../../../core/extensions/state_handle_extension.dart';
 import '../../../../core/extensions/translation_extension.dart';
 import '../../../../core/theme/tokens/app_tokens.dart';
+import '../../../../core/utils/app_form_validators.dart';
 import '../../../../core/utils/app_icons.dart';
 import '../../../../core/utils/strings_manager.dart';
 import '../blocs/customers_list/customers_list_bloc.dart';
@@ -27,55 +33,53 @@ class PaymentVoucherPage extends StatefulWidget {
 }
 
 class _PaymentVoucherPageState extends State<PaymentVoucherPage> {
-  final _amountController = TextEditingController();
-  final _notesController = TextEditingController();
-  String? _selectedCustomerId;
+  final _formKey = GlobalKey<FormBuilderState>();
   String? _receiptPath;
 
   @override
   void initState() {
     super.initState();
-    _selectedCustomerId = widget.customerId;
-    if (_selectedCustomerId != null) {
-      context.read<PaymentVoucherBloc>().add(SelectVoucherCustomerEvent(_selectedCustomerId!));
+    if (widget.customerId != null) {
+      context.read<PaymentVoucherBloc>().add(SelectVoucherCustomerEvent(widget.customerId!));
     }
-  }
-
-  @override
-  void dispose() {
-    _amountController.dispose();
-    _notesController.dispose();
-    super.dispose();
   }
 
   void _onSave() {
-    if (_selectedCustomerId == null) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(StringsManager.checkoutErrorSelectCustomer.lang)),
-      );
-      return;
-    }
+    if (_formKey.currentState?.saveAndValidate() ?? false) {
+      final values = _formKey.currentState!.value;
+      final customerId = values['customer_id']?.toString();
+      final amount = double.tryParse(values['amount']?.toString() ?? '0') ?? 0.0;
+      final notes = (values['notes'] as String?)?.trim();
 
-    final amount = double.tryParse(_amountController.text) ?? 0.0;
-    if (amount <= 0) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(StringsManager.voucherErrorInvalidAmount.lang)),
-      );
-      return;
-    }
+      if (customerId == null || customerId.isEmpty) {
+        context.showStateHandler(
+          isLoading: false,
+          isError: true,
+          errorMessage: StringsManager.checkoutErrorSelectCustomer.lang,
+        );
+        return;
+      }
 
-    context.read<PaymentVoucherBloc>().add(SubmitPaymentVoucherEvent(
-          customerId: _selectedCustomerId!,
-          amount: amount,
-          notes: _notesController.text.trim().isNotEmpty ? _notesController.text.trim() : null,
-          receiptPath: _receiptPath,
-        ));
+      if (amount <= 0) {
+        context.showStateHandler(
+          isLoading: false,
+          isError: true,
+          errorMessage: StringsManager.voucherErrorInvalidAmount.lang,
+        );
+        return;
+      }
+
+      context.read<PaymentVoucherBloc>().add(SubmitPaymentVoucherEvent(
+            customerId: customerId,
+            amount: amount,
+            notes: notes?.isNotEmpty == true ? notes : null,
+            receiptPath: _receiptPath,
+          ));
+    }
   }
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-
     return BlocConsumer<PaymentVoucherBloc, PaymentVoucherState>(
       listener: (context, state) {
         context.showStateHandler(
@@ -92,9 +96,9 @@ class _PaymentVoucherPageState extends State<PaymentVoucherPage> {
       },
       builder: (context, state) {
         final currentCustomer = state.selectedCustomer ??
-            (_selectedCustomerId != null
+            (widget.customerId != null
                 ? BaseetMockData.initialCustomers.firstWhere(
-                    (c) => c.id == _selectedCustomerId,
+                    (c) => c.id == widget.customerId,
                     orElse: () => BaseetMockData.initialCustomers.first,
                   )
                 : null);
@@ -103,53 +107,40 @@ class _PaymentVoucherPageState extends State<PaymentVoucherPage> {
         final double enteredAmount = state.amount;
         final double remaining = (currentDebt - enteredAmount).clamp(0.0, 999999.0);
 
-        return Scaffold(
-          backgroundColor: theme.scaffoldBackgroundColor,
+        return AppPageWrapper(
+          scrollable: true,
+          padding: const EdgeInsets.all(AppSpacing.md),
           appBar: PageHeader(
             title: StringsManager.voucherTitle.lang,
             showBackButton: true,
           ),
-          body: SingleChildScrollView(
-            padding: const EdgeInsets.all(16),
+          child: AppForm(
+            formKey: _formKey,
+            initialValue: {
+              if (widget.customerId != null) 'customer_id': widget.customerId,
+            },
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 // Customer Selector
-                Text(
-                  StringsManager.voucherCustomer.lang,
-                  style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w600),
+                AppFormDropdown<String>(
+                  name: 'customer_id',
+                  label: StringsManager.voucherCustomer.lang,
+                  hint: StringsManager.voucherSelectCustomer.lang,
+                  items: BaseetMockData.initialCustomers.map((c) {
+                    return DropdownMenuItem<String>(
+                      value: c.id,
+                      child: Text('${c.name} (${StringsManager.debtsDebtSuffix.lang}: ${c.totalDebt.toStringAsFixed(0)} ${StringsManager.posCurrency.lang})'),
+                    );
+                  }).toList(),
+                  validator: AppFormValidators.required(),
+                  onChanged: (val) {
+                    if (val != null) {
+                      context.read<PaymentVoucherBloc>().add(SelectVoucherCustomerEvent(val));
+                    }
+                  },
                 ),
-                const SizedBox(height: 6),
-                Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 14),
-                  decoration: BoxDecoration(
-                    color: theme.colorScheme.surfaceContainerLowest,
-                    borderRadius: BorderRadius.circular(AppRadius.lg),
-                    border: Border.all(color: theme.colorScheme.outlineVariant),
-                  ),
-                  child: DropdownButtonHideUnderline(
-                    child: DropdownButton<String>(
-                      isExpanded: true,
-                      hint: Text(StringsManager.voucherSelectCustomer.lang),
-                      value: _selectedCustomerId,
-                      items: BaseetMockData.initialCustomers.map((c) {
-                        return DropdownMenuItem<String>(
-                          value: c.id,
-                          child: Text('${c.name} (${StringsManager.debtsDebtSuffix.lang}: ${c.totalDebt.toStringAsFixed(0)} ${StringsManager.posCurrency.lang})'),
-                        );
-                      }).toList(),
-                      onChanged: (val) {
-                        if (val != null) {
-                          setState(() {
-                            _selectedCustomerId = val;
-                          });
-                          context.read<PaymentVoucherBloc>().add(SelectVoucherCustomerEvent(val));
-                        }
-                      },
-                    ),
-                  ),
-                ),
-                const SizedBox(height: 16),
+                16.vSpace,
 
                 // Current Debt Display Card
                 if (currentCustomer != null) ...[
@@ -178,21 +169,25 @@ class _PaymentVoucherPageState extends State<PaymentVoucherPage> {
                       ],
                     ),
                   ),
-                  const SizedBox(height: 16),
+                  16.vSpace,
                 ],
 
                 // Amount input
-                AppTextField(
-                  controller: _amountController,
+                AppFormTextField(
+                  name: 'amount',
                   label: StringsManager.voucherAmount.lang,
                   hint: '0.0',
                   keyboardType: TextInputType.number,
+                  validator: AppFormValidators.compose([
+                    AppFormValidators.required(),
+                    AppFormValidators.numeric(),
+                  ]),
                   onChanged: (val) {
-                    final amount = double.tryParse(val) ?? 0.0;
+                    final amount = double.tryParse(val ?? '0') ?? 0.0;
                     context.read<PaymentVoucherBloc>().add(SetVoucherAmountEvent(amount));
                   },
                 ),
-                const SizedBox(height: 16),
+                16.vSpace,
 
                 // Remaining Debt preview
                 if (currentCustomer != null && enteredAmount > 0) ...[
@@ -221,24 +216,24 @@ class _PaymentVoucherPageState extends State<PaymentVoucherPage> {
                       ],
                     ),
                   ),
-                  const SizedBox(height: 16),
+                  16.vSpace,
                 ],
 
                 // Notes
-                AppTextField(
-                  controller: _notesController,
+                AppFormTextField(
+                  name: 'notes',
                   label: StringsManager.voucherNotes.lang,
                   hint: StringsManager.voucherNotesHint.lang,
                   maxLines: 2,
                 ),
-                const SizedBox(height: 16),
+                16.vSpace,
 
                 // Receipt Attachment
                 ReceiptAttachmentField(
                   receiptPath: _receiptPath,
                   onChanged: (p) => setState(() => _receiptPath = p),
                 ),
-                const SizedBox(height: 32),
+                24.vSpace,
 
                 // Save button
                 AppButton(
