@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "24753149126",
+    "project_id": "baseet-f6bbb",
+    "storage_bucket": "baseet-f6bbb.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:24753149126:android:e36a799d83454d2a37b3c7",
+        "android_client_info": {
+          "package_name": "com.ama.baseet"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCkj_tDbDd4TnZ8QA1RM6cFi9kyfFG39fE"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
