@@ -449,9 +449,105 @@ abstract class StringsManager {
   static const String activationInstructionsStep2 = 'activation_instructions_step2';
   static const String activationInstructionsStep3 = 'activation_instructions_step3';
   static const String activationSendWhatsAppShort = 'activation_send_whatsapp_short';
-  static const String activationCopyShort = 'activation_copy_short';
-  static const String activationRenewShort = 'activation_renew_short';
   static const String activationSeedDummyData = 'activation_seed_dummy_data';
   static const String activationSeedDummyDataDesc = 'activation_seed_dummy_data_desc';
+  // Dynamic Actions & Management
+  static const String productEdit = 'product_edit';
+  static const String productDelete = 'product_delete';
+  static const String productDeleteConfirm = 'product_delete_confirm';
+  static const String productDeleteSuccess = 'product_delete_success';
+  static const String productUpdateSuccess = 'product_update_success';
+  static const String customerDelete = 'customer_delete';
+  static const String customerDeleteConfirm = 'customer_delete_confirm';
+  static const String customerDeleteSuccess = 'customer_delete_success';
+  static const String supplierDelete = 'supplier_delete';
+  static const String supplierDeleteConfirm = 'supplier_delete_confirm';
+  static const String supplierDeleteSuccess = 'supplier_delete_success';
+  static const String cartRemoveItem = 'cart_remove_item';
+
+  // Receipt & Report Customization
+  static const String receiptCustomizationTitle = 'receipt_customization_title';
+  static const String receiptCustomizationSubtitle = 'receipt_customization_subtitle';
+  static const String receiptHeaderTitle = 'receipt_header_title';
+  static const String receiptTaxNumber = 'receipt_tax_number';
+  static const String receiptFooterNote = 'receipt_footer_note';
+  static const String receiptFooterNoteHint = 'receipt_footer_note_hint';
+  static const String receiptShowLogo = 'receipt_show_logo';
+  static const String receiptShowPhone = 'receipt_show_phone';
+  static const String receiptShowAddress = 'receipt_show_address';
+  static const String receiptShowTax = 'receipt_show_tax';
+  static const String receiptSavedSuccess = 'receipt_saved_success';
+
+  // Backup & Restore
+  static const String backupTitle = 'backup_title';
+  static const String backupSubtitle = 'backup_subtitle';
+  static const String backupLocation = 'backup_location';
+  static const String backupChooseFolder = 'backup_choose_folder';
+  static const String backupNow = 'backup_now';
+  static const String backupAuto = 'backup_auto';
+  static const String backupLastDate = 'backup_last_date';
+  static const String backupNever = 'backup_never';
+  static const String backupSuccess = 'backup_success';
+  static const String backupRestore = 'backup_restore';
+  static const String backupRestoreConfirm = 'backup_restore_confirm';
+  static const String backupRestoreSuccess = 'backup_restore_success';
+
+  // Bluetooth Discovery
+  static const String bluetoothDiscover = 'bluetooth_discover';
+  static const String bluetoothScanning = 'bluetooth_scanning';
+  static const String bluetoothNoDevices = 'bluetooth_no_devices';
+  static const String bluetoothConnect = 'bluetooth_connect';
+  static const String bluetoothConnected = 'bluetooth_connected';
+  static const String bluetoothDisconnect = 'bluetooth_disconnect';
+  static const String bluetoothTestPrint = 'bluetooth_test_print';
+  static const String bluetoothTestPrintSuccess = 'bluetooth_test_print_success';
+
+  // Debt Reminders
+  static const String remindersTitle = 'reminders_title';
+  static const String remindersSubtitle = 'reminders_subtitle';
+  static const String remindersNoOverdue = 'reminders_no_overdue';
+  static const String remindersAllClear = 'reminders_all_clear';
+  static const String remindersSendWhatsApp = 'reminders_send_whatsapp';
+
+  // Receipt Settings Aliases & Additional Keys
+  static const String receiptSettingsTitle = 'receipt_customization_title';
+  static const String receiptTextSettings = 'receipt_text_settings';
+  static const String receiptHeaderTitleLabel = 'receipt_header_title';
+  static const String receiptHeaderTitleHint = 'receipt_header_title_hint';
+  static const String receiptTaxNumberLabel = 'receipt_tax_number';
+  static const String receiptFooterNoteLabel = 'receipt_footer_note';
+  static const String receiptDisplayOptions = 'receipt_display_options';
+  static const String receiptShowStorePhone = 'receipt_show_phone';
+  static const String receiptShowStoreAddress = 'receipt_show_address';
+  static const String receiptShowTaxNumber = 'receipt_show_tax';
+  static const String receiptSaveSettings = 'receipt_save_settings';
+  static const String receiptSettingsSaved = 'receipt_saved_success';
+
+  // Backup Aliases & Additional Keys
+  static const String backupSettingsTitle = 'backup_title';
+  static const String backupDirectoryLabel = 'backup_location';
+  static const String backupDirectoryDefault = 'backup_directory_default';
+  static const String backupChooseDirectory = 'backup_choose_folder';
+  static const String backupAutoBackup = 'backup_auto';
+  static const String backupAutoBackupSubtitle = 'backup_auto_subtitle';
+  static const String backupCreatedSuccess = 'backup_success';
+  static const String backupRestoreTitle = 'backup_restore';
+  static const String backupRestoredSuccess = 'backup_restore_success';
+
+  // Bluetooth Aliases & Additional Keys
+  static const String bluetoothDiscoveredDevices = 'bluetooth_discover';
+  static const String bluetoothScanDevices = 'bluetooth_scanning';
+  static const String bluetoothScanFinished = 'bluetooth_scan_finished';
+  static const String bluetoothDeviceConnected = 'bluetooth_connected';
+  static const String printerTestPrint = 'bluetooth_test_print';
+  static const String printerTestPrintSuccess = 'bluetooth_test_print_success';
+
+  // Common & Activation Aliases
+  static const String commonOptional = 'common_optional';
+  static const String commonNoPhone = 'common_no_phone';
+  static const String commonCall = 'common_call';
+  static const String commonLoading = 'common_loading';
+  static const String activationCopyShort = 'activation_copy_short';
+  static const String activationRenewShort = 'activation_renew_short';
 }
 

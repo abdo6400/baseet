@@ -28,6 +28,11 @@ class SupplierRepositoryImpl implements SupplierRepository {
   }
 
   @override
+  Future<Either<Failure, void>> deleteSupplier(String id) {
+    return Failure.handleCall(() => localDataSource.deleteSupplier(id));
+  }
+
+  @override
   Future<Either<Failure, List<SupplierInvoiceEntity>>> getSupplierInvoices(String supplierId) {
     return Failure.handleCall(() => localDataSource.getSupplierInvoices(supplierId));
   }

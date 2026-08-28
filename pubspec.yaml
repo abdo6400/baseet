@@ -39,6 +39,8 @@ dependencies:
   printing: ^5.13.2
   showcaseview: ^5.1.0
   crypto: ^3.0.6
+  file_picker: ^8.1.7
+  flutter_local_notifications: ^18.0.1
 
 dev_dependencies:
   flutter_test:

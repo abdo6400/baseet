@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
 import 'package:go_router/go_router.dart';
 import 'package:baseet/core/common/widgets/button/app_button.dart';
+import 'package:baseet/core/common/widgets/button/app_outlined_button.dart';
 import 'package:baseet/core/common/widgets/form/app_form.dart';
 import 'package:baseet/core/common/widgets/form/app_form_dropdown.dart';
 import 'package:baseet/core/common/widgets/form/app_form_text_field.dart';
@@ -10,6 +11,7 @@ import 'package:baseet/core/common/widgets/icon/app_icon.dart';
 import 'package:baseet/core/common/widgets/layout/app_page_wrapper.dart';
 import 'package:baseet/core/common/widgets/layout/page_header.dart';
 import 'package:baseet/core/common/widgets/scanner/barcode_scanner_modal.dart';
+import 'package:baseet/core/extensions/dialog_extension.dart';
 import 'package:baseet/core/extensions/spacing_extension.dart';
 import 'package:baseet/core/extensions/state_handle_extension.dart';
 import 'package:baseet/core/extensions/translation_extension.dart';
@@ -29,7 +31,9 @@ import 'package:baseet/features/pos/presentation/blocs/catalog/pos_catalog_bloc.
 import 'package:baseet/features/pos/presentation/blocs/catalog/pos_catalog_event.dart';
 
 class AddProductPage extends StatefulWidget {
-  const AddProductPage({super.key});
+  final ProductEntity? productToEdit;
+
+  const AddProductPage({super.key, this.productToEdit});
 
   @override
   State<AddProductPage> createState() => _AddProductPageState();
@@ -37,6 +41,8 @@ class AddProductPage extends StatefulWidget {
 
 class _AddProductPageState extends State<AddProductPage> {
   final _formKey = GlobalKey<FormBuilderState>();
+
+  bool get isEditMode => widget.productToEdit != null;
 
   @override
   void initState() {
@@ -55,19 +61,38 @@ class _AddProductPageState extends State<AddProductPage> {
       final barcode = (values['barcode'] as String?)?.trim();
 
       final product = ProductEntity(
-        id: UuidGenerator.generate('prod'),
+        id: isEditMode ? widget.productToEdit!.id : UuidGenerator.generate('prod'),
         name: (values['name'] as String?)?.trim() ?? '',
-        barcode: (barcode != null && barcode.isNotEmpty) ? barcode : UuidGenerator.generate('622'),
+        barcode: (barcode != null && barcode.isNotEmpty)
+            ? barcode
+            : (isEditMode ? widget.productToEdit!.barcode : UuidGenerator.generate('622')),
         categoryId: categoryId,
         categoryName: categoryName,
         buyPrice: double.tryParse(values['buy_price']?.toString() ?? '0') ?? 0.0,
         sellPrice: double.tryParse(values['sell_price']?.toString() ?? '0') ?? 0.0,
         stockQuantity: int.tryParse(values['stock']?.toString() ?? '10') ?? 10,
         minStockLimit: int.tryParse(values['min_stock']?.toString() ?? '3') ?? 3,
-        imageUrl: '',
+        imageUrl: isEditMode ? widget.productToEdit!.imageUrl : '',
       );
 
-      context.read<AddProductBloc>().add(SubmitAddProductEvent(product));
+      if (isEditMode) {
+        context.read<AddProductBloc>().add(SubmitUpdateProductEvent(product));
+      } else {
+        context.read<AddProductBloc>().add(SubmitAddProductEvent(product));
+      }
+    }
+  }
+
+  void _onDeleteProduct() async {
+    final confirmed = await context.showConfirmDialog(
+      title: StringsManager.productDelete.lang,
+      message: StringsManager.productDeleteConfirm.lang,
+      confirmText: StringsManager.productDelete.lang,
+      isDestructive: true,
+    );
+
+    if (confirmed == true && mounted) {
+      context.read<AddProductBloc>().add(SubmitDeleteProductEvent(widget.productToEdit!.id));
     }
   }
 
@@ -80,7 +105,9 @@ class _AddProductPageState extends State<AddProductPage> {
           isError: state.status == AddProductStatus.error,
           isSuccess: state.status == AddProductStatus.success,
           errorMessage: state.errorMessage,
-          successMessage: StringsManager.addProductSuccess.lang,
+          successMessage: isEditMode
+              ? StringsManager.productUpdateSuccess.lang
+              : StringsManager.addProductSuccess.lang,
           onSuccess: () {
             context.read<InventoryListBloc>().add(const LoadInventoryEvent());
             context.read<PosCatalogBloc>().add(const LoadPosCatalogEvent());
@@ -93,15 +120,35 @@ class _AddProductPageState extends State<AddProductPage> {
           scrollable: true,
           padding: const EdgeInsets.all(AppSpacing.md),
           appBar: PageHeader(
-            title: StringsManager.addProductTitle.lang,
+            title: isEditMode
+                ? StringsManager.productEdit.lang
+                : StringsManager.addProductTitle.lang,
             showBackButton: true,
+            actions: [
+              if (isEditMode)
+                IconButton(
+                  icon: const AppIcon(AppIcons.delete, color: AppPrimitiveTokens.red700, size: 22),
+                  tooltip: StringsManager.productDelete.lang,
+                  onPressed: _onDeleteProduct,
+                ),
+            ],
           ),
           child: AppForm(
             formKey: _formKey,
-            initialValue: const {
-              'stock': '10',
-              'min_stock': '3',
-            },
+            initialValue: isEditMode
+                ? {
+                    'name': widget.productToEdit!.name,
+                    'barcode': widget.productToEdit!.barcode,
+                    'category_id': widget.productToEdit!.categoryId,
+                    'buy_price': widget.productToEdit!.buyPrice.toStringAsFixed(0),
+                    'sell_price': widget.productToEdit!.sellPrice.toStringAsFixed(0),
+                    'stock': widget.productToEdit!.stockQuantity.toString(),
+                    'min_stock': widget.productToEdit!.minStockLimit.toString(),
+                  }
+                : const {
+                    'stock': '10',
+                    'min_stock': '3',
+                  },
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -117,7 +164,7 @@ class _AddProductPageState extends State<AddProductPage> {
                   label: StringsManager.addProductBarcode.lang,
                   hint: StringsManager.addProductBarcodeHint.lang,
                   suffixIcon: IconButton(
-                    icon: AppIcon(AppIcons.barcode, size: 20),
+                    icon: const AppIcon(AppIcons.barcode, size: 20),
                     tooltip: StringsManager.barcodeScannerTitle.lang,
                     onPressed: () async {
                       final inventoryBloc = context.read<InventoryListBloc>();
@@ -226,13 +273,29 @@ class _AddProductPageState extends State<AddProductPage> {
                     ),
                   ],
                 ),
-                24.vSpace,
+                28.vSpace,
 
                 AppButton(
-                  text: StringsManager.addProductSave.lang,
-                  icon: AppIcons.save,
+                  text: isEditMode
+                      ? StringsManager.productEdit.lang
+                      : StringsManager.addProductSave.lang,
+                  icon: isEditMode ? AppIcons.edit : AppIcons.save,
                   onPressed: _onSave,
                 ),
+
+                if (isEditMode) ...[
+                  12.vSpace,
+                  AppOutlinedButton(
+                    text: StringsManager.productDelete.lang,
+                    icon: AppIcons.delete,
+                    borderColor: AppPrimitiveTokens.red700,
+                    textColor: AppPrimitiveTokens.red700,
+                    width: double.infinity,
+                    height: 48,
+                    borderRadius: AppRadius.lg,
+                    onPressed: _onDeleteProduct,
+                  ),
+                ],
               ],
             ),
           ),

@@ -41,6 +41,11 @@ class DebtRepositoryImpl implements DebtRepository {
   }
 
   @override
+  Future<Either<Failure, void>> deleteCustomer(String id) {
+    return Failure.handleCall(() => localDataSource.deleteCustomer(id));
+  }
+
+  @override
   Future<Either<Failure, DebtTransactionEntity>> addPaymentVoucher({
     required String customerId,
     required double amount,

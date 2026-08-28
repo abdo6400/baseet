@@ -11,8 +11,11 @@ import '../../features/debt_ledger/presentation/pages/payment_voucher_page.dart'
 import '../../features/inventory/presentation/pages/add_category_page.dart';
 import '../../features/inventory/presentation/pages/add_product_page.dart';
 import '../../features/inventory/presentation/pages/inventory_page.dart';
+import '../../features/more_settings/presentation/pages/backup_settings_page.dart';
 import '../../features/more_settings/presentation/pages/more_page.dart';
 import '../../features/more_settings/presentation/pages/printer_settings_page.dart';
+import '../../features/more_settings/presentation/pages/receipt_settings_page.dart';
+import '../../features/pos/domain/entities/product_entity.dart';
 import '../../features/pos/presentation/pages/checkout_page.dart';
 import '../../features/pos/presentation/pages/pos_page.dart';
 import '../../features/pos/presentation/pages/receipts_page.dart';
@@ -90,6 +93,16 @@ class AppRouter {
         parentNavigatorKey: ConstantsManager.rootNavigatorKey,
         builder: (context, state) => const PrinterSettingsPage(),
       ),
+      GoRoute(
+        path: AppRoutes.receiptSettings,
+        parentNavigatorKey: ConstantsManager.rootNavigatorKey,
+        builder: (context, state) => const ReceiptSettingsPage(),
+      ),
+      GoRoute(
+        path: AppRoutes.backupSettings,
+        parentNavigatorKey: ConstantsManager.rootNavigatorKey,
+        builder: (context, state) => const BackupSettingsPage(),
+      ),
 
       StatefulShellRoute.indexedStack(
         builder: (context, state, navigationShell) {
@@ -156,7 +169,10 @@ class AppRouter {
                   GoRoute(
                     path: 'add-product',
                     parentNavigatorKey: ConstantsManager.rootNavigatorKey,
-                    builder: (context, state) => const AddProductPage(),
+                    builder: (context, state) {
+                      final product = state.extra as ProductEntity?;
+                      return AddProductPage(productToEdit: product);
+                    },
                   ),
                   GoRoute(
                     path: 'add-category',

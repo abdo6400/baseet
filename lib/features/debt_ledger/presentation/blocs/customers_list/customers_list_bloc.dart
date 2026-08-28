@@ -1,4 +1,5 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:baseet/features/debt_ledger/domain/usecases/delete_customer_usecase.dart';
 import 'package:baseet/features/debt_ledger/domain/usecases/get_customers_usecase.dart';
 import 'package:baseet/features/debt_ledger/domain/usecases/get_debt_stats_usecase.dart';
 import 'customers_list_event.dart';
@@ -7,14 +8,17 @@ import 'customers_list_state.dart';
 class CustomersListBloc extends Bloc<CustomersListEvent, CustomersListState> {
   final GetCustomersUseCase getCustomersUseCase;
   final GetDebtStatsUseCase getDebtStatsUseCase;
+  final DeleteCustomerUseCase deleteCustomerUseCase;
 
   CustomersListBloc({
     required this.getCustomersUseCase,
     required this.getDebtStatsUseCase,
+    required this.deleteCustomerUseCase,
   }) : super(const CustomersListState()) {
     on<LoadCustomersListEvent>(_onLoadCustomers);
     on<SearchCustomersEvent>(_onSearchCustomers);
     on<FilterCustomersByStatusEvent>(_onFilterCustomers);
+    on<DeleteCustomerEvent>(_onDeleteCustomer);
   }
 
   Future<void> _onLoadCustomers(
@@ -75,5 +79,25 @@ class CustomersListBloc extends Bloc<CustomersListEvent, CustomersListState> {
       statusFilter: event.status,
       sortByHighest: event.sortByHighest,
     ));
+  }
+
+  Future<void> _onDeleteCustomer(
+    DeleteCustomerEvent event,
+    Emitter<CustomersListState> emit,
+  ) async {
+    emit(state.copyWith(status: CustomersListStatus.loading));
+    final result = await deleteCustomerUseCase(event.customerId);
+
+    result.fold(
+      (failure) => emit(state.copyWith(
+        status: CustomersListStatus.error,
+        errorMessage: failure.message,
+      )),
+      (_) => add(LoadCustomersListEvent(
+        searchQuery: state.searchQuery,
+        statusFilter: state.statusFilter,
+        sortByHighest: state.sortByHighest,
+      )),
+    );
   }
 }

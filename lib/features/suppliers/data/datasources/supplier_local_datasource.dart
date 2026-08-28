@@ -7,6 +7,7 @@ abstract class SupplierLocalDataSource {
   Future<List<SupplierModel>> getSuppliers({String? searchQuery});
   Future<SupplierModel> getSupplierById(String id);
   Future<SupplierModel> addSupplier(SupplierModel supplier);
+  Future<void> deleteSupplier(String id);
   Future<List<SupplierInvoiceModel>> getSupplierInvoices(String supplierId);
   Future<SupplierInvoiceModel> addSupplierInvoice(SupplierInvoiceModel invoice);
   Future<double> getTotalSupplierDebt();
@@ -69,6 +70,20 @@ class SupplierLocalDataSourceImpl implements SupplierLocalDataSource {
     );
 
     return supplier;
+  }
+
+  @override
+  Future<void> deleteSupplier(String id) async {
+    final db = await appDatabase.database;
+    await db.transaction((txn) async {
+      final invoiceMaps = await txn.query('supplier_invoices', where: 'supplierId = ?', whereArgs: [id]);
+      for (final inv in invoiceMaps) {
+        final invId = inv['id'] as String;
+        await txn.delete('supplier_invoice_items', where: 'invoiceId = ?', whereArgs: [invId]);
+      }
+      await txn.delete('supplier_invoices', where: 'supplierId = ?', whereArgs: [id]);
+      await txn.delete('suppliers', where: 'id = ?', whereArgs: [id]);
+    });
   }
 
   @override
