@@ -16,6 +16,7 @@ import '../blocs/customers_list/customers_list_event.dart';
 import '../blocs/customers_list/customers_list_state.dart';
 import '../widgets/customer_ledger_card.dart';
 import '../widgets/debt_filter_chips_row.dart';
+import '../widgets/debt_reminders_modal.dart';
 import '../widgets/debt_summary_carousel.dart';
 
 class DebtLedgerPage extends StatefulWidget {
@@ -60,6 +61,11 @@ class _DebtLedgerPageState extends State<DebtLedgerPage> {
         ),
         centerTitle: true,
         actions: [
+          IconButton(
+            icon: Icon(Icons.notifications_none_outlined, color: theme.colorScheme.primary),
+            tooltip: StringsManager.remindersTitle.lang,
+            onPressed: () => DebtRemindersModal.show(context),
+          ),
           IconButton(
             icon: AppIcon(AppIcons.user, color: theme.colorScheme.primary),
             onPressed: () => context.push(AppRoutes.addCustomer),

@@ -138,6 +138,18 @@ class MorePage extends StatelessWidget {
                   ),
                   const Divider(height: 1),
                   MoreMenuItem(
+                    title: StringsManager.receiptSettingsTitle.lang,
+                    icon: AppIcons.document,
+                    onTap: () => context.push(AppRoutes.receiptSettings),
+                  ),
+                  const Divider(height: 1),
+                  MoreMenuItem(
+                    title: StringsManager.backupSettingsTitle.lang,
+                    icon: AppIcons.database,
+                    onTap: () => context.push(AppRoutes.backupSettings),
+                  ),
+                  const Divider(height: 1),
+                  MoreMenuItem(
                     title: StringsManager.showcaseReplayTour.lang,
                     icon: AppIcons.help,
                     onTap: () => _onReplayTour(context),

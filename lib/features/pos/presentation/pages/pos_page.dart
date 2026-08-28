@@ -250,6 +250,13 @@ class _PosPageState extends State<PosPage> {
                                     onAddToCart: () {
                                       context.read<CartBloc>().add(AddProductToCartEvent(product));
                                     },
+                                    onRemoveFromCart: () {
+                                      if (qty > 1) {
+                                        context.read<CartBloc>().add(UpdateItemQuantityEvent(product.id, qty - 1));
+                                      } else {
+                                        context.read<CartBloc>().add(RemoveProductFromCartEvent(product.id));
+                                      }
+                                    },
                                   );
                                 },
                               );

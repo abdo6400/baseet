@@ -7,6 +7,8 @@ abstract class InventoryLocalDataSource {
   Future<List<ProductModel>> getInventory({String? categoryId, String? searchQuery, bool onlyLowStock = false});
   Future<List<CategoryModel>> getCategories();
   Future<ProductModel> addProduct(ProductModel product);
+  Future<ProductModel> updateProduct(ProductModel product);
+  Future<void> deleteProduct(String id);
   Future<CategoryModel> addCategory(CategoryModel category);
   Future<void> deleteCategory(String id);
   Future<Map<String, dynamic>> getInventoryStats();
@@ -75,6 +77,26 @@ class InventoryLocalDataSourceImpl implements InventoryLocalDataSource {
     );
 
     return product;
+  }
+
+  @override
+  Future<ProductModel> updateProduct(ProductModel product) async {
+    final db = await appDatabase.database;
+
+    await db.update(
+      'products',
+      product.toMap(),
+      where: 'id = ?',
+      whereArgs: [product.id],
+    );
+
+    return product;
+  }
+
+  @override
+  Future<void> deleteProduct(String id) async {
+    final db = await appDatabase.database;
+    await db.delete('products', where: 'id = ?', whereArgs: [id]);
   }
 
   @override

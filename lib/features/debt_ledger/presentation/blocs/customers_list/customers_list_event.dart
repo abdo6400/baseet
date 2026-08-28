@@ -41,3 +41,12 @@ class FilterCustomersByStatusEvent extends CustomersListEvent {
   @override
   List<Object?> get props => [status, sortByHighest];
 }
+
+class DeleteCustomerEvent extends CustomersListEvent {
+  final String customerId;
+
+  const DeleteCustomerEvent(this.customerId);
+
+  @override
+  List<Object?> get props => [customerId];
+}

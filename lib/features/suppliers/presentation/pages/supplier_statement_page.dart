@@ -7,6 +7,7 @@ import '../../../../core/common/widgets/feedback/empty_state_widget.dart';
 import '../../../../core/common/widgets/icon/app_icon.dart';
 import '../../../../core/common/widgets/layout/app_page_wrapper.dart';
 import '../../../../core/common/widgets/layout/page_header.dart';
+import '../../../../core/extensions/dialog_extension.dart';
 import '../../../../core/extensions/responsive_extension.dart';
 import '../../../../core/extensions/responsive_text_extension.dart';
 import '../../../../core/extensions/spacing_extension.dart';
@@ -20,6 +21,8 @@ import '../../domain/entities/supplier_invoice_entity.dart';
 import '../blocs/supplier_statement/supplier_statement_bloc.dart';
 import '../blocs/supplier_statement/supplier_statement_event.dart';
 import '../blocs/supplier_statement/supplier_statement_state.dart';
+import '../blocs/suppliers/suppliers_bloc.dart';
+import '../blocs/suppliers/suppliers_event.dart';
 import '../utils/supplier_pdf_helper.dart';
 import '../widgets/supplier_info_header.dart';
 import '../widgets/supplier_invoice_card.dart';
@@ -89,7 +92,23 @@ class _SupplierStatementViewState extends State<_SupplierStatementView> {
             showBackButton: true,
             actions: [
               IconButton(
-                icon: AppIcon(AppIcons.printer, size: 20),
+                icon: const AppIcon(AppIcons.delete, color: AppPrimitiveTokens.red700, size: 20),
+                tooltip: StringsManager.supplierDelete.lang,
+                onPressed: () async {
+                  final confirmed = await context.showConfirmDialog(
+                    title: StringsManager.supplierDelete.lang,
+                    message: StringsManager.supplierDeleteConfirm.lang,
+                    confirmText: StringsManager.supplierDelete.lang,
+                    isDestructive: true,
+                  );
+                  if (confirmed == true && context.mounted) {
+                    context.read<SuppliersBloc>().add(DeleteSupplierEvent(_currentSupplier.id));
+                    Navigator.pop(context);
+                  }
+                },
+              ),
+              IconButton(
+                icon: const AppIcon(AppIcons.printer, size: 20),
                 tooltip: StringsManager.customerPrintPdf.lang,
                 onPressed: () => _printStatement(invoices),
               ),

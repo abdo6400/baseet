@@ -1,4 +1,5 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
+import '../../../domain/usecases/delete_supplier_usecase.dart';
 import '../../../domain/usecases/get_suppliers_usecase.dart';
 import '../../../domain/usecases/get_total_supplier_debt_usecase.dart';
 import 'suppliers_event.dart';
@@ -7,13 +8,16 @@ import 'suppliers_state.dart';
 class SuppliersBloc extends Bloc<SuppliersEvent, SuppliersState> {
   final GetSuppliersUseCase getSuppliersUseCase;
   final GetTotalSupplierDebtUseCase getTotalSupplierDebtUseCase;
+  final DeleteSupplierUseCase deleteSupplierUseCase;
 
   SuppliersBloc({
     required this.getSuppliersUseCase,
     required this.getTotalSupplierDebtUseCase,
+    required this.deleteSupplierUseCase,
   }) : super(const SuppliersState()) {
     on<LoadSuppliersEvent>(_onLoadSuppliers);
     on<SearchSuppliersEvent>(_onSearchSuppliers);
+    on<DeleteSupplierEvent>(_onDeleteSupplier);
   }
 
   Future<void> _onLoadSuppliers(
@@ -48,5 +52,21 @@ class SuppliersBloc extends Bloc<SuppliersEvent, SuppliersState> {
   ) async {
     emit(state.copyWith(searchQuery: event.query));
     add(LoadSuppliersEvent(searchQuery: event.query));
+  }
+
+  Future<void> _onDeleteSupplier(
+    DeleteSupplierEvent event,
+    Emitter<SuppliersState> emit,
+  ) async {
+    emit(state.copyWith(status: SuppliersStatus.loading));
+    final result = await deleteSupplierUseCase(event.supplierId);
+
+    result.fold(
+      (failure) => emit(state.copyWith(
+        status: SuppliersStatus.error,
+        errorMessage: failure.message,
+      )),
+      (_) => add(LoadSuppliersEvent(searchQuery: state.searchQuery)),
+    );
   }
 }

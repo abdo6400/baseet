@@ -35,4 +35,6 @@ abstract class AppRoutes {
   static const String reports = '/reports';
   static const String more = '/more';
   static const String printerSettings = '/more/printer-settings';
+  static const String receiptSettings = '/more/receipt-settings';
+  static const String backupSettings = '/more/backup-settings';
 }

@@ -9,6 +9,7 @@ abstract class DebtLocalDataSource {
   Future<CustomerModel> getCustomerById(String id);
   Future<List<DebtTransactionModel>> getCustomerTransactions(String customerId);
   Future<CustomerModel> addCustomer(CustomerModel customer);
+  Future<void> deleteCustomer(String id);
   Future<DebtTransactionModel> addPaymentVoucher({
     required String customerId,
     required double amount,
@@ -100,6 +101,15 @@ class DebtLocalDataSourceImpl implements DebtLocalDataSource {
     );
 
     return customer;
+  }
+
+  @override
+  Future<void> deleteCustomer(String id) async {
+    final db = await appDatabase.database;
+    await db.transaction((txn) async {
+      await txn.delete('debt_transactions', where: 'customerId = ?', whereArgs: [id]);
+      await txn.delete('customers', where: 'id = ?', whereArgs: [id]);
+    });
   }
 
   @override

@@ -10,12 +10,14 @@ import '../../domain/entities/product_entity.dart';
 class PosProductGridCard extends StatelessWidget {
   final ProductEntity product;
   final VoidCallback onAddToCart;
+  final VoidCallback? onRemoveFromCart;
   final int cartQuantity;
 
   const PosProductGridCard({
     super.key,
     required this.product,
     required this.onAddToCart,
+    this.onRemoveFromCart,
     this.cartQuantity = 0,
   });
 
@@ -34,6 +36,7 @@ class PosProductGridCard extends StatelessWidget {
     final isInCart = cartQuantity > 0;
 
     return Container(
+      padding: EdgeInsets.zero,
       decoration: BoxDecoration(
         color: isInCart
             ? theme.colorScheme.primaryContainer.withValues(alpha: 0.18)
@@ -59,7 +62,7 @@ class PosProductGridCard extends StatelessWidget {
         children: [
           // Image / Header area
           Expanded(
-            flex: 11,
+            flex: 10,
             child: Stack(
               fit: StackFit.expand,
               children: [
@@ -74,34 +77,45 @@ class PosProductGridCard extends StatelessWidget {
                       : _buildPlaceholder(theme),
                 ),
                 if (isInCart)
-                  Positioned(
+                  PositionedDirectional(
                     top: 8,
-                    left: 8,
-                    child: Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 9, vertical: 3),
-                      decoration: BoxDecoration(
-                        color: theme.colorScheme.primary,
-                        borderRadius: BorderRadius.circular(AppRadius.full),
-                        boxShadow: [
-                          BoxShadow(
-                            color: Colors.black.withValues(alpha: 0.2),
-                            blurRadius: 4,
-                          ),
-                        ],
-                      ),
-                      child: Text(
-                        'x$cartQuantity',
-                        style: const TextStyle(
-                          color: Colors.white,
-                          fontSize: 11,
-                          fontWeight: FontWeight.w900,
+                    start: 8,
+                    child: GestureDetector(
+                      onTap: () {
+                        HapticFeedback.lightImpact();
+                        if (onRemoveFromCart != null) onRemoveFromCart!();
+                      },
+                      child: Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                        decoration: BoxDecoration(
+                          color: theme.colorScheme.primary,
+                          borderRadius: BorderRadius.circular(AppRadius.full),
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.black.withValues(alpha: 0.2),
+                              blurRadius: 4,
+                            ),
+                          ],
+                        ),
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Text(
+                              'x$cartQuantity',
+                              style: const TextStyle(
+                                color: Colors.white,
+                                fontSize: 11,
+                                fontWeight: FontWeight.w900,
+                              ),
+                            ),
+                          ],
                         ),
                       ),
                     ),
                   ),
-                Positioned(
+                PositionedDirectional(
                   top: 8,
-                  right: 8,
+                  end: 8,
                   child: Container(
                     padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 3),
                     decoration: BoxDecoration(
@@ -128,7 +142,7 @@ class PosProductGridCard extends StatelessWidget {
           Expanded(
             flex: 8,
             child: Padding(
-              padding: const EdgeInsets.fromLTRB(10, 8, 10, 8),
+              padding: const EdgeInsets.fromLTRB(10, 6, 10, 8),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -150,14 +164,14 @@ class PosProductGridCard extends StatelessWidget {
                       Flexible(
                         child: FittedBox(
                           fit: BoxFit.scaleDown,
-                          alignment: Alignment.centerRight,
+                          alignment: AlignmentDirectional.centerStart,
                           child: Row(
                             mainAxisSize: MainAxisSize.min,
                             children: [
                               Text(
                                 product.sellPrice.toStringAsFixed(0),
                                 style: TextStyle(
-                                  fontSize: 16,
+                                  fontSize: 15.5,
                                   fontWeight: FontWeight.w800,
                                   color: theme.colorScheme.primary,
                                 ),
@@ -166,7 +180,7 @@ class PosProductGridCard extends StatelessWidget {
                               Text(
                                 StringsManager.posCurrency.lang,
                                 style: TextStyle(
-                                  fontSize: 10,
+                                  fontSize: 9.5,
                                   fontWeight: FontWeight.w600,
                                   color: theme.colorScheme.primary,
                                 ),
@@ -176,31 +190,60 @@ class PosProductGridCard extends StatelessWidget {
                         ),
                       ),
                       const SizedBox(width: 4),
-                      GestureDetector(
-                        onTap: () {
-                          HapticFeedback.lightImpact();
-                          onAddToCart();
-                        },
-                        child: Container(
-                          width: 30,
-                          height: 30,
-                          decoration: BoxDecoration(
-                            color: theme.colorScheme.primary,
-                            shape: BoxShape.circle,
-                            boxShadow: [
-                              BoxShadow(
-                                color: theme.colorScheme.primary.withValues(alpha: 0.3),
-                                blurRadius: 4,
-                                offset: const Offset(0, 2),
+                      Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          if (isInCart && onRemoveFromCart != null) ...[
+                            GestureDetector(
+                              onTap: () {
+                                HapticFeedback.lightImpact();
+                                onRemoveFromCart!();
+                              },
+                              child: Container(
+                                width: 26,
+                                height: 26,
+                                decoration: BoxDecoration(
+                                  color: AppPrimitiveTokens.red700.withValues(alpha: 0.12),
+                                  shape: BoxShape.circle,
+                                ),
+                                child: const Center(
+                                  child: Icon(
+                                    Icons.remove,
+                                    color: AppPrimitiveTokens.red700,
+                                    size: 15,
+                                  ),
+                                ),
                               ),
-                            ],
+                            ),
+                            const SizedBox(width: 5),
+                          ],
+                          GestureDetector(
+                            onTap: () {
+                              HapticFeedback.lightImpact();
+                              onAddToCart();
+                            },
+                            child: Container(
+                              width: 28,
+                              height: 28,
+                              decoration: BoxDecoration(
+                                color: theme.colorScheme.primary,
+                                shape: BoxShape.circle,
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: theme.colorScheme.primary.withValues(alpha: 0.3),
+                                    blurRadius: 4,
+                                    offset: const Offset(0, 2),
+                                  ),
+                                ],
+                              ),
+                              child: const AppIcon(
+                                AppIcons.add,
+                                color: Colors.white,
+                                size: 16,
+                              ),
+                            ),
                           ),
-                          child: AppIcon(
-                            AppIcons.add,
-                            color: Colors.white,
-                            size: 18,
-                          ),
-                        ),
+                        ],
                       ),
                     ],
                   ),

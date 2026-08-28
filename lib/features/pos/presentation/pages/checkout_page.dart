@@ -118,6 +118,20 @@ class _CheckoutPageState extends State<CheckoutPage> {
                   CheckoutOrderSummaryCard(
                     totalPrice: cartState.totalPrice,
                     totalItemCount: cartState.totalItemCount,
+                    items: cartState.items,
+                    onIncrement: (item) {
+                      context.read<CartBloc>().add(AddProductToCartEvent(item.product));
+                    },
+                    onDecrement: (item) {
+                      if (item.quantity > 1) {
+                        context.read<CartBloc>().add(UpdateItemQuantityEvent(item.product.id, item.quantity - 1));
+                      } else {
+                        context.read<CartBloc>().add(RemoveProductFromCartEvent(item.product.id));
+                      }
+                    },
+                    onRemove: (item) {
+                      context.read<CartBloc>().add(RemoveProductFromCartEvent(item.product.id));
+                    },
                   ),
                   20.vSpace,
 
@@ -168,36 +182,46 @@ class _CheckoutPageState extends State<CheckoutPage> {
                         ),
                         20.vSpace,
 
-                        // Customer Selection & Partial Debt Payment Section
-                        if (checkoutState.paymentMethod == PaymentMethod.debt) ...[
-                          BlocBuilder<CustomersListBloc, CustomersListState>(
-                            builder: (context, custState) {
-                              return AppFormDropdown<String>(
-                                name: 'customer_id',
-                                label: StringsManager.checkoutSelectCustomer.lang,
-                                hint: StringsManager.checkoutSelectCustomer.lang,
-                                items: custState.customers.map((c) {
-                                  return DropdownMenuItem<String>(
-                                    value: c.id,
-                                    child: Text('${c.name} (${c.totalDebt.toStringAsFixed(0)} ${StringsManager.posCurrency.lang} ${StringsManager.debtsDebtSuffix.lang})'),
-                                  );
-                                }).toList(),
-                                validator: AppFormValidators.required(),
-                                onChanged: (val) {
-                                  if (val != null) {
-                                    final cust = custState.customers.firstWhere((c) => c.id == val);
+                        // Customer Selection Section (Available for ALL payment methods)
+                        BlocBuilder<CustomersListBloc, CustomersListState>(
+                          builder: (context, custState) {
+                            final isDebt = checkoutState.paymentMethod == PaymentMethod.debt;
+                            return AppFormDropdown<String>(
+                              name: 'customer_id',
+                              label: isDebt
+                                  ? StringsManager.checkoutSelectCustomer.lang
+                                  : '${StringsManager.checkoutCustomer.lang} (${StringsManager.commonOptional.lang})',
+                              hint: StringsManager.checkoutSelectCustomer.lang,
+                              items: custState.customers.map((c) {
+                                return DropdownMenuItem<String>(
+                                  value: c.id,
+                                  child: Text('${c.name} (${c.totalDebt.toStringAsFixed(0)} ${StringsManager.posCurrency.lang} ${StringsManager.debtsDebtSuffix.lang})'),
+                                );
+                              }).toList(),
+                              validator: isDebt ? AppFormValidators.required() : null,
+                              onChanged: (val) {
+                                if (val != null && val.isNotEmpty) {
+                                  final cust = custState.customers.where((c) => c.id == val).firstOrNull;
+                                  if (cust != null) {
                                     context.read<CheckoutBloc>().add(SelectCustomerForDebtEvent(
                                           customerId: cust.id,
                                           customerName: cust.name,
                                         ));
                                   }
-                                },
-                              );
-                            },
-                          ),
-                          14.vSpace,
+                                } else {
+                                  context.read<CheckoutBloc>().add(const SelectCustomerForDebtEvent(
+                                        customerId: null,
+                                        customerName: null,
+                                      ));
+                                }
+                              },
+                            );
+                          },
+                        ),
+                        14.vSpace,
 
-                          // Partial payment input for debt
+                        // Partial debt payment input if payment method is Debt
+                        if (checkoutState.paymentMethod == PaymentMethod.debt) ...[
                           AppFormTextField(
                             name: 'paid_amount',
                             label: StringsManager.checkoutReceivedAmount.lang,

@@ -5,9 +5,11 @@ import '../../features/inventory/domain/repositories/inventory_repository.dart';
 import '../../features/inventory/domain/usecases/add_category_usecase.dart';
 import '../../features/inventory/domain/usecases/add_product_usecase.dart';
 import '../../features/inventory/domain/usecases/delete_category_usecase.dart';
+import '../../features/inventory/domain/usecases/delete_product_usecase.dart';
 import '../../features/inventory/domain/usecases/get_categories_usecase.dart';
 import '../../features/inventory/domain/usecases/get_inventory_stats_usecase.dart';
 import '../../features/inventory/domain/usecases/get_inventory_usecase.dart';
+import '../../features/inventory/domain/usecases/update_product_usecase.dart';
 import '../../features/inventory/presentation/blocs/add_category/add_category_bloc.dart';
 import '../../features/inventory/presentation/blocs/add_product/add_product_bloc.dart';
 import '../../features/inventory/presentation/blocs/inventory_list/inventory_list_bloc.dart';
@@ -23,6 +25,8 @@ void initInventoryLocator(GetIt sl) {
   sl.registerLazySingleton(() => GetInventoryUseCase(sl()));
   sl.registerLazySingleton(() => GetCategoriesUseCase(sl()));
   sl.registerLazySingleton(() => AddProductUseCase(sl()));
+  sl.registerLazySingleton(() => UpdateProductUseCase(sl()));
+  sl.registerLazySingleton(() => DeleteProductUseCase(sl()));
   sl.registerLazySingleton(() => AddCategoryUseCase(sl()));
   sl.registerLazySingleton(() => DeleteCategoryUseCase(sl()));
   sl.registerLazySingleton(() => GetInventoryStatsUseCase(sl()));
@@ -33,7 +37,11 @@ void initInventoryLocator(GetIt sl) {
         getCategoriesUseCase: sl(),
         getInventoryStatsUseCase: sl(),
       ));
-  sl.registerFactory(() => AddProductBloc(addProductUseCase: sl()));
+  sl.registerFactory(() => AddProductBloc(
+        addProductUseCase: sl(),
+        updateProductUseCase: sl(),
+        deleteProductUseCase: sl(),
+      ));
   sl.registerFactory(() => AddCategoryBloc(
         addCategoryUseCase: sl(),
         deleteCategoryUseCase: sl(),

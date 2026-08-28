@@ -10,10 +10,12 @@ import '../../../../core/common/widgets/feedback/empty_state_widget.dart';
 import '../../../../core/common/widgets/icon/app_icon.dart';
 import '../../../../core/common/widgets/layout/page_header.dart';
 import '../../../../core/enums/enums.dart';
+import '../../../../core/extensions/dialog_extension.dart';
 import '../../../../core/extensions/responsive_extension.dart';
 import '../../../../core/extensions/responsive_text_extension.dart';
 import '../../../../core/extensions/spacing_extension.dart';
 import '../../../../core/extensions/translation_extension.dart';
+import '../../../../core/theme/tokens/app_tokens.dart';
 import '../../../../core/utils/app_icons.dart';
 import '../../../../core/utils/app_pdf_helper.dart';
 import '../../../../core/utils/strings_manager.dart';
@@ -22,6 +24,8 @@ import '../../domain/entities/debt_transaction_entity.dart';
 import '../blocs/customer_statement/customer_statement_bloc.dart';
 import '../blocs/customer_statement/customer_statement_event.dart';
 import '../blocs/customer_statement/customer_statement_state.dart';
+import '../blocs/customers_list/customers_list_bloc.dart';
+import '../blocs/customers_list/customers_list_event.dart';
 import '../widgets/customer_share_bottom_sheet.dart';
 import '../widgets/customer_statement_actions.dart';
 import '../widgets/customer_statement_profile_card.dart';
@@ -134,6 +138,22 @@ class _CustomerStatementPageState extends State<CustomerStatementPage> {
         showBackButton: true,
         actions: [
           IconButton(
+            icon: const AppIcon(AppIcons.delete, color: AppPrimitiveTokens.red700),
+            tooltip: StringsManager.customerDelete.lang,
+            onPressed: () async {
+              final confirmed = await context.showConfirmDialog(
+                title: StringsManager.customerDelete.lang,
+                message: StringsManager.customerDeleteConfirm.lang,
+                confirmText: StringsManager.customerDelete.lang,
+                isDestructive: true,
+              );
+              if (confirmed == true && context.mounted) {
+                context.read<CustomersListBloc>().add(DeleteCustomerEvent(widget.customerId));
+                context.pop();
+              }
+            },
+          ),
+          IconButton(
             icon: const Icon(Icons.print),
             tooltip: StringsManager.pdfPrintTooltip.lang,
             onPressed: () {
@@ -144,7 +164,7 @@ class _CustomerStatementPageState extends State<CustomerStatementPage> {
             },
           ),
           IconButton(
-            icon: AppIcon(AppIcons.share),
+            icon: const AppIcon(AppIcons.share),
             onPressed: () {
               final cust = context.read<CustomerStatementBloc>().state.customer;
               if (cust != null) {
