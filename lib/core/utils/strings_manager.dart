@@ -476,6 +476,8 @@ abstract class StringsManager {
   static const String receiptShowPhone = 'receipt_show_phone';
   static const String receiptShowAddress = 'receipt_show_address';
   static const String receiptShowTax = 'receipt_show_tax';
+  static const String receiptShowSignatures = 'receipt_show_signatures';
+  static const String receiptShowFooterNotes = 'receipt_show_footer_notes';
   static const String receiptSavedSuccess = 'receipt_saved_success';
 
   // Backup & Restore
@@ -555,6 +557,14 @@ abstract class StringsManager {
   static const String moreSectionStore = 'more_section_store';
   static const String moreSectionPreferences = 'more_section_preferences';
   static const String moreSectionSystem = 'more_section_system';
+
+  // Store Logo
+  static const String storeLogoTitle = 'store_logo_title';
+  static const String storeLogoPick = 'store_logo_pick';
+  static const String storeLogoChange = 'store_logo_change';
+  static const String storeLogoRemove = 'store_logo_remove';
+  static const String storeLogoPickGallery = 'store_logo_pick_gallery';
+  static const String storeLogoTakeCamera = 'store_logo_take_camera';
 
   // Common & Activation Aliases
   static const String commonOptional = 'common_optional';

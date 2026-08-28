@@ -30,6 +30,8 @@ class _ReceiptSettingsPageState extends State<ReceiptSettingsPage> {
   late bool _showPhone;
   late bool _showAddress;
   late bool _showTax;
+  late bool _showSignatures;
+  late bool _showFooterNotes;
 
   @override
   void initState() {
@@ -39,6 +41,8 @@ class _ReceiptSettingsPageState extends State<ReceiptSettingsPage> {
     _showPhone = _settings.showStorePhone;
     _showAddress = _settings.showStoreAddress;
     _showTax = _settings.showTaxNumber;
+    _showSignatures = _settings.showSignatureOnReceipt;
+    _showFooterNotes = _settings.showFooterNoteOnReceipt;
   }
 
   Future<void> _onSave() async {
@@ -52,6 +56,8 @@ class _ReceiptSettingsPageState extends State<ReceiptSettingsPage> {
       await _settings.setShowStorePhone(_showPhone);
       await _settings.setShowStoreAddress(_showAddress);
       await _settings.setShowTaxNumber(_showTax);
+      await _settings.setShowSignatureOnReceipt(_showSignatures);
+      await _settings.setShowFooterNoteOnReceipt(_showFooterNotes);
 
       if (mounted) {
         toastification.show(
@@ -146,6 +152,12 @@ class _ReceiptSettingsPageState extends State<ReceiptSettingsPage> {
                   SwitchListTile(
                     contentPadding: EdgeInsets.zero,
                     title: Text(StringsManager.receiptShowLogo.lang, style: context.label(13.5)),
+                    subtitle: _settings.storeLogoPath != null && _settings.storeLogoPath!.isNotEmpty
+                        ? Text(
+                            StringsManager.storeLogoTitle.lang,
+                            style: TextStyle(fontSize: 11.5, color: theme.colorScheme.primary),
+                          )
+                        : null,
                     value: _showLogo,
                     onChanged: (val) => setState(() => _showLogo = val),
                   ),
@@ -169,6 +181,20 @@ class _ReceiptSettingsPageState extends State<ReceiptSettingsPage> {
                     title: Text(StringsManager.receiptShowTaxNumber.lang, style: context.label(13.5)),
                     value: _showTax,
                     onChanged: (val) => setState(() => _showTax = val),
+                  ),
+                  const Divider(),
+                  SwitchListTile(
+                    contentPadding: EdgeInsets.zero,
+                    title: Text(StringsManager.receiptShowSignatures.lang, style: context.label(13.5)),
+                    value: _showSignatures,
+                    onChanged: (val) => setState(() => _showSignatures = val),
+                  ),
+                  const Divider(),
+                  SwitchListTile(
+                    contentPadding: EdgeInsets.zero,
+                    title: Text(StringsManager.receiptShowFooterNotes.lang, style: context.label(13.5)),
+                    value: _showFooterNotes,
+                    onChanged: (val) => setState(() => _showFooterNotes = val),
                   ),
                 ],
               ),

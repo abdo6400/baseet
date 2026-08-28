@@ -453,6 +453,8 @@
   "receipt_show_phone": "إظهار رقم الهاتف",
   "receipt_show_address": "إظهار العنوان",
   "receipt_show_tax": "إظهار الرقم الضريبي",
+  "receipt_show_signatures": "إظهار قسم التوقيعات (المستلم / الكاشير)",
+  "receipt_show_footer_notes": "إظهار نص الملاحظات والشروط أسفل الفاتورة",
   "receipt_saved_success": "تم حفظ إعدادات الفاتورة بنجاح",
 
   "backup_title": "النسخ الاحتياطي والاستعادة",
@@ -508,6 +510,13 @@
 
   "more_section_store": "المتجر والعتاد",
   "more_section_preferences": "التفضيلات والبيانات",
-  "more_section_system": "النظام والدعم"
+  "more_section_system": "النظام والدعم",
+
+  "store_logo_title": "شعار المتجر",
+  "store_logo_pick": "تحديد شعار المتجر",
+  "store_logo_change": "تغيير الشعار",
+  "store_logo_remove": "حذف الشعار",
+  "store_logo_pick_gallery": "اختيار من المعرض",
+  "store_logo_take_camera": "التقاط بالكاميرا"
 }
 

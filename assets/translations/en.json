@@ -453,6 +453,8 @@
   "receipt_show_phone": "Show Store Phone",
   "receipt_show_address": "Show Store Address",
   "receipt_show_tax": "Show Tax Number",
+  "receipt_show_signatures": "Show Signatures Section (Receiver / Cashier)",
+  "receipt_show_footer_notes": "Show Footer Notes & Terms",
   "receipt_saved_success": "Receipt settings saved successfully",
 
   "backup_title": "Backup & Restore",
@@ -508,6 +510,13 @@
 
   "more_section_store": "Store & Hardware",
   "more_section_preferences": "Preferences & Data",
-  "more_section_system": "System & Support"
+  "more_section_system": "System & Support",
+
+  "store_logo_title": "Store Logo",
+  "store_logo_pick": "Select Store Logo",
+  "store_logo_change": "Change Logo",
+  "store_logo_remove": "Remove Logo",
+  "store_logo_pick_gallery": "Pick from Gallery",
+  "store_logo_take_camera": "Take from Camera"
 }
 

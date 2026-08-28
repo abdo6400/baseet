@@ -12,6 +12,7 @@ class SettingsService extends ChangeNotifier {
   static const String _keyCashierName = 'settings_cashier_name';
   static const String _keyStorePhone = 'settings_store_phone';
   static const String _keyStoreAddress = 'settings_store_address';
+  static const String _keyStoreLogoPath = 'settings_store_logo_path';
   static const String _keyPrinterType = 'settings_printer_type';
   static const String _keyPrinterIp = 'settings_printer_ip';
   static const String _keyPaperSize = 'settings_paper_size';
@@ -26,6 +27,8 @@ class SettingsService extends ChangeNotifier {
   static const String _keyReceiptShowPhone = 'settings_receipt_show_phone';
   static const String _keyReceiptShowAddress = 'settings_receipt_show_address';
   static const String _keyReceiptShowTax = 'settings_receipt_show_tax';
+  static const String _keyReceiptShowSignature = 'settings_receipt_show_signature';
+  static const String _keyReceiptShowFooterNote = 'settings_receipt_show_footer_note';
   static const String _keyReceiptLogoPath = 'settings_receipt_logo_path';
 
   // Backup Keys
@@ -41,6 +44,7 @@ class SettingsService extends ChangeNotifier {
   String get cashierName => _prefs.getString(_keyCashierName) ?? 'الكاشير';
   String get storePhone => _prefs.getString(_keyStorePhone) ?? '';
   String get storeAddress => _prefs.getString(_keyStoreAddress) ?? '';
+  String? get storeLogoPath => _prefs.getString(_keyStoreLogoPath);
 
   // Printer Getters
   String get printerType => _prefs.getString(_keyPrinterType) ?? 'bluetooth';
@@ -61,11 +65,15 @@ class SettingsService extends ChangeNotifier {
   bool get receiptShowPhone => _prefs.getBool(_keyReceiptShowPhone) ?? true;
   bool get receiptShowAddress => _prefs.getBool(_keyReceiptShowAddress) ?? true;
   bool get receiptShowTax => _prefs.getBool(_keyReceiptShowTax) ?? true;
+  bool get receiptShowSignature => _prefs.getBool(_keyReceiptShowSignature) ?? true;
+  bool get receiptShowFooterNote => _prefs.getBool(_keyReceiptShowFooterNote) ?? true;
   bool get showLogoOnReceipt => receiptShowLogo;
   bool get showStorePhone => receiptShowPhone;
   bool get showStoreAddress => receiptShowAddress;
   bool get showTaxNumber => receiptShowTax;
-  String? get receiptLogoPath => _prefs.getString(_keyReceiptLogoPath);
+  bool get showSignatureOnReceipt => receiptShowSignature;
+  bool get showFooterNoteOnReceipt => receiptShowFooterNote;
+  String? get receiptLogoPath => _prefs.getString(_keyReceiptLogoPath) ?? storeLogoPath;
 
   // Backup Getters
   String get backupDirectoryPath => _prefs.getString(_keyBackupDirectory) ?? '';
@@ -78,6 +86,7 @@ class SettingsService extends ChangeNotifier {
     required String phone,
     String? address,
     String? cashier,
+    String? logoPath,
   }) async {
     await _prefs.setString(_keyStoreName, name.trim());
     await _prefs.setString(_keyStorePhone, phone.trim());
@@ -86,6 +95,22 @@ class SettingsService extends ChangeNotifier {
     }
     if (cashier != null && cashier.trim().isNotEmpty) {
       await _prefs.setString(_keyCashierName, cashier.trim());
+    }
+    if (logoPath != null) {
+      if (logoPath.isEmpty) {
+        await _prefs.remove(_keyStoreLogoPath);
+      } else {
+        await _prefs.setString(_keyStoreLogoPath, logoPath);
+      }
+    }
+    notifyListeners();
+  }
+
+  Future<void> setStoreLogoPath(String? path) async {
+    if (path == null || path.isEmpty) {
+      await _prefs.remove(_keyStoreLogoPath);
+    } else {
+      await _prefs.setString(_keyStoreLogoPath, path);
     }
     notifyListeners();
   }
@@ -167,6 +192,16 @@ class SettingsService extends ChangeNotifier {
 
   Future<void> setShowTaxNumber(bool v) async {
     await _prefs.setBool(_keyReceiptShowTax, v);
+    notifyListeners();
+  }
+
+  Future<void> setShowSignatureOnReceipt(bool v) async {
+    await _prefs.setBool(_keyReceiptShowSignature, v);
+    notifyListeners();
+  }
+
+  Future<void> setShowFooterNoteOnReceipt(bool v) async {
+    await _prefs.setBool(_keyReceiptShowFooterNote, v);
     notifyListeners();
   }
 

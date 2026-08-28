@@ -1,3 +1,4 @@
+import 'dart:io';
 import 'dart:typed_data';
 import 'package:pdf/pdf.dart';
 import 'package:pdf/widgets.dart' as pw;
@@ -33,6 +34,16 @@ class PosPdfHelper {
         : StringsManager.receiptThankYou.lang;
     final is58mm = settings.paperSize == '58mm';
 
+    Uint8List? logoBytes;
+    if (settings.showLogoOnReceipt && settings.receiptLogoPath != null && settings.receiptLogoPath!.isNotEmpty) {
+      final file = File(settings.receiptLogoPath!);
+      if (file.existsSync()) {
+        try {
+          logoBytes = file.readAsBytesSync();
+        } catch (_) {}
+      }
+    }
+
     doc.addPage(
       pw.Page(
         pageFormat: is58mm ? PdfPageFormat.roll57 : PdfPageFormat.roll80,
@@ -41,6 +52,12 @@ class PosPdfHelper {
             child: pw.Column(
               crossAxisAlignment: pw.CrossAxisAlignment.center,
               children: [
+                if (logoBytes != null)
+                  pw.Container(
+                    height: is58mm ? 36 : 48,
+                    margin: const pw.EdgeInsets.only(bottom: 6),
+                    child: pw.Image(pw.MemoryImage(logoBytes)),
+                  ),
                 pw.Text(headerTitle, style: pw.TextStyle(fontSize: 15, fontWeight: pw.FontWeight.bold)),
                 if (settings.showTaxNumber && taxNo.isNotEmpty)
                   pw.Text('${StringsManager.receiptTaxNumberLabel.lang}: $taxNo', style: const pw.TextStyle(fontSize: 9, color: PdfColors.grey700)),
@@ -107,8 +124,30 @@ class PosPdfHelper {
                     pw.Text('${changeAmount.toStringAsFixed(0)} ${StringsManager.posCurrency.lang}', style: const pw.TextStyle(fontSize: 9)),
                   ],
                 ),
-                pw.SizedBox(height: AppSpacing.md),
-                pw.Text(footerNote, style: pw.TextStyle(fontSize: 10, fontWeight: pw.FontWeight.bold), textAlign: pw.TextAlign.center),
+                if (settings.showSignatureOnReceipt) ...[
+                  pw.SizedBox(height: AppSpacing.sm),
+                  pw.Divider(thickness: 0.5, borderStyle: pw.BorderStyle.dashed),
+                  pw.SizedBox(height: 3),
+                  pw.Row(
+                    mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
+                    children: [
+                      pw.Text('${StringsManager.receiptReceiverSignature.lang}: .........', style: const pw.TextStyle(fontSize: 8)),
+                      pw.Text('${StringsManager.receiptCashierSignature.lang}: .........', style: const pw.TextStyle(fontSize: 8)),
+                    ],
+                  ),
+                ],
+                if (settings.showFooterNoteOnReceipt && footerNote.isNotEmpty) ...[
+                  pw.SizedBox(height: AppSpacing.sm),
+                  pw.Text(footerNote, style: pw.TextStyle(fontSize: 9, fontWeight: pw.FontWeight.bold), textAlign: pw.TextAlign.center),
+                ],
+                if (settings.showStorePhone && settings.storePhone.isNotEmpty) ...[
+                  pw.SizedBox(height: 3),
+                  pw.Text('${StringsManager.storeSettingsPhoneLabel.lang}: ${settings.storePhone}', style: const pw.TextStyle(fontSize: 8, color: PdfColors.grey700), textAlign: pw.TextAlign.center),
+                ],
+                if (settings.showStoreAddress && settings.storeAddress.isNotEmpty) ...[
+                  pw.SizedBox(height: 2),
+                  pw.Text(settings.storeAddress, style: const pw.TextStyle(fontSize: 8, color: PdfColors.grey700), textAlign: pw.TextAlign.center),
+                ],
               ],
             ),
           );
@@ -140,6 +179,16 @@ class PosPdfHelper {
         ? settings.receiptFooterNote
         : StringsManager.receiptElectronicNote.lang;
 
+    Uint8List? logoBytes;
+    if (settings.showLogoOnReceipt && settings.receiptLogoPath != null && settings.receiptLogoPath!.isNotEmpty) {
+      final file = File(settings.receiptLogoPath!);
+      if (file.existsSync()) {
+        try {
+          logoBytes = file.readAsBytesSync();
+        } catch (_) {}
+      }
+    }
+
     doc.addPage(
       pw.Page(
         pageFormat: PdfPageFormat.a4,
@@ -151,14 +200,27 @@ class PosPdfHelper {
                 // Header
                 pw.Row(
                   mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
+                  crossAxisAlignment: pw.CrossAxisAlignment.center,
                   children: [
-                    pw.Column(
-                      crossAxisAlignment: pw.CrossAxisAlignment.start,
+                    pw.Row(
+                      crossAxisAlignment: pw.CrossAxisAlignment.center,
                       children: [
-                        pw.Text(headerTitle, style: pw.TextStyle(fontSize: 20, fontWeight: pw.FontWeight.bold, color: PdfColors.teal800)),
-                        pw.Text(StringsManager.receiptTaxInvoice.lang, style: const pw.TextStyle(fontSize: 13, color: PdfColors.grey700)),
-                        if (settings.showTaxNumber && taxNo.isNotEmpty)
-                          pw.Text('${StringsManager.receiptTaxNumberLabel.lang}: $taxNo', style: const pw.TextStyle(fontSize: 10, color: PdfColors.grey800)),
+                        if (logoBytes != null)
+                          pw.Container(
+                            height: 48,
+                            width: 48,
+                            margin: const pw.EdgeInsets.only(left: 12),
+                            child: pw.Image(pw.MemoryImage(logoBytes)),
+                          ),
+                        pw.Column(
+                          crossAxisAlignment: pw.CrossAxisAlignment.start,
+                          children: [
+                            pw.Text(headerTitle, style: pw.TextStyle(fontSize: 18, fontWeight: pw.FontWeight.bold, color: PdfColors.teal800)),
+                            pw.Text(StringsManager.receiptTaxInvoice.lang, style: const pw.TextStyle(fontSize: 12, color: PdfColors.grey700)),
+                            if (settings.showTaxNumber && taxNo.isNotEmpty)
+                              pw.Text('${StringsManager.receiptTaxNumberLabel.lang}: $taxNo', style: const pw.TextStyle(fontSize: 9.5, color: PdfColors.grey800)),
+                          ],
+                        ),
                       ],
                     ),
                     pw.Column(
@@ -263,16 +325,24 @@ class PosPdfHelper {
                   ],
                 ),
                 pw.Spacer(),
-                pw.Divider(),
-                pw.Row(
-                  mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
-                  children: [
-                    pw.Text('${StringsManager.receiptReceiverSignature.lang}: ..........................', style: const pw.TextStyle(fontSize: 9)),
-                    pw.Text('${StringsManager.receiptCashierSignature.lang}: ..........................', style: const pw.TextStyle(fontSize: 9)),
-                  ],
-                ),
-                pw.SizedBox(height: 6),
-                pw.Text(footerNote, style: const pw.TextStyle(fontSize: 8, color: PdfColors.grey600)),
+                if (settings.showSignatureOnReceipt) ...[
+                  pw.Divider(),
+                  pw.Row(
+                    mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
+                    children: [
+                      pw.Text('${StringsManager.receiptReceiverSignature.lang}: ..........................', style: const pw.TextStyle(fontSize: 9)),
+                      pw.Text('${StringsManager.receiptCashierSignature.lang}: ..........................', style: const pw.TextStyle(fontSize: 9)),
+                    ],
+                  ),
+                ],
+                if (settings.showFooterNoteOnReceipt && footerNote.isNotEmpty) ...[
+                  pw.SizedBox(height: 6),
+                  pw.Text(footerNote, style: const pw.TextStyle(fontSize: 8, color: PdfColors.grey600), textAlign: pw.TextAlign.center),
+                ],
+                if (settings.showStorePhone && settings.storePhone.isNotEmpty) ...[
+                  pw.SizedBox(height: 3),
+                  pw.Text('${StringsManager.storeSettingsPhoneLabel.lang}: ${settings.storePhone}', style: const pw.TextStyle(fontSize: 7.5, color: PdfColors.grey500), textAlign: pw.TextAlign.center),
+                ],
               ],
             ),
           );
