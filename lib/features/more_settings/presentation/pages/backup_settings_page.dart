@@ -46,7 +46,7 @@ class _BackupSettingsPageState extends State<BackupSettingsPage> {
 
   Future<void> _pickDirectory() async {
     try {
-      final selectedDir = await FilePicker.platform.getDirectoryPath();
+      final selectedDir = await FilePicker.getDirectoryPath();
       if (selectedDir != null && selectedDir.isNotEmpty) {
         setState(() {
           _backupDirectory = selectedDir;
@@ -104,7 +104,7 @@ class _BackupSettingsPageState extends State<BackupSettingsPage> {
   Future<void> _restoreBackupNow() async {
     HapticFeedback.mediumImpact();
     try {
-      final result = await FilePicker.platform.pickFiles(
+      final result = await FilePicker.pickFiles(
         type: FileType.custom,
         allowedExtensions: ['json'],
       );
