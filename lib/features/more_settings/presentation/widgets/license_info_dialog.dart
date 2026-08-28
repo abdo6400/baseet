@@ -8,6 +8,8 @@ import '../../../../config/routes/app_routes.dart';
 import '../../../../core/common/widgets/button/app_button.dart';
 import '../../../../core/common/widgets/button/app_outlined_button.dart';
 import '../../../../core/common/widgets/icon/app_icon.dart';
+import '../../../../core/extensions/responsive_extension.dart';
+import '../../../../core/extensions/responsive_text_extension.dart';
 import '../../../../core/extensions/spacing_extension.dart';
 import '../../../../core/extensions/translation_extension.dart';
 import '../../../../core/services/device_id_service.dart';
@@ -81,11 +83,16 @@ class _LicenseInfoDialogState extends State<LicenseInfoDialog> {
         borderRadius: BorderRadius.circular(AppRadius.lg),
         side: BorderSide(color: theme.colorScheme.outlineVariant),
       ),
-      insetPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 24),
+      insetPadding: EdgeInsets.symmetric(
+        horizontal: context.safeDp(20),
+        vertical: context.safeDp(24),
+      ),
       child: ConstrainedBox(
-        constraints: const BoxConstraints(maxWidth: 480),
+        constraints: BoxConstraints(
+          maxWidth: context.isTablet ? 540 : 480,
+        ),
         child: Padding(
-          padding: const EdgeInsets.all(20),
+          padding: EdgeInsets.all(context.safeDp(20)),
           child: Column(
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -94,7 +101,7 @@ class _LicenseInfoDialogState extends State<LicenseInfoDialog> {
               Row(
                 children: [
                   Container(
-                    padding: const EdgeInsets.all(10),
+                    padding: EdgeInsets.all(context.safeDp(10)),
                     decoration: BoxDecoration(
                       color: (isActive
                               ? AppPrimitiveTokens.emerald600
@@ -107,7 +114,7 @@ class _LicenseInfoDialogState extends State<LicenseInfoDialog> {
                       color: isActive
                           ? AppPrimitiveTokens.emerald600
                           : AppPrimitiveTokens.red600,
-                      size: 24,
+                      size: context.safeDp(24),
                     ),
                   ),
                   12.hSpace,
@@ -117,15 +124,15 @@ class _LicenseInfoDialogState extends State<LicenseInfoDialog> {
                       children: [
                         Text(
                           StringsManager.moreLicense.lang,
-                          style: const TextStyle(
-                            fontSize: 18,
-                            fontWeight: FontWeight.w800,
+                          style: context.label(
+                            18,
+                            weight: FontWeight.w800,
                           ),
                         ),
                         Text(
                           StringsManager.moreLicenseSubtitle.lang,
-                          style: TextStyle(
-                            fontSize: 12,
+                          style: context.label(
+                            12,
                             color: theme.colorScheme.onSurfaceVariant,
                           ),
                         ),
@@ -133,7 +140,7 @@ class _LicenseInfoDialogState extends State<LicenseInfoDialog> {
                     ),
                   ),
                   IconButton(
-                    icon: const AppIcon(AppIcons.close, size: 20),
+                    icon: AppIcon(AppIcons.close, size: context.safeDp(20)),
                     onPressed: () => Navigator.of(context).pop(),
                   ),
                 ],
@@ -142,8 +149,10 @@ class _LicenseInfoDialogState extends State<LicenseInfoDialog> {
 
               // Status Badge
               Container(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+                padding: EdgeInsets.symmetric(
+                  horizontal: context.safeDp(14),
+                  vertical: context.safeDp(12),
+                ),
                 decoration: BoxDecoration(
                   color: (isActive
                           ? AppPrimitiveTokens.emerald50
@@ -162,7 +171,7 @@ class _LicenseInfoDialogState extends State<LicenseInfoDialog> {
                       color: isActive
                           ? AppPrimitiveTokens.emerald700
                           : AppPrimitiveTokens.red700,
-                      size: 20,
+                      size: context.safeDp(20),
                     ),
                     10.hSpace,
                     Expanded(
@@ -176,9 +185,9 @@ class _LicenseInfoDialogState extends State<LicenseInfoDialog> {
                                     ? StringsManager.activationStatusExpired.lang
                                     : StringsManager
                                         .activationStatusUnactivated.lang,
-                            style: TextStyle(
-                              fontSize: 14,
-                              fontWeight: FontWeight.w700,
+                            style: context.label(
+                              14,
+                              weight: FontWeight.w700,
                               color: isActive
                                   ? AppPrimitiveTokens.emerald800
                                   : AppPrimitiveTokens.red800,
@@ -192,8 +201,8 @@ class _LicenseInfoDialogState extends State<LicenseInfoDialog> {
                                 DateFormat('yyyy/MM/dd')
                                     .format(_licenseInfo!.expiresAt),
                               ),
-                              style: TextStyle(
-                                fontSize: 12,
+                              style: context.label(
+                                12,
                                 color: isActive
                                     ? AppPrimitiveTokens.emerald700
                                     : AppPrimitiveTokens.red700,
@@ -205,8 +214,10 @@ class _LicenseInfoDialogState extends State<LicenseInfoDialog> {
                     ),
                     if (isActive && _licenseInfo != null)
                       Container(
-                        padding: const EdgeInsets.symmetric(
-                            horizontal: 10, vertical: 4),
+                        padding: EdgeInsets.symmetric(
+                          horizontal: context.safeDp(10),
+                          vertical: context.safeDp(4),
+                        ),
                         decoration: BoxDecoration(
                           color: AppPrimitiveTokens.emerald700,
                           borderRadius: BorderRadius.circular(AppRadius.sm),
@@ -214,9 +225,9 @@ class _LicenseInfoDialogState extends State<LicenseInfoDialog> {
                         child: Text(
                           StringsManager.activationDaysRemaining.lang.replaceAll(
                               '{}', '${_licenseInfo!.daysRemaining}'),
-                          style: const TextStyle(
-                            fontSize: 11,
-                            fontWeight: FontWeight.w700,
+                          style: context.label(
+                            11,
+                            weight: FontWeight.w700,
                             color: Colors.white,
                           ),
                         ),
@@ -229,15 +240,17 @@ class _LicenseInfoDialogState extends State<LicenseInfoDialog> {
               // Device ID
               Text(
                 StringsManager.activationDeviceId.lang,
-                style: const TextStyle(
-                  fontSize: 12,
-                  fontWeight: FontWeight.w700,
+                style: context.label(
+                  12,
+                  weight: FontWeight.w700,
                 ),
               ),
               6.vSpace,
               Container(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+                padding: EdgeInsets.symmetric(
+                  horizontal: context.safeDp(12),
+                  vertical: context.safeDp(10),
+                ),
                 decoration: BoxDecoration(
                   color: isDark
                       ? theme.colorScheme.surfaceContainer
@@ -250,9 +263,9 @@ class _LicenseInfoDialogState extends State<LicenseInfoDialog> {
                     Expanded(
                       child: SelectableText(
                         _deviceId,
-                        style: TextStyle(
-                          fontSize: 14,
-                          fontWeight: FontWeight.w800,
+                        style: context.label(
+                          14,
+                          weight: FontWeight.w800,
                           fontFamily: 'monospace',
                           color: theme.colorScheme.primary,
                         ),
@@ -260,7 +273,7 @@ class _LicenseInfoDialogState extends State<LicenseInfoDialog> {
                     ),
                     IconButton(
                       tooltip: StringsManager.activationCopyDeviceId.lang,
-                      icon: const AppIcon(AppIcons.copy, size: 18),
+                      icon: AppIcon(AppIcons.copy, size: context.safeDp(18)),
                       onPressed: _copyDeviceId,
                       visualDensity: VisualDensity.compact,
                     ),

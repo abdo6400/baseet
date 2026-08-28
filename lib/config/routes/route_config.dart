@@ -1,5 +1,7 @@
 import 'package:go_router/go_router.dart';
+import '../../config/locators/global_locator.dart';
 import '../../core/common/widgets/layout/main_layout_page.dart';
+import '../../core/services/license_service.dart';
 import '../../core/utils/constants_manager.dart';
 import '../../features/activation/presentation/pages/activation_page.dart';
 import '../../features/debt_ledger/presentation/pages/add_customer_page.dart';
@@ -24,6 +26,34 @@ class AppRouter {
   final GoRouter router = GoRouter(
     navigatorKey: ConstantsManager.rootNavigatorKey,
     initialLocation: AppRoutes.splash,
+    redirect: (context, state) async {
+      final loc = state.matchedLocation;
+
+      // Allow splash to display without interruption
+      if (loc == AppRoutes.splash) {
+        return null;
+      }
+
+      final licenseStatus = await sl<LicenseService>().checkLicense();
+      final isActivationRoute = loc == AppRoutes.activation;
+
+      if (licenseStatus == LicenseStatus.active) {
+        if (isActivationRoute) {
+          return AppRoutes.pos;
+        }
+        return null;
+      } else if (licenseStatus == LicenseStatus.expired) {
+        if (!isActivationRoute || state.uri.queryParameters['expired'] != 'true') {
+          return '${AppRoutes.activation}?expired=true';
+        }
+        return null;
+      } else {
+        if (!isActivationRoute) {
+          return AppRoutes.activation;
+        }
+        return null;
+      }
+    },
     routes: [
       GoRoute(
         path: AppRoutes.splash,

@@ -40,7 +40,14 @@ class AppPageWrapper extends StatelessWidget {
     return Scaffold(
       backgroundColor: backgroundColor,
       appBar: appBar,
-      body: SafeArea(child: bodyContent),
+      body: SafeArea(
+        child: Center(
+          child: ConstrainedBox(
+            constraints: const BoxConstraints(maxWidth: 720),
+            child: bodyContent,
+          ),
+        ),
+      ),
       bottomNavigationBar: bottomNavigationBar,
       floatingActionButton: floatingActionButton,
       floatingActionButtonLocation: floatingActionButtonLocation,

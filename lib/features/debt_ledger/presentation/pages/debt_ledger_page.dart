@@ -5,6 +5,9 @@ import '../../../../config/routes/app_routes.dart';
 import '../../../../core/common/widgets/feedback/empty_state_widget.dart';
 import '../../../../core/common/widgets/form/app_search_field.dart';
 import '../../../../core/common/widgets/icon/app_icon.dart';
+import '../../../../core/extensions/responsive_extension.dart';
+import '../../../../core/extensions/responsive_text_extension.dart';
+import '../../../../core/extensions/spacing_extension.dart';
 import '../../../../core/extensions/translation_extension.dart';
 import '../../../../core/utils/app_icons.dart';
 import '../../../../core/utils/strings_manager.dart';
@@ -49,9 +52,9 @@ class _DebtLedgerPageState extends State<DebtLedgerPage> {
         scrolledUnderElevation: 0.5,
         title: Text(
           StringsManager.appName.lang,
-          style: TextStyle(
-            fontSize: 22,
-            fontWeight: FontWeight.w800,
+          style: context.label(
+            22,
+            weight: FontWeight.w800,
             color: theme.colorScheme.primary,
           ),
         ),
@@ -72,10 +75,10 @@ class _DebtLedgerPageState extends State<DebtLedgerPage> {
         backgroundColor: theme.colorScheme.primary,
         foregroundColor: Colors.white,
         onPressed: () => context.push(AppRoutes.addCustomer),
-        icon: AppIcon(AppIcons.add, color: Colors.white),
+        icon: const AppIcon(AppIcons.add, color: Colors.white),
         label: Text(
           StringsManager.debtsAddCustomer.lang,
-          style: const TextStyle(fontWeight: FontWeight.w700),
+          style: context.label(14, weight: FontWeight.w700, color: Colors.white),
         ),
       ),
       body: BlocBuilder<CustomersListBloc, CustomersListState>(
@@ -93,24 +96,24 @@ class _DebtLedgerPageState extends State<DebtLedgerPage> {
               slivers: [
                 SliverToBoxAdapter(
                   child: Padding(
-                    padding: const EdgeInsets.all(16),
+                    padding: EdgeInsets.all(context.safeDp(16)),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         // Page Header
                         Text(
                           StringsManager.debtsTitle.lang,
-                          style: const TextStyle(fontSize: 20, fontWeight: FontWeight.w800),
+                          style: context.label(20, weight: FontWeight.w800),
                         ),
                         const SizedBox(height: 2),
                         Text(
                           StringsManager.debtsSubtitle.lang,
-                          style: TextStyle(
-                            fontSize: 13,
+                          style: context.label(
+                            13,
                             color: theme.colorScheme.onSurfaceVariant,
                           ),
                         ),
-                        const SizedBox(height: 14),
+                        14.vSpace,
 
                         // Search Bar
                         AppSearchField(

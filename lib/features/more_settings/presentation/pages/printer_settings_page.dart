@@ -5,6 +5,8 @@ import '../../../../core/common/widgets/button/app_button.dart';
 import '../../../../core/common/widgets/form/app_text_field.dart';
 import '../../../../core/common/widgets/layout/app_page_wrapper.dart';
 import '../../../../core/common/widgets/layout/page_header.dart';
+import '../../../../core/extensions/responsive_extension.dart';
+import '../../../../core/extensions/responsive_text_extension.dart';
 import '../../../../core/extensions/spacing_extension.dart';
 import '../../../../core/extensions/translation_extension.dart';
 import '../../../../core/services/settings_service.dart';
@@ -90,9 +92,9 @@ class _PrinterSettingsPageState extends State<PrinterSettingsPage> {
               children: [
                 Text(
                   StringsManager.printerConnectionType.lang,
-                  style: TextStyle(
-                    fontSize: 15,
-                    fontWeight: FontWeight.w800,
+                  style: context.label(
+                    15,
+                    weight: FontWeight.w800,
                     color: theme.colorScheme.primary,
                   ),
                 ),
@@ -134,7 +136,7 @@ class _PrinterSettingsPageState extends State<PrinterSettingsPage> {
 
           // Paper Size & Settings
           Container(
-            padding: const EdgeInsets.all(AppSpacing.md),
+            padding: EdgeInsets.all(context.safeDp(AppSpacing.md)),
             decoration: BoxDecoration(
               color: theme.colorScheme.surface,
               borderRadius: BorderRadius.circular(AppRadius.lg),
@@ -145,15 +147,15 @@ class _PrinterSettingsPageState extends State<PrinterSettingsPage> {
               children: [
                 Text(
                   StringsManager.printerPaperSize.lang,
-                  style: TextStyle(
-                    fontSize: 15,
-                    fontWeight: FontWeight.w800,
+                  style: context.label(
+                    15,
+                    weight: FontWeight.w800,
                     color: theme.colorScheme.primary,
                   ),
                 ),
                 12.vSpace,
                 ListTile(
-                  title: Text(StringsManager.printerPaperSize.lang, style: const TextStyle(fontSize: 14)),
+                  title: Text(StringsManager.printerPaperSize.lang, style: context.label(14)),
                   trailing: DropdownButton<String>(
                     value: _paperSize,
                     items: [
@@ -167,8 +169,11 @@ class _PrinterSettingsPageState extends State<PrinterSettingsPage> {
                 ),
                 const Divider(),
                 SwitchListTile(
-                  title: Text(StringsManager.printerAutoPrint.lang, style: const TextStyle(fontSize: 14)),
-                  subtitle: Text(StringsManager.printerAutoPrintSubtitle.lang, style: TextStyle(fontSize: 12, color: theme.colorScheme.outline)),
+                  title: Text(StringsManager.printerAutoPrint.lang, style: context.label(14)),
+                  subtitle: Text(
+                    StringsManager.printerAutoPrintSubtitle.lang,
+                    style: context.label(12, color: theme.colorScheme.outline),
+                  ),
                   value: _autoPrintReceipt,
                   onChanged: (val) => setState(() => _autoPrintReceipt = val),
                 ),

@@ -6,6 +6,8 @@ import '../../../../config/database/local/app_database.dart';
 import '../../../../config/locators/global_locator.dart';
 import '../../../../config/routes/app_routes.dart';
 import '../../../../core/extensions/dialog_extension.dart';
+import '../../../../core/extensions/responsive_extension.dart';
+import '../../../../core/extensions/responsive_text_extension.dart';
 import '../../../../core/extensions/spacing_extension.dart';
 import '../../../../core/extensions/state_handle_extension.dart';
 import '../../../../core/extensions/translation_extension.dart';
@@ -81,9 +83,9 @@ class MorePage extends StatelessWidget {
         scrolledUnderElevation: 0.5,
         title: Text(
           StringsManager.appName.lang,
-          style: TextStyle(
-            fontSize: 22,
-            fontWeight: FontWeight.w800,
+          style: context.label(
+            22,
+            weight: FontWeight.w800,
             color: theme.colorScheme.primary,
           ),
         ),
@@ -94,7 +96,7 @@ class MorePage extends StatelessWidget {
         ),
       ),
       body: SingleChildScrollView(
-        padding: const EdgeInsets.all(16),
+        padding: EdgeInsets.all(context.safeDp(16)),
         child: Column(
           children: [
             // Store Profile Card

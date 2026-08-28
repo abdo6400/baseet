@@ -7,6 +7,8 @@ import '../../../../core/common/widgets/feedback/empty_state_widget.dart';
 import '../../../../core/common/widgets/icon/app_icon.dart';
 import '../../../../core/common/widgets/layout/app_page_wrapper.dart';
 import '../../../../core/common/widgets/layout/page_header.dart';
+import '../../../../core/extensions/responsive_extension.dart';
+import '../../../../core/extensions/responsive_text_extension.dart';
 import '../../../../core/extensions/spacing_extension.dart';
 import '../../../../core/extensions/state_handle_extension.dart';
 import '../../../../core/extensions/translation_extension.dart';
@@ -81,7 +83,7 @@ class _SupplierStatementViewState extends State<_SupplierStatementView> {
 
         return AppPageWrapper(
           scrollable: true,
-          padding: const EdgeInsets.all(AppSpacing.md),
+          padding: EdgeInsets.all(context.safeDp(AppSpacing.md)),
           appBar: PageHeader(
             title: StringsManager.suppliersStatementTitle.lang,
             showBackButton: true,
@@ -136,9 +138,9 @@ class _SupplierStatementViewState extends State<_SupplierStatementView> {
                     // Invoices Header
                     Text(
                       '${StringsManager.suppliersInvoicesHistory.lang} (${invoices.length})',
-                      style: TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.w700,
+                      style: context.label(
+                        16,
+                        weight: FontWeight.w700,
                         color: theme.colorScheme.onSurface,
                       ),
                     ),
