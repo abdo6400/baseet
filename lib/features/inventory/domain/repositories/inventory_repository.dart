@@ -8,5 +8,6 @@ abstract class InventoryRepository {
   Future<Either<Failure, List<CategoryEntity>>> getCategories();
   Future<Either<Failure, ProductEntity>> addProduct(ProductEntity product);
   Future<Either<Failure, CategoryEntity>> addCategory(CategoryEntity category);
+  Future<Either<Failure, void>> deleteCategory(String id);
   Future<Either<Failure, Map<String, dynamic>>> getInventoryStats();
 }

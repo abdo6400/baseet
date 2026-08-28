@@ -10,6 +10,7 @@ import '../../../../core/extensions/state_handle_extension.dart';
 import '../../../../core/extensions/translation_extension.dart';
 import '../../../../core/theme/tokens/app_tokens.dart';
 import '../../../../core/utils/app_icons.dart';
+import '../../../../core/utils/app_pdf_helper.dart';
 import '../../../../core/utils/strings_manager.dart';
 import '../../domain/entities/report_summary_entity.dart';
 import '../blocs/reports/reports_bloc.dart';
@@ -39,55 +40,61 @@ class _ReportsPageState extends State<ReportsPage> {
   }
 
   Future<void> _exportPdfReport(ReportSummaryEntity summary) async {
-    final pdf = pw.Document();
+    final pdf = await AppPdfHelper.createDocument();
 
     pdf.addPage(
       pw.Page(
         pageFormat: PdfPageFormat.a4,
         build: (pw.Context context) {
-          return pw.Column(
-            crossAxisAlignment: pw.CrossAxisAlignment.center,
-            children: [
-              pw.Text('تقرير المبيعات والأرباح - بسيط',
-                  style: pw.TextStyle(
-                      fontSize: 20, fontWeight: pw.FontWeight.bold)),
-              pw.SizedBox(height: 12),
-              pw.Divider(),
-              pw.Row(
-                mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
-                children: [
-                  pw.Text(
-                      'إجمالي المبيعات: ${summary.totalSales.toStringAsFixed(0)} ج.م'),
-                  pw.Text(
-                      'صافي الأرباح: ${summary.netProfit.toStringAsFixed(0)} ج.م'),
-                ],
-              ),
-              pw.Row(
-                mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
-                children: [
-                  pw.Text(
-                      'المبيعات النقدية: ${summary.cashSales.toStringAsFixed(0)} ج.م'),
-                  pw.Text(
-                      'المبيعات الآجلة (ديون): ${summary.debtSales.toStringAsFixed(0)} ج.م'),
-                ],
-              ),
-              pw.SizedBox(height: 12),
-              pw.Divider(),
-              pw.Text('المنتجات الأكثر مبيعاً',
-                  style: pw.TextStyle(
-                      fontSize: 16, fontWeight: pw.FontWeight.bold)),
-              pw.SizedBox(height: 8),
-              pw.TableHelper.fromTextArray(
-                headers: ['المنتج', 'الكمية المباعة', 'إجمالي الإيرادات'],
-                data: summary.topProducts
-                    .map((p) => [
-                          p.productName,
-                          '${p.soldQuantity}',
-                          '${p.totalRevenue.toStringAsFixed(0)} ج.م',
-                        ])
-                    .toList(),
-              ),
-            ],
+          return AppPdfHelper.wrapDirectionality(
+            child: pw.Column(
+              crossAxisAlignment: pw.CrossAxisAlignment.center,
+              children: [
+                pw.Text('${StringsManager.pdfSalesReportTitle.lang} - ${StringsManager.appName.lang}',
+                    style: pw.TextStyle(
+                        fontSize: 20, fontWeight: pw.FontWeight.bold)),
+                pw.SizedBox(height: 12),
+                pw.Divider(),
+                pw.Row(
+                  mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
+                  children: [
+                    pw.Text(
+                        '${StringsManager.reportsTotalSales.lang}: ${summary.totalSales.toStringAsFixed(0)} ${StringsManager.posCurrency.lang}'),
+                    pw.Text(
+                        '${StringsManager.reportsNetProfit.lang}: ${summary.netProfit.toStringAsFixed(0)} ${StringsManager.posCurrency.lang}'),
+                  ],
+                ),
+                pw.Row(
+                  mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
+                  children: [
+                    pw.Text(
+                        '${StringsManager.reportsCashCollected.lang}: ${summary.cashSales.toStringAsFixed(0)} ${StringsManager.posCurrency.lang}'),
+                    pw.Text(
+                        '${StringsManager.reportsDebtSales.lang}: ${summary.debtSales.toStringAsFixed(0)} ${StringsManager.posCurrency.lang}'),
+                  ],
+                ),
+                pw.SizedBox(height: 12),
+                pw.Divider(),
+                pw.Text(StringsManager.pdfTopProducts.lang,
+                    style: pw.TextStyle(
+                        fontSize: 15, fontWeight: pw.FontWeight.bold)),
+                pw.SizedBox(height: 8),
+                pw.TableHelper.fromTextArray(
+                  headers: [
+                    StringsManager.addProductName.lang,
+                    StringsManager.pdfSoldQuantity.lang,
+                    StringsManager.pdfTotalRevenue.lang,
+                  ],
+                  data: summary.topProducts
+                      .map((p) => [
+                            p.productName,
+                            '${p.soldQuantity}',
+                            '${p.totalRevenue.toStringAsFixed(0)} ${StringsManager.posCurrency.lang}',
+                          ])
+                      .toList(),
+                ),
+              ],
+            ),
           );
         },
       ),

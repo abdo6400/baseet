@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:toastification/toastification.dart';
+import '../../../../config/locators/global_locator.dart';
 import '../../../../core/common/widgets/button/app_button.dart';
 import '../../../../core/common/widgets/form/app_text_field.dart';
 import '../../../../core/common/widgets/layout/app_page_wrapper.dart';
 import '../../../../core/common/widgets/layout/page_header.dart';
 import '../../../../core/extensions/spacing_extension.dart';
 import '../../../../core/extensions/translation_extension.dart';
+import '../../../../core/services/settings_service.dart';
 import '../../../../core/theme/tokens/app_tokens.dart';
 import '../../../../core/utils/app_icons.dart';
 import '../../../../core/utils/strings_manager.dart';
@@ -19,10 +21,20 @@ class PrinterSettingsPage extends StatefulWidget {
 }
 
 class _PrinterSettingsPageState extends State<PrinterSettingsPage> {
-  String _printerType = 'bluetooth'; // 'bluetooth', 'network', 'system'
-  String _paperSize = '80mm'; // '80mm', '58mm'
-  bool _autoPrintReceipt = true;
-  final _ipController = TextEditingController(text: '192.168.1.100');
+  late String _printerType;
+  late String _paperSize;
+  late bool _autoPrintReceipt;
+  late final TextEditingController _ipController;
+
+  @override
+  void initState() {
+    super.initState();
+    final settings = sl<SettingsService>();
+    _printerType = settings.printerType;
+    _paperSize = settings.paperSize;
+    _autoPrintReceipt = settings.autoPrintReceipt;
+    _ipController = TextEditingController(text: settings.printerIp);
+  }
 
   @override
   void dispose() {
@@ -30,15 +42,25 @@ class _PrinterSettingsPageState extends State<PrinterSettingsPage> {
     super.dispose();
   }
 
-  void _onSave() {
-    toastification.show(
-      context: context,
-      type: ToastificationType.success,
-      style: ToastificationStyle.fillColored,
-      title: Text(StringsManager.printerSavedSuccess.lang),
-      autoCloseDuration: const Duration(seconds: 3),
+  Future<void> _onSave() async {
+    final settings = sl<SettingsService>();
+    await settings.updatePrinterSettings(
+      type: _printerType,
+      ip: _ipController.text.trim(),
+      size: _paperSize,
+      autoPrint: _autoPrintReceipt,
     );
-    Navigator.pop(context);
+
+    if (mounted) {
+      toastification.show(
+        context: context,
+        type: ToastificationType.success,
+        style: ToastificationStyle.fillColored,
+        title: Text(StringsManager.printerSavedSuccess.lang),
+        autoCloseDuration: const Duration(seconds: 3),
+      );
+      Navigator.pop(context);
+    }
   }
 
   @override

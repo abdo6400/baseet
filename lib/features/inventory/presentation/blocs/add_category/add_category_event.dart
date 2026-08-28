@@ -16,3 +16,12 @@ class SubmitAddCategoryEvent extends AddCategoryEvent {
   @override
   List<Object?> get props => [category];
 }
+
+class DeleteCategoryEvent extends AddCategoryEvent {
+  final String id;
+
+  const DeleteCategoryEvent(this.id);
+
+  @override
+  List<Object?> get props => [id];
+}

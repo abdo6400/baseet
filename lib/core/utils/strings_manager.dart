@@ -280,9 +280,13 @@ abstract class StringsManager {
   static const String moreClearSuccess = 'more_clear_success';
   static const String moreAppearance = 'more_appearance';
   static const String moreLanguage = 'more_language';
-  static const String moreCurrentLanguage = 'more_current_language';
   static const String moreHelp = 'more_help';
   static const String moreAbout = 'more_about';
+  static const String helpGuideTitle = 'help_guide_title';
+  static const String helpGuideSubtitle = 'help_guide_subtitle';
+  static const String helpContactTitle = 'help_contact_title';
+  static const String helpContactSubtitle = 'help_contact_subtitle';
+  static const String aboutAppDescription = 'about_app_description';
 
   // Common
   static const String commonSave = 'common_save';
@@ -321,4 +325,62 @@ abstract class StringsManager {
   static const String receiptViewInvoice = 'receipt_view_invoice';
   static const String receiptPreview = 'receipt_preview';
   static const String receiptPhotoOrDoc = 'receipt_photo_or_doc';
+
+  // Store Settings
+  static const String storeSettingsNameLabel = 'store_settings_name_label';
+  static const String storeSettingsPhoneLabel = 'store_settings_phone_label';
+  static const String storeSettingsAddressLabel = 'store_settings_address_label';
+  static const String storeSettingsCashierLabel = 'store_settings_cashier_label';
+
+  // PDF Generation Strings
+  static const String pdfThermalReceiptTitle = 'pdf_thermal_receipt_title';
+  static const String pdfTaxInvoiceTitle = 'pdf_tax_invoice_title';
+  static const String pdfSupplierInvoiceTitle = 'pdf_supplier_invoice_title';
+  static const String pdfSupplierStatementTitle = 'pdf_supplier_statement_title';
+  static const String pdfCustomerStatementTitle = 'pdf_customer_statement_title';
+  static const String pdfSalesReportTitle = 'pdf_sales_report_title';
+  static const String pdfDate = 'pdf_date';
+  static const String pdfTransactionType = 'pdf_transaction_type';
+  static const String pdfDescription = 'pdf_description';
+  static const String pdfAmount = 'pdf_amount';
+  static const String pdfRemainingBalance = 'pdf_remaining_balance';
+  static const String pdfCreditSale = 'pdf_credit_sale';
+  static const String pdfPaymentVoucher = 'pdf_payment_voucher';
+  static const String pdfPrintTooltip = 'pdf_print_tooltip';
+  static const String pdfSoldQuantity = 'pdf_sold_quantity';
+  static const String pdfTotalRevenue = 'pdf_total_revenue';
+  static const String pdfCurrentDebt = 'pdf_current_debt';
+  static const String pdfCreditLimit = 'pdf_credit_limit';
+  static const String pdfCustomerPhone = 'pdf_customer_phone';
+  static const String pdfCustomerName = 'pdf_customer_name';
+  static const String pdfTopProducts = 'pdf_top_products';
+  static const String pdfDefaultSaleNotes = 'pdf_default_sale_notes';
+  static const String pdfDefaultVoucherNotes = 'pdf_default_voucher_notes';
+
+  // Showcase / Onboarding Intro Tour
+  static const String showcaseReplayTour = 'showcase_replay_tour';
+  static const String showcaseReplayTourSubtitle = 'showcase_replay_tour_subtitle';
+  static const String showcaseScannerTitle = 'showcase_scanner_title';
+  static const String showcaseScannerDesc = 'showcase_scanner_desc';
+  static const String showcaseSearchTitle = 'showcase_search_title';
+  static const String showcaseSearchDesc = 'showcase_search_desc';
+  static const String showcaseCategoriesTitle = 'showcase_categories_title';
+  static const String showcaseCategoriesDesc = 'showcase_categories_desc';
+  static const String showcaseSalesCardTitle = 'showcase_sales_card_title';
+  static const String showcaseSalesCardDesc = 'showcase_sales_card_desc';
+  static const String showcaseProductItemTitle = 'showcase_product_item_title';
+  static const String showcaseProductItemDesc = 'showcase_product_item_desc';
+  static const String showcaseCartBarTitle = 'showcase_cart_bar_title';
+  static const String showcaseCartBarDesc = 'showcase_cart_bar_desc';
+  static const String showcaseNavPosTitle = 'showcase_nav_pos_title';
+  static const String showcaseNavPosDesc = 'showcase_nav_pos_desc';
+  static const String showcaseNavDebtsTitle = 'showcase_nav_debts_title';
+  static const String showcaseNavDebtsDesc = 'showcase_nav_debts_desc';
+  static const String showcaseNavInventoryTitle = 'showcase_nav_inventory_title';
+  static const String showcaseNavInventoryDesc = 'showcase_nav_inventory_desc';
+  static const String showcaseNavReportsTitle = 'showcase_nav_reports_title';
+  static const String showcaseNavReportsDesc = 'showcase_nav_reports_desc';
+  static const String showcaseNavMoreTitle = 'showcase_nav_more_title';
+  static const String showcaseNavMoreDesc = 'showcase_nav_more_desc';
+  static const String showcaseTourFinished = 'showcase_tour_finished';
 }

@@ -21,9 +21,9 @@ class CustomersListState extends Equatable {
     this.searchQuery = '',
     this.statusFilter,
     this.sortByHighest = false,
-    this.totalDebt = 45200.0,
-    this.overdueDebt = 12500.0,
-    this.todayCollections = 3400.0,
+    this.totalDebt = 0.0,
+    this.overdueDebt = 0.0,
+    this.todayCollections = 0.0,
     this.errorMessage,
   });
 

@@ -1,4 +1,6 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:baseet/core/extensions/translation_extension.dart';
+import 'package:baseet/core/utils/strings_manager.dart';
 import 'package:baseet/features/inventory/domain/entities/category_entity.dart';
 import 'package:baseet/features/inventory/domain/usecases/get_categories_usecase.dart';
 import 'package:baseet/features/pos/domain/usecases/get_pos_catalog_usecase.dart';
@@ -29,9 +31,9 @@ class PosCatalogBloc extends Bloc<PosCatalogEvent, PosCatalogState> {
 
     final categoriesResult = await getCategoriesUseCase();
     final allCats = categoriesResult.fold(
-      (l) => <CategoryEntity>[const CategoryEntity(id: 'cat_0', name: 'الكل', iconName: 'grid')],
+      (l) => <CategoryEntity>[CategoryEntity(id: 'cat_0', name: StringsManager.posAllCategories.lang, iconName: 'grid')],
       (cats) => [
-        const CategoryEntity(id: 'cat_0', name: 'الكل', iconName: 'grid'),
+        CategoryEntity(id: 'cat_0', name: StringsManager.posAllCategories.lang, iconName: 'grid'),
         ...cats.where((c) => c.id != 'cat_0'),
       ],
     );

@@ -36,14 +36,14 @@ class HelpSupportModal extends StatelessWidget {
           16.vSpace,
           ListTile(
             leading: AppIcon(AppIcons.help, color: theme.colorScheme.primary),
-            title: const Text('دليل الاستخدام والأسئلة الشائعة'),
-            subtitle: const Text('تعلم كيفية إدارة نقاط البيع والديون والمخزن بسهولة'),
+            title: Text(StringsManager.helpGuideTitle.lang),
+            subtitle: Text(StringsManager.helpGuideSubtitle.lang),
             onTap: () => Navigator.pop(context),
           ),
           ListTile(
             leading: AppIcon(AppIcons.phone, color: AppPrimitiveTokens.emerald700),
-            title: const Text('الدعم الفني والخدمة المباشرة'),
-            subtitle: const Text('تواصل معنا للحصول على الدعم الفني والمساعدة'),
+            title: Text(StringsManager.helpContactTitle.lang),
+            subtitle: Text(StringsManager.helpContactSubtitle.lang),
             onTap: () => Navigator.pop(context),
           ),
         ],

@@ -9,6 +9,7 @@ import '../../../../core/extensions/dialog_extension.dart';
 import '../../../../core/extensions/spacing_extension.dart';
 import '../../../../core/extensions/state_handle_extension.dart';
 import '../../../../core/extensions/translation_extension.dart';
+import '../../../../core/services/settings_service.dart';
 import '../../../../core/theme/theme_bloc/theme_bloc.dart';
 import '../../../../core/theme/theme_bloc/theme_event.dart';
 import '../../../../core/theme/tokens/app_tokens.dart';
@@ -38,27 +39,6 @@ class MorePage extends StatelessWidget {
     context.read<ReportsBloc>().add(const LoadReportsSummaryEvent());
   }
 
-  void _onReseedData(BuildContext context) async {
-    final confirmed = await context.showConfirmDialog(
-      title: StringsManager.moreReseedTitle.lang,
-      message: StringsManager.moreReseedConfirm.lang,
-      confirmText: StringsManager.commonConfirm.lang,
-      isDestructive: false,
-    );
-
-    if (confirmed == true && context.mounted) {
-      await sl<AppDatabase>().reseedDemoData();
-      if (context.mounted) {
-        _refreshAllBlocs(context);
-        context.showStateHandler(
-          isLoading: false,
-          isSuccess: true,
-          successMessage: StringsManager.moreReseedSuccess.lang,
-        );
-      }
-    }
-  }
-
   void _onClearData(BuildContext context) async {
     final confirmed = await context.showConfirmDialog(
       title: StringsManager.moreClearTitle.lang,
@@ -77,6 +57,13 @@ class MorePage extends StatelessWidget {
           successMessage: StringsManager.moreClearSuccess.lang,
         );
       }
+    }
+  }
+
+  void _onReplayTour(BuildContext context) async {
+    await sl<SettingsService>().setHasSeenShowcase(false);
+    if (context.mounted) {
+      context.go(AppRoutes.pos);
     }
   }
 
@@ -102,8 +89,7 @@ class MorePage extends StatelessWidget {
         centerTitle: true,
         bottom: PreferredSize(
           preferredSize: const Size.fromHeight(1.0),
-          child:
-              Container(color: theme.colorScheme.outlineVariant, height: 1.0),
+          child: Container(color: theme.colorScheme.outlineVariant, height: 1.0),
         ),
       ),
       body: SingleChildScrollView(
@@ -143,28 +129,9 @@ class MorePage extends StatelessWidget {
                   ),
                   const Divider(height: 1),
                   MoreMenuItem(
-                    title: StringsManager.moreBackup.lang,
-                    icon: AppIcons.backup,
-                    onTap: () {
-                      context.showStateHandler(
-                        isLoading: false,
-                        isSuccess: true,
-                        successMessage: StringsManager.moreBackupSuccess.lang,
-                      );
-                    },
-                  ),
-                  const Divider(height: 1),
-                  MoreMenuItem(
-                    title: StringsManager.moreReseedMenu.lang,
-                    icon: AppIcons.refresh,
-                    onTap: () => _onReseedData(context),
-                  ),
-                  const Divider(height: 1),
-                  MoreMenuItem(
-                    title: StringsManager.moreClearMenu.lang,
-                    icon: AppIcons.clear,
-                    iconColor: AppPrimitiveTokens.red700,
-                    onTap: () => _onClearData(context),
+                    title: StringsManager.showcaseReplayTour.lang,
+                    icon: AppIcons.help,
+                    onTap: () => _onReplayTour(context),
                   ),
                   const Divider(height: 1),
                   MoreMenuItem(
@@ -202,16 +169,23 @@ class MorePage extends StatelessWidget {
                   const Divider(height: 1),
                   MoreMenuItem(
                     title: StringsManager.moreHelp.lang,
-                    icon: AppIcons.help,
+                    icon: AppIcons.info,
                     onTap: () => HelpSupportModal.show(context),
                   ),
                   const Divider(height: 1),
                   MoreMenuItem(
                     title: StringsManager.moreAbout.lang,
-                    icon: AppIcons.info,
+                    icon: AppIcons.store,
                     trailing: const Text('v1.0.0',
                         style: TextStyle(color: Colors.grey, fontSize: 12)),
                     onTap: () => AboutAppDialog.show(context),
+                  ),
+                  const Divider(height: 1),
+                  MoreMenuItem(
+                    title: StringsManager.moreClearMenu.lang,
+                    icon: AppIcons.clear,
+                    iconColor: AppPrimitiveTokens.red700,
+                    onTap: () => _onClearData(context),
                   ),
                 ],
               ),
@@ -222,3 +196,4 @@ class MorePage extends StatelessWidget {
     );
   }
 }
+

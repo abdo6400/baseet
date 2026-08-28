@@ -23,7 +23,7 @@ class ReceiptPage extends StatelessWidget {
   final double totalPrice;
   final double paidAmount;
   final double changeAmount;
-  final String customerName;
+  final String? customerName;
   final String paymentMethod;
   final DateTime timestamp;
 
@@ -34,7 +34,7 @@ class ReceiptPage extends StatelessWidget {
     required this.totalPrice,
     required this.paidAmount,
     required this.changeAmount,
-    this.customerName = 'عميل نقدي',
+    this.customerName,
     required this.paymentMethod,
     required this.timestamp,
   });
@@ -42,6 +42,7 @@ class ReceiptPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final effectiveCustomerName = customerName ?? StringsManager.receiptDefaultCustomer.lang;
 
     return AppPageWrapper(
       scrollable: true,
@@ -103,7 +104,7 @@ class ReceiptPage extends StatelessWidget {
                 const Divider(height: AppSpacing.lg),
 
                 // Customer & Payment Info
-                _buildRow(StringsManager.receiptCustomer.lang, customerName, theme),
+                _buildRow(StringsManager.receiptCustomer.lang, effectiveCustomerName, theme),
                 _buildRow(StringsManager.receiptPaymentMethod.lang, paymentMethod, theme),
                 _buildRow(StringsManager.receiptDate.lang, '${timestamp.hour}:${timestamp.minute.toString().padLeft(2, '0')} - ${timestamp.day}/${timestamp.month}/${timestamp.year}', theme),
                 const Divider(height: AppSpacing.lg),
@@ -164,7 +165,7 @@ class ReceiptPage extends StatelessWidget {
                       totalPrice: totalPrice,
                       paidAmount: paidAmount,
                       changeAmount: changeAmount,
-                      customerName: customerName,
+                      customerName: effectiveCustomerName,
                       paymentMethod: paymentMethod,
                       timestamp: timestamp,
                     ),
@@ -182,13 +183,13 @@ class ReceiptPage extends StatelessWidget {
                 borderRadius: AppRadius.lg,
                 onPressed: () async {
                   await Printing.layoutPdf(
-                    onLayout: (PdfPageFormat format) async => PosPdfHelper.generateA4InvoicePdf(
+                    onLayout: (PdfPageFormat format) async => PosPdfHelper.generateTaxInvoicePdf(
                       orderId: orderId,
                       items: items,
                       totalPrice: totalPrice,
                       paidAmount: paidAmount,
                       changeAmount: changeAmount,
-                      customerName: customerName,
+                      customerName: effectiveCustomerName,
                       paymentMethod: paymentMethod,
                       timestamp: timestamp,
                     ),

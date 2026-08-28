@@ -13,6 +13,7 @@ import '../../../../core/enums/enums.dart';
 import '../../../../core/extensions/spacing_extension.dart';
 import '../../../../core/extensions/translation_extension.dart';
 import '../../../../core/utils/app_icons.dart';
+import '../../../../core/utils/app_pdf_helper.dart';
 import '../../../../core/utils/strings_manager.dart';
 import '../../domain/entities/customer_entity.dart';
 import '../../domain/entities/debt_transaction_entity.dart';
@@ -59,51 +60,59 @@ class _CustomerStatementPageState extends State<CustomerStatementPage> {
   }
 
   Future<void> _printCustomerStatement(CustomerEntity customer, List<DebtTransactionEntity> transactions) async {
-    final pdf = pw.Document();
+    final pdf = await AppPdfHelper.createDocument();
 
     pdf.addPage(
       pw.Page(
         pageFormat: PdfPageFormat.a4,
         build: (pw.Context context) {
-          return pw.Column(
-            crossAxisAlignment: pw.CrossAxisAlignment.center,
-            children: [
-              pw.Text('كشف حساب عميل - بسيط', style: pw.TextStyle(fontSize: 20, fontWeight: pw.FontWeight.bold)),
-              pw.SizedBox(height: 12),
-              pw.Divider(),
-              pw.Row(
-                mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
-                children: [
-                  pw.Text('اسم العميل: ${customer.name}'),
-                  pw.Text('الهاتف: ${customer.phone}'),
-                ],
-              ),
-              pw.Row(
-                mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
-                children: [
-                  pw.Text('إجمالي الدين الحالي: ${customer.totalDebt.toStringAsFixed(0)} ج.م'),
-                  pw.Text('حد الدين: ${customer.creditLimit.toStringAsFixed(0)} ج.م'),
-                ],
-              ),
-              pw.SizedBox(height: 12),
-              pw.Divider(),
-              pw.TableHelper.fromTextArray(
-                headers: ['التاريخ', 'نوع المعاملة', 'الأصناف المباعة / الوصف', 'المبلغ', 'الرصيد المتبقي'],
-                data: transactions.map((t) {
-                  final isDebt = t.type == TransactionType.saleCredit;
-                  final description = (t.itemsSummary != null && t.itemsSummary!.isNotEmpty)
-                      ? t.itemsSummary!.join(', ')
-                      : (t.notes ?? (isDebt ? 'فاتورة بيع آجل' : 'دفعة سداد نقدية'));
-                  return [
-                    '${t.date.day}/${t.date.month}/${t.date.year}',
-                    isDebt ? 'فاتورة بيع (آجل)' : 'سداد دفعة',
-                    description,
-                    '${t.amount.toStringAsFixed(0)} ج.م',
-                    '${t.remainingBalance.toStringAsFixed(0)} ج.م',
-                  ];
-                }).toList(),
-              ),
-            ],
+          return AppPdfHelper.wrapDirectionality(
+            child: pw.Column(
+              crossAxisAlignment: pw.CrossAxisAlignment.center,
+              children: [
+                pw.Text('${StringsManager.pdfCustomerStatementTitle.lang} - ${StringsManager.appName.lang}', style: pw.TextStyle(fontSize: 20, fontWeight: pw.FontWeight.bold)),
+                pw.SizedBox(height: 12),
+                pw.Divider(),
+                pw.Row(
+                  mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
+                  children: [
+                    pw.Text('${StringsManager.pdfCustomerName.lang}: ${customer.name}'),
+                    pw.Text('${StringsManager.pdfCustomerPhone.lang}: ${customer.phone}'),
+                  ],
+                ),
+                pw.Row(
+                  mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
+                  children: [
+                    pw.Text('${StringsManager.pdfCurrentDebt.lang}: ${customer.totalDebt.toStringAsFixed(0)} ${StringsManager.posCurrency.lang}'),
+                    pw.Text('${StringsManager.pdfCreditLimit.lang}: ${customer.creditLimit.toStringAsFixed(0)} ${StringsManager.posCurrency.lang}'),
+                  ],
+                ),
+                pw.SizedBox(height: 12),
+                pw.Divider(),
+                pw.TableHelper.fromTextArray(
+                  headers: [
+                    StringsManager.pdfDate.lang,
+                    StringsManager.pdfTransactionType.lang,
+                    StringsManager.pdfDescription.lang,
+                    StringsManager.pdfAmount.lang,
+                    StringsManager.pdfRemainingBalance.lang,
+                  ],
+                  data: transactions.map((t) {
+                    final isDebt = t.type == TransactionType.saleCredit;
+                    final description = (t.itemsSummary != null && t.itemsSummary!.isNotEmpty)
+                        ? t.itemsSummary!.join(', ')
+                        : (t.notes ?? (isDebt ? StringsManager.pdfDefaultSaleNotes.lang : StringsManager.pdfDefaultVoucherNotes.lang));
+                    return [
+                      '${t.date.day}/${t.date.month}/${t.date.year}',
+                      isDebt ? StringsManager.pdfCreditSale.lang : StringsManager.pdfPaymentVoucher.lang,
+                      description,
+                      '${t.amount.toStringAsFixed(0)} ${StringsManager.posCurrency.lang}',
+                      '${t.remainingBalance.toStringAsFixed(0)} ${StringsManager.posCurrency.lang}',
+                    ];
+                  }).toList(),
+                ),
+              ],
+            ),
           );
         },
       ),
@@ -124,7 +133,7 @@ class _CustomerStatementPageState extends State<CustomerStatementPage> {
         actions: [
           IconButton(
             icon: const Icon(Icons.print),
-            tooltip: 'طباعة كشف الحساب (PDF)',
+            tooltip: StringsManager.pdfPrintTooltip.lang,
             onPressed: () {
               final state = context.read<CustomerStatementBloc>().state;
               if (state.customer != null) {
