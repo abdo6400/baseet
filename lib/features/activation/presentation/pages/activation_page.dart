@@ -125,13 +125,14 @@ class _ActivationViewState extends State<_ActivationView> {
           body: SafeArea(
             child: Center(
               child: SingleChildScrollView(
+                physics: const BouncingScrollPhysics(),
                 padding: EdgeInsets.symmetric(
-                  horizontal: context.safeDp(20),
-                  vertical: context.safeDp(24),
+                  horizontal: context.safeDp(16),
+                  vertical: context.safeDp(16),
                 ),
                 child: ConstrainedBox(
                   constraints: BoxConstraints(
-                    maxWidth: context.isTablet ? 600 : 540,
+                    maxWidth: context.isTablet ? 600 : 520,
                   ),
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
@@ -139,12 +140,12 @@ class _ActivationViewState extends State<_ActivationView> {
                     children: [
                       // App Logo & Title Header
                       ActivationHeader(isExpired: state.isExpired),
-                      20.vSpace,
+                      14.vSpace,
 
                       // Expiry Banner if expired
                       if (state.isExpired && state.expiredAt != null) ...[
                         ActivationExpiryBanner(expiredAt: state.expiredAt!),
-                        16.vSpace,
+                        12.vSpace,
                       ],
 
                       // Device ID Card
@@ -154,7 +155,7 @@ class _ActivationViewState extends State<_ActivationView> {
                         onCopy: () => _copyDeviceId(state.deviceId),
                         onSendWhatsApp: () => _sendViaWhatsApp(state.deviceId),
                       ),
-                      20.vSpace,
+                      14.vSpace,
 
                       // Activation Key Input Card
                       ActivationKeyInputCard(
@@ -167,7 +168,7 @@ class _ActivationViewState extends State<_ActivationView> {
                         onPaste: _pasteKey,
                         onActivate: () => cubit.activate(_keyController.text),
                       ),
-                      20.vSpace,
+                      14.vSpace,
 
                       // Instructions Card
                       const ActivationInstructionsCard(),

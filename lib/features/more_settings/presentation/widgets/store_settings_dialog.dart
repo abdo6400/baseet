@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
 import '../../../../config/locators/global_locator.dart';
 import '../../../../core/common/widgets/button/app_button.dart';
+import '../../../../core/common/widgets/button/app_outlined_button.dart';
 import '../../../../core/common/widgets/form/app_form.dart';
 import '../../../../core/common/widgets/form/app_form_text_field.dart';
 import '../../../../core/extensions/spacing_extension.dart';
@@ -103,15 +104,26 @@ class _StoreSettingsDialogState extends State<StoreSettingsDialog> {
           ),
         ),
       ),
+      actionsPadding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
       actions: [
-        TextButton(
-          onPressed: () => Navigator.pop(context),
-          child: Text(StringsManager.commonCancel.lang),
-        ),
-        AppButton(
-          text: StringsManager.commonSave.lang,
-          height: 38,
-          onPressed: _onSave,
+        Row(
+          children: [
+            Expanded(
+              child: AppOutlinedButton(
+                text: StringsManager.commonCancel.lang,
+                height: 42,
+                onPressed: () => Navigator.pop(context),
+              ),
+            ),
+            10.hSpace,
+            Expanded(
+              child: AppButton(
+                text: StringsManager.commonSave.lang,
+                height: 42,
+                onPressed: _onSave,
+              ),
+            ),
+          ],
         ),
       ],
     );

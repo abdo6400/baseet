@@ -420,6 +420,13 @@
   "more_license": "License & Activation",
   "more_license_subtitle": "License details, validity date and device ID",
   "activation_instructions": "1. Tap 'Copy Device ID'.\n2. Send the ID to administrator to get your key.\n3. Paste the activation key and tap 'Activate'.",
+  "activation_instructions_title": "Quick Activation Steps",
+  "activation_instructions_step1": "Copy your Device ID shown above.",
+  "activation_instructions_step2": "Send the ID to the admin or via WhatsApp to get your key.",
+  "activation_instructions_step3": "Paste the received key and tap 'Activate Application'.",
+  "activation_send_whatsapp_short": "Send via WhatsApp",
+  "activation_copy_short": "Copy ID",
+  "activation_renew_short": "Renew License",
   "activation_seed_dummy_data": "Include sample demo data (products, customers, suppliers)",
   "activation_seed_dummy_data_desc": "Allows you to explore and test the system immediately with ready sample data"
 }

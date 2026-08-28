@@ -21,13 +21,13 @@ class ActivationHeader extends StatelessWidget {
 
     return Column(
       children: [
-        Center(child: AppLogo(size: context.safeDp(84), showText: false)),
-        16.vSpace,
+        Center(child: AppLogo(size: context.safeDp(64), showText: false)),
+        12.vSpace,
         Text(
           StringsManager.appName.lang,
           textAlign: TextAlign.center,
           style: context.label(
-            30,
+            26,
             weight: FontWeight.w900,
             color: theme.colorScheme.primary,
           ),
@@ -39,23 +39,23 @@ class ActivationHeader extends StatelessWidget {
               : StringsManager.activationTitle.lang,
           textAlign: TextAlign.center,
           style: context.label(
-            18,
+            16,
             weight: FontWeight.w700,
             color: isExpired
                 ? AppPrimitiveTokens.red600
                 : theme.colorScheme.onSurface,
           ),
         ),
-        8.vSpace,
+        6.vSpace,
         Text(
           isExpired
               ? StringsManager.activationExpiredDesc.lang
               : StringsManager.activationSubtitle.lang,
           textAlign: TextAlign.center,
           style: context.label(
-            13,
+            12,
             color: theme.colorScheme.onSurfaceVariant,
-            height: 1.4,
+            height: 1.35,
           ),
         ),
       ],

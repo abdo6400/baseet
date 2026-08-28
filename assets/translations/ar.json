@@ -420,6 +420,13 @@
   "more_license": "الترخيص والتفعيل",
   "more_license_subtitle": "بيانات ترخيص النسخة وتاريخ الصلاحية",
   "activation_instructions": "1. اضغط على 'نسخ معرف الجهاز'.\n2. أرسل المعرف إلى المسؤول للحصول على كود التفعيل.\n3. الصق كود التفعيل واضغط 'تفعيل التطبيق'.",
+  "activation_instructions_title": "خطوات التفعيل السريعة",
+  "activation_instructions_step1": "انسخ معرف جهازك الظاهر بالأعلى.",
+  "activation_instructions_step2": "أرسل المعرف للمسؤول أو عبر واتساب للحصول على المفتاح.",
+  "activation_instructions_step3": "الصق المفتاح الممنوح لك واضغط 'تفعيل التطبيق'.",
+  "activation_send_whatsapp_short": "إرسال عبر واتساب",
+  "activation_copy_short": "نسخ المعرف",
+  "activation_renew_short": "تجديد الترخيص",
   "activation_seed_dummy_data": "إضافة بيانات تجريبية افتراضية (أصناف، عملاء، موردين)",
   "activation_seed_dummy_data_desc": "تتيح لك تجربة واستكشاف النظام مباشرة بقاعدة بيانات جاهزة"
 }

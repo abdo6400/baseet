@@ -444,6 +444,13 @@ abstract class StringsManager {
   static const String moreLicense = 'more_license';
   static const String moreLicenseSubtitle = 'more_license_subtitle';
   static const String activationInstructions = 'activation_instructions';
+  static const String activationInstructionsTitle = 'activation_instructions_title';
+  static const String activationInstructionsStep1 = 'activation_instructions_step1';
+  static const String activationInstructionsStep2 = 'activation_instructions_step2';
+  static const String activationInstructionsStep3 = 'activation_instructions_step3';
+  static const String activationSendWhatsAppShort = 'activation_send_whatsapp_short';
+  static const String activationCopyShort = 'activation_copy_short';
+  static const String activationRenewShort = 'activation_renew_short';
   static const String activationSeedDummyData = 'activation_seed_dummy_data';
   static const String activationSeedDummyDataDesc = 'activation_seed_dummy_data_desc';
 }

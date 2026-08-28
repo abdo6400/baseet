@@ -287,16 +287,21 @@ class _LicenseInfoDialogState extends State<LicenseInfoDialog> {
                 children: [
                   Expanded(
                     child: AppOutlinedButton(
-                      text: StringsManager.activationCopyDeviceId.lang,
+                      text: StringsManager.activationCopyShort.lang,
                       icon: AppIcons.copy,
+                      height: 42,
+                      padding: const EdgeInsets.symmetric(horizontal: 8),
                       onPressed: _copyDeviceId,
                     ),
                   ),
                   10.hSpace,
                   Expanded(
                     child: AppButton(
-                      text: StringsManager.activationRenewBtn.lang,
+                      text: StringsManager.activationRenewShort.lang,
                       icon: AppIcons.key,
+                      height: 42,
+                      fontSize: 13,
+                      padding: const EdgeInsets.symmetric(horizontal: 8),
                       onPressed: () {
                         Navigator.of(context).pop();
                         context.push(AppRoutes.activation);
