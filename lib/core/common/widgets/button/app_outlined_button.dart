@@ -8,9 +8,11 @@ class AppOutlinedButton extends StatelessWidget {
   final dynamic icon;
   final Color? borderColor;
   final Color? textColor;
+  final Color? backgroundColor;
   final double? width;
   final double height;
   final double borderRadius;
+  final EdgeInsetsGeometry? padding;
 
   const AppOutlinedButton({
     super.key,
@@ -19,9 +21,11 @@ class AppOutlinedButton extends StatelessWidget {
     this.icon,
     this.borderColor,
     this.textColor,
+    this.backgroundColor,
     this.width,
     this.height = 46.0,
     this.borderRadius = AppRadius.md,
+    this.padding,
   });
 
   @override
@@ -35,11 +39,12 @@ class AppOutlinedButton extends StatelessWidget {
       height: height,
       child: OutlinedButton(
         style: OutlinedButton.styleFrom(
+          backgroundColor: backgroundColor,
           side: BorderSide(color: border),
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(borderRadius),
           ),
-          padding: const EdgeInsets.symmetric(horizontal: 16),
+          padding: padding ?? const EdgeInsets.symmetric(horizontal: 10),
         ),
         onPressed: onPressed,
         child: Row(
@@ -47,15 +52,19 @@ class AppOutlinedButton extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             if (icon != null) ...[
-              AppIcon(icon, size: 18, color: textCol),
+              AppIcon(icon, size: 16, color: textCol),
               const SizedBox(width: 6),
             ],
-            Text(
-              text,
-              style: TextStyle(
-                fontSize: 14,
-                fontWeight: FontWeight.w600,
-                color: textCol,
+            Flexible(
+              child: Text(
+                text,
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+                style: TextStyle(
+                  fontSize: 13,
+                  fontWeight: FontWeight.w600,
+                  color: textCol,
+                ),
               ),
             ),
           ],

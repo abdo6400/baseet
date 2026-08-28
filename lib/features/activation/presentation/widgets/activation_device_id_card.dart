@@ -29,7 +29,7 @@ class ActivationDeviceIdCard extends StatelessWidget {
     final isDark = theme.brightness == Brightness.dark;
 
     return Container(
-      padding: EdgeInsets.all(context.safeDp(16)),
+      padding: EdgeInsets.all(context.safeDp(14)),
       decoration: BoxDecoration(
         color: theme.colorScheme.surfaceContainerLowest,
         borderRadius: BorderRadius.circular(AppRadius.lg),
@@ -48,7 +48,7 @@ class ActivationDeviceIdCard extends StatelessWidget {
           Row(
             children: [
               Container(
-                padding: EdgeInsets.all(context.safeDp(8)),
+                padding: EdgeInsets.all(context.safeDp(7)),
                 decoration: BoxDecoration(
                   color: theme.colorScheme.primary.withValues(alpha: 0.1),
                   shape: BoxShape.circle,
@@ -56,86 +56,100 @@ class ActivationDeviceIdCard extends StatelessWidget {
                 child: AppIcon(
                   AppIcons.shield,
                   color: theme.colorScheme.primary,
-                  size: context.safeDp(18),
+                  size: context.safeDp(16),
                 ),
               ),
-              10.hSpace,
+              8.hSpace,
               Expanded(
                 child: Text(
                   StringsManager.activationDeviceId.lang,
                   style: context.label(
-                    14,
+                    13,
                     weight: FontWeight.w700,
                   ),
                 ),
               ),
             ],
           ),
-          12.vSpace,
-          Container(
-            padding: EdgeInsets.symmetric(
-              horizontal: context.safeDp(14),
-              vertical: context.safeDp(12),
-            ),
-            decoration: BoxDecoration(
-              color: isDark
-                  ? theme.colorScheme.surfaceContainer
-                  : AppPrimitiveTokens.slate100,
-              borderRadius: BorderRadius.circular(AppRadius.md),
-              border: Border.all(
-                color: theme.colorScheme.outlineVariant,
+          10.vSpace,
+          // Device ID box with tap-to-copy
+          InkWell(
+            onTap: onCopy,
+            borderRadius: BorderRadius.circular(AppRadius.md),
+            child: Container(
+              padding: EdgeInsets.symmetric(
+                horizontal: context.safeDp(12),
+                vertical: context.safeDp(10),
+              ),
+              decoration: BoxDecoration(
+                color: isDark
+                    ? theme.colorScheme.surfaceContainer
+                    : AppPrimitiveTokens.slate100,
+                borderRadius: BorderRadius.circular(AppRadius.md),
+                border: Border.all(
+                  color: theme.colorScheme.outlineVariant,
+                ),
+              ),
+              child: Row(
+                children: [
+                  Expanded(
+                    child: isLoadingDevice
+                        ? const SizedBox(
+                            height: 18,
+                            width: 18,
+                            child: CircularProgressIndicator(strokeWidth: 2),
+                          )
+                        : SelectableText(
+                            deviceId,
+                            style: context.label(
+                              14,
+                              weight: FontWeight.w800,
+                              letterSpacing: 1.2,
+                              fontFamily: 'monospace',
+                              color: theme.colorScheme.primary,
+                            ),
+                          ),
+                  ),
+                  8.hSpace,
+                  IconButton(
+                    tooltip: StringsManager.activationCopyDeviceId.lang,
+                    icon: AppIcon(
+                      AppIcons.copy,
+                      size: context.safeDp(18),
+                      color: theme.colorScheme.primary,
+                    ),
+                    onPressed: onCopy,
+                    visualDensity: VisualDensity.compact,
+                    padding: EdgeInsets.zero,
+                    constraints: const BoxConstraints(minWidth: 32, minHeight: 32),
+                  ),
+                ],
               ),
             ),
-            child: Row(
-              children: [
-                Expanded(
-                  child: isLoadingDevice
-                      ? const SizedBox(
-                          height: 18,
-                          width: 18,
-                          child: CircularProgressIndicator(strokeWidth: 2),
-                        )
-                      : SelectableText(
-                          deviceId,
-                          style: context.label(
-                            16,
-                            weight: FontWeight.w800,
-                            letterSpacing: 1.5,
-                            fontFamily: 'monospace',
-                            color: theme.colorScheme.primary,
-                          ),
-                        ),
-                ),
-                8.hSpace,
-                IconButton(
-                  tooltip: StringsManager.activationCopyDeviceId.lang,
-                  icon: AppIcon(
-                    AppIcons.copy,
-                    size: context.safeDp(20),
-                  ),
-                  onPressed: onCopy,
-                  visualDensity: VisualDensity.compact,
-                ),
-              ],
-            ),
           ),
-          12.vSpace,
+          10.vSpace,
+          // Actions Row
           Row(
             children: [
               Expanded(
                 child: AppOutlinedButton(
-                  text: StringsManager.activationCopyDeviceId.lang,
+                  text: StringsManager.activationCopyShort.lang,
                   icon: AppIcons.copy,
-                  height: context.safeDp(40),
+                  height: context.safeDp(38),
+                  padding: EdgeInsets.symmetric(horizontal: context.safeDp(8)),
                   onPressed: onCopy,
                 ),
               ),
-              10.hSpace,
+              8.hSpace,
               Expanded(
                 child: AppOutlinedButton(
-                  text: StringsManager.activationSendToWhatsApp.lang,
+                  text: StringsManager.activationSendWhatsAppShort.lang,
                   icon: AppIcons.whatsapp,
-                  height: context.safeDp(40),
+                  height: context.safeDp(38),
+                  borderColor: const Color(0xFF25D366),
+                  textColor: isDark ? const Color(0xFF4ADE80) : const Color(0xFF15803D),
+                  backgroundColor: const Color(0xFF25D366).withValues(alpha: isDark ? 0.15 : 0.08),
+                  padding: EdgeInsets.symmetric(horizontal: context.safeDp(8)),
                   onPressed: onSendWhatsApp,
                 ),
               ),

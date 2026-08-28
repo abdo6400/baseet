@@ -37,7 +37,7 @@ class ActivationKeyInputCard extends StatelessWidget {
     final isDark = theme.brightness == Brightness.dark;
 
     return Container(
-      padding: EdgeInsets.all(context.safeDp(16)),
+      padding: EdgeInsets.all(context.safeDp(14)),
       decoration: BoxDecoration(
         color: theme.colorScheme.surfaceContainerLowest,
         borderRadius: BorderRadius.circular(AppRadius.lg),
@@ -56,82 +56,124 @@ class ActivationKeyInputCard extends StatelessWidget {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Row(
-                children: [
-                  Container(
-                    padding: EdgeInsets.all(context.safeDp(8)),
-                    decoration: BoxDecoration(
-                      color: theme.colorScheme.primary.withValues(alpha: 0.1),
-                      shape: BoxShape.circle,
+              Expanded(
+                child: Row(
+                  children: [
+                    Container(
+                      padding: EdgeInsets.all(context.safeDp(7)),
+                      decoration: BoxDecoration(
+                        color: theme.colorScheme.primary.withValues(alpha: 0.1),
+                        shape: BoxShape.circle,
+                      ),
+                      child: AppIcon(
+                        AppIcons.key,
+                        color: theme.colorScheme.primary,
+                        size: context.safeDp(16),
+                      ),
                     ),
-                    child: AppIcon(
-                      AppIcons.key,
-                      color: theme.colorScheme.primary,
-                      size: context.safeDp(18),
+                    8.hSpace,
+                    Expanded(
+                      child: Text(
+                        StringsManager.activationKeyLabel.lang,
+                        style: context.label(
+                          13,
+                          weight: FontWeight.w700,
+                        ),
+                        overflow: TextOverflow.ellipsis,
+                      ),
                     ),
-                  ),
-                  10.hSpace,
-                  Text(
-                    StringsManager.activationKeyLabel.lang,
-                    style: context.label(
-                      14,
-                      weight: FontWeight.w700,
-                    ),
-                  ),
-                ],
+                  ],
+                ),
               ),
-              TextButton.icon(
-                onPressed: onPaste,
-                icon: AppIcon(AppIcons.copy, size: context.safeDp(16)),
-                label: Text(
-                  StringsManager.activationPaste.lang,
-                  style: context.label(
-                    12,
-                    weight: FontWeight.w600,
+              InkWell(
+                onTap: onPaste,
+                borderRadius: BorderRadius.circular(AppRadius.sm),
+                child: Padding(
+                  padding: EdgeInsets.symmetric(
+                    horizontal: context.safeDp(8),
+                    vertical: context.safeDp(4),
+                  ),
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      AppIcon(
+                        AppIcons.copy,
+                        size: context.safeDp(14),
+                        color: theme.colorScheme.primary,
+                      ),
+                      4.hSpace,
+                      Text(
+                        StringsManager.activationPaste.lang,
+                        style: context.label(
+                          12,
+                          weight: FontWeight.w700,
+                          color: theme.colorScheme.primary,
+                        ),
+                      ),
+                    ],
                   ),
                 ),
               ),
             ],
           ),
           10.vSpace,
-          TextField(
-            controller: keyController,
-            focusNode: keyFocusNode,
-            maxLines: 2,
-            style: context.label(
-              13,
-              fontFamily: 'monospace',
-              letterSpacing: 0.5,
-            ),
-            decoration: InputDecoration(
-              hintText: StringsManager.activationKeyHint.lang,
-              hintStyle: context.label(
-                12,
-                color: theme.colorScheme.onSurfaceVariant.withValues(alpha: 0.6),
-              ),
-              filled: true,
-              fillColor: isDark
-                  ? theme.colorScheme.surfaceContainer
-                  : AppPrimitiveTokens.slate50,
-              contentPadding: const EdgeInsets.all(12),
-              border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(AppRadius.md),
-                borderSide: BorderSide(color: theme.colorScheme.outlineVariant),
-              ),
-              enabledBorder: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(AppRadius.md),
-                borderSide: BorderSide(color: theme.colorScheme.outlineVariant),
-              ),
-              focusedBorder: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(AppRadius.md),
-                borderSide: BorderSide(color: theme.colorScheme.primary, width: 1.5),
-              ),
-            ),
+          ValueListenableBuilder<TextEditingValue>(
+            valueListenable: keyController,
+            builder: (context, value, _) {
+              return TextField(
+                controller: keyController,
+                focusNode: keyFocusNode,
+                minLines: 1,
+                maxLines: 2,
+                style: context.label(
+                  13,
+                  fontFamily: 'monospace',
+                  letterSpacing: 0.5,
+                ),
+                decoration: InputDecoration(
+                  hintText: StringsManager.activationKeyHint.lang,
+                  hintStyle: context.label(
+                    12,
+                    color: theme.colorScheme.onSurfaceVariant.withValues(alpha: 0.6),
+                  ),
+                  filled: true,
+                  fillColor: isDark
+                      ? theme.colorScheme.surfaceContainer
+                      : AppPrimitiveTokens.slate50,
+                  contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+                  suffixIcon: value.text.isNotEmpty
+                      ? IconButton(
+                          icon: const AppIcon(AppIcons.close, size: 16),
+                          onPressed: () => keyController.clear(),
+                          tooltip: 'Clear',
+                          visualDensity: VisualDensity.compact,
+                        )
+                      : IconButton(
+                          icon: const AppIcon(AppIcons.copy, size: 16),
+                          onPressed: onPaste,
+                          tooltip: StringsManager.activationPaste.lang,
+                          visualDensity: VisualDensity.compact,
+                        ),
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(AppRadius.md),
+                    borderSide: BorderSide(color: theme.colorScheme.outlineVariant),
+                  ),
+                  enabledBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(AppRadius.md),
+                    borderSide: BorderSide(color: theme.colorScheme.outlineVariant),
+                  ),
+                  focusedBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(AppRadius.md),
+                    borderSide: BorderSide(color: theme.colorScheme.primary, width: 1.5),
+                  ),
+                ),
+              );
+            },
           ),
 
           // Dummy Data Seed Option (initial setup only)
           if (!isExpiredState) ...[
-            14.vSpace,
+            10.vSpace,
             InkWell(
               onTap: () => onSeedDummyDataChanged(!seedDummyData),
               borderRadius: BorderRadius.circular(AppRadius.md),
@@ -155,17 +197,25 @@ class ActivationKeyInputCard extends StatelessWidget {
                   ),
                 ),
                 child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Checkbox(
-                      value: seedDummyData,
-                      onChanged: (val) => onSeedDummyDataChanged(val ?? false),
-                      activeColor: theme.colorScheme.primary,
-                      visualDensity: VisualDensity.compact,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(4),
+                    Padding(
+                      padding: const EdgeInsets.only(top: 2),
+                      child: SizedBox(
+                        height: 18,
+                        width: 18,
+                        child: Checkbox(
+                          value: seedDummyData,
+                          onChanged: (val) => onSeedDummyDataChanged(val ?? false),
+                          activeColor: theme.colorScheme.primary,
+                          materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(4),
+                          ),
+                        ),
                       ),
                     ),
-                    6.hSpace,
+                    8.hSpace,
                     Expanded(
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
@@ -173,7 +223,7 @@ class ActivationKeyInputCard extends StatelessWidget {
                           Text(
                             StringsManager.activationSeedDummyData.lang,
                             style: context.label(
-                              13,
+                              12.5,
                               weight: FontWeight.w700,
                               color: seedDummyData
                                   ? theme.colorScheme.primary
@@ -186,6 +236,7 @@ class ActivationKeyInputCard extends StatelessWidget {
                             style: context.label(
                               11,
                               color: theme.colorScheme.onSurfaceVariant,
+                              height: 1.3,
                             ),
                           ),
                         ],
@@ -197,12 +248,13 @@ class ActivationKeyInputCard extends StatelessWidget {
             ),
           ],
 
-          16.vSpace,
+          12.vSpace,
           AppButton(
             text: isExpiredState
                 ? StringsManager.activationRenewBtn.lang
                 : StringsManager.activationBtn.lang,
             icon: AppIcons.check,
+            height: context.safeDp(42),
             isLoading: isActivating,
             onPressed: onActivate,
           ),
