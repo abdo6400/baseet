@@ -5,6 +5,8 @@ import 'package:baseet/config/routes/app_routes.dart';
 import 'package:baseet/core/common/widgets/feedback/empty_state_widget.dart';
 import 'package:baseet/core/common/widgets/form/app_search_field.dart';
 import 'package:baseet/core/common/widgets/icon/app_icon.dart';
+import 'package:baseet/core/extensions/responsive_extension.dart';
+import 'package:baseet/core/extensions/responsive_text_extension.dart';
 import 'package:baseet/core/extensions/translation_extension.dart';
 import 'package:baseet/core/utils/app_icons.dart';
 import 'package:baseet/core/utils/strings_manager.dart';
@@ -49,9 +51,9 @@ class _InventoryPageState extends State<InventoryPage> {
         scrolledUnderElevation: 0.5,
         title: Text(
           StringsManager.appName.lang,
-          style: TextStyle(
-            fontSize: 22,
-            fontWeight: FontWeight.w800,
+          style: context.label(
+            22,
+            weight: FontWeight.w800,
             color: theme.colorScheme.primary,
           ),
         ),
@@ -78,10 +80,10 @@ class _InventoryPageState extends State<InventoryPage> {
         backgroundColor: theme.colorScheme.primary,
         foregroundColor: Colors.white,
         onPressed: () => context.push(AppRoutes.addProduct),
-        icon: AppIcon(AppIcons.add, color: Colors.white),
+        icon: const AppIcon(AppIcons.add, color: Colors.white),
         label: Text(
           StringsManager.inventoryAddProduct.lang,
-          style: const TextStyle(fontWeight: FontWeight.w700),
+          style: context.label(14, weight: FontWeight.w700, color: Colors.white),
         ),
       ),
       body: BlocBuilder<InventoryListBloc, InventoryListState>(
@@ -99,19 +101,19 @@ class _InventoryPageState extends State<InventoryPage> {
               slivers: [
                 SliverToBoxAdapter(
                   child: Padding(
-                    padding: const EdgeInsets.all(16),
+                    padding: EdgeInsets.all(context.safeDp(16)),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
                           StringsManager.inventoryTitle.lang,
-                          style: const TextStyle(fontSize: 20, fontWeight: FontWeight.w800),
+                          style: context.label(20, weight: FontWeight.w800),
                         ),
                         const SizedBox(height: 2),
                         Text(
                           StringsManager.inventorySubtitle.lang,
-                          style: TextStyle(
-                            fontSize: 13,
+                          style: context.label(
+                            13,
                             color: theme.colorScheme.onSurfaceVariant,
                           ),
                         ),

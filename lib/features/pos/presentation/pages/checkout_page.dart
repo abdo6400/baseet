@@ -10,6 +10,8 @@ import '../../../../core/common/widgets/form/receipt_attachment_field.dart';
 import '../../../../core/common/widgets/layout/app_page_wrapper.dart';
 import '../../../../core/common/widgets/layout/page_header.dart';
 import '../../../../core/enums/enums.dart';
+import '../../../../core/extensions/responsive_extension.dart';
+import '../../../../core/extensions/responsive_text_extension.dart';
 import '../../../../core/extensions/spacing_extension.dart';
 import '../../../../core/extensions/state_handle_extension.dart';
 import '../../../../core/extensions/translation_extension.dart';
@@ -95,7 +97,7 @@ class _CheckoutPageState extends State<CheckoutPage> {
       builder: (context, checkoutState) {
         return AppPageWrapper(
           scrollable: true,
-          padding: const EdgeInsets.all(AppSpacing.md),
+          padding: EdgeInsets.all(context.safeDp(AppSpacing.md)),
           appBar: PageHeader(
             title: StringsManager.checkoutTitle.lang,
             showBackButton: true,
@@ -127,9 +129,9 @@ class _CheckoutPageState extends State<CheckoutPage> {
                       children: [
                         Text(
                           StringsManager.checkoutPaymentMethod.lang,
-                          style: TextStyle(
-                            fontSize: 15,
-                            fontWeight: FontWeight.w700,
+                          style: context.label(
+                            15,
+                            weight: FontWeight.w700,
                             color: Theme.of(context).colorScheme.onSurface,
                           ),
                         ),

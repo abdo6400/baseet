@@ -3,6 +3,8 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../../core/common/widgets/feedback/empty_state_widget.dart';
 import '../../../../core/common/widgets/form/app_search_field.dart';
 import '../../../../core/common/widgets/icon/app_icon.dart';
+import '../../../../core/extensions/responsive_extension.dart';
+import '../../../../core/extensions/responsive_text_extension.dart';
 import '../../../../core/extensions/spacing_extension.dart';
 import '../../../../core/extensions/translation_extension.dart';
 import '../../../../core/theme/tokens/app_tokens.dart';
@@ -88,7 +90,7 @@ class _ReceiptsPageState extends State<ReceiptsPage> {
         scrolledUnderElevation: 0.5,
         title: Text(
           StringsManager.receiptsListTitle.lang,
-          style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w800),
+          style: context.label(18, weight: FontWeight.w800),
         ),
         centerTitle: true,
         actions: [
@@ -148,12 +150,12 @@ class _ReceiptsPageState extends State<ReceiptsPage> {
                                 selected: isSelected,
                                 selectedColor: theme.colorScheme.primary.withValues(alpha: 0.15),
                                 checkmarkColor: theme.colorScheme.primary,
-                                labelStyle: TextStyle(
-                                  fontWeight: isSelected ? FontWeight.w700 : FontWeight.w500,
+                                labelStyle: context.label(
+                                  12,
+                                  weight: isSelected ? FontWeight.w700 : FontWeight.w500,
                                   color: isSelected
                                       ? theme.colorScheme.primary
                                       : theme.colorScheme.onSurface,
-                                  fontSize: 12,
                                 ),
                                 onSelected: (_) {
                                   if (filter == ReceiptDateFilter.custom) {
@@ -173,7 +175,10 @@ class _ReceiptsPageState extends State<ReceiptsPage> {
 
                       // Financial & Invoices Stats Summary Card
                       Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+                        padding: EdgeInsets.symmetric(
+                          horizontal: context.safeDp(14),
+                          vertical: context.safeDp(10),
+                        ),
                         decoration: BoxDecoration(
                           color: theme.colorScheme.primaryContainer.withValues(alpha: 0.18),
                           borderRadius: BorderRadius.circular(AppRadius.md),
@@ -188,23 +193,23 @@ class _ReceiptsPageState extends State<ReceiptsPage> {
                               children: [
                                 AppIcon(
                                   AppIcons.receipt,
-                                  size: 20,
+                                  size: context.safeDp(20),
                                   color: theme.colorScheme.primary,
                                 ),
                                 8.hSpace,
                                 Text(
                                   '${StringsManager.receiptsCount.lang}: ',
-                                  style: TextStyle(
-                                    fontSize: 13,
-                                    fontWeight: FontWeight.w600,
+                                  style: context.label(
+                                    13,
+                                    weight: FontWeight.w600,
                                     color: theme.colorScheme.onSurface,
                                   ),
                                 ),
                                 Text(
                                   '${state.totalCount}',
-                                  style: TextStyle(
-                                    fontSize: 14,
-                                    fontWeight: FontWeight.w800,
+                                  style: context.label(
+                                    14,
+                                    weight: FontWeight.w800,
                                     color: theme.colorScheme.primary,
                                   ),
                                 ),
@@ -214,17 +219,17 @@ class _ReceiptsPageState extends State<ReceiptsPage> {
                               children: [
                                 Text(
                                   '${StringsManager.receiptsTotalSales.lang}: ',
-                                  style: TextStyle(
-                                    fontSize: 13,
-                                    fontWeight: FontWeight.w600,
+                                  style: context.label(
+                                    13,
+                                    weight: FontWeight.w600,
                                     color: theme.colorScheme.onSurface,
                                   ),
                                 ),
                                 Text(
                                   '${state.totalSales.toStringAsFixed(0)} ${StringsManager.posCurrency.lang}',
-                                  style: TextStyle(
-                                    fontSize: 15,
-                                    fontWeight: FontWeight.w900,
+                                  style: context.label(
+                                    15,
+                                    weight: FontWeight.w900,
                                     color: theme.colorScheme.primary,
                                   ),
                                 ),

@@ -5,6 +5,8 @@ import 'package:pdf/widgets.dart' as pw;
 import 'package:printing/printing.dart';
 import '../../../../core/common/widgets/button/app_button.dart';
 import '../../../../core/common/widgets/icon/app_icon.dart';
+import '../../../../core/extensions/responsive_extension.dart';
+import '../../../../core/extensions/responsive_text_extension.dart';
 import '../../../../core/extensions/spacing_extension.dart';
 import '../../../../core/extensions/state_handle_extension.dart';
 import '../../../../core/extensions/translation_extension.dart';
@@ -115,9 +117,9 @@ class _ReportsPageState extends State<ReportsPage> {
         scrolledUnderElevation: 0.5,
         title: Text(
           StringsManager.appName.lang,
-          style: TextStyle(
-            fontSize: 22,
-            fontWeight: FontWeight.w800,
+          style: context.label(
+            22,
+            weight: FontWeight.w800,
             color: theme.colorScheme.primary,
           ),
         ),
@@ -144,21 +146,20 @@ class _ReportsPageState extends State<ReportsPage> {
             },
             child: SingleChildScrollView(
               physics: const AlwaysScrollableScrollPhysics(),
-              padding: const EdgeInsets.all(16),
+              padding: EdgeInsets.all(context.safeDp(16)),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   // Page Header
                   Text(
                     StringsManager.reportsTitle.lang,
-                    style: const TextStyle(
-                        fontSize: 20, fontWeight: FontWeight.w800),
+                    style: context.label(20, weight: FontWeight.w800),
                   ),
                   2.vSpace,
                   Text(
                     StringsManager.reportsSubtitle.lang,
-                    style: TextStyle(
-                      fontSize: 13,
+                    style: context.label(
+                      13,
                       color: theme.colorScheme.onSurfaceVariant,
                     ),
                   ),

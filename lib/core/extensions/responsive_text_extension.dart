@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'responsive_extension.dart';
 
 extension ResponsiveTextExtension on BuildContext {
   TextStyle label(
@@ -6,12 +7,18 @@ extension ResponsiveTextExtension on BuildContext {
     FontWeight weight = FontWeight.w400,
     Color? color,
     double? height,
+    double? letterSpacing,
+    String? fontFamily,
+    TextDecoration? decoration,
   }) {
     return TextStyle(
-      fontSize: size,
+      fontSize: sp(size),
       fontWeight: weight,
       color: color,
       height: height,
+      letterSpacing: letterSpacing,
+      fontFamily: fontFamily,
+      decoration: decoration,
     );
   }
 }

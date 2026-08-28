@@ -7,7 +7,8 @@ extension ResponsiveExtension on BuildContext {
   bool get isDesktop => screenWidth >= 1024;
 
   double safeDp(double size) {
-    if (isTablet) return size * 1.15;
+    if (isDesktop) return size * 1.2;
+    if (isTablet) return size * 1.1;
     return size;
   }
 

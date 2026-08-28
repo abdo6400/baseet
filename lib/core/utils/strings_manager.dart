@@ -444,5 +444,7 @@ abstract class StringsManager {
   static const String moreLicense = 'more_license';
   static const String moreLicenseSubtitle = 'more_license_subtitle';
   static const String activationInstructions = 'activation_instructions';
+  static const String activationSeedDummyData = 'activation_seed_dummy_data';
+  static const String activationSeedDummyDataDesc = 'activation_seed_dummy_data_desc';
 }
 
