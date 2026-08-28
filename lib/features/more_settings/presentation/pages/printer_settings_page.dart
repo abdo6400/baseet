@@ -17,6 +17,7 @@ import '../../../../core/extensions/translation_extension.dart';
 import '../../../../core/services/settings_service.dart';
 import '../../../../core/theme/tokens/app_tokens.dart';
 import '../../../../core/utils/app_icons.dart';
+import '../../../../core/utils/app_pdf_helper.dart';
 import '../../../../core/utils/strings_manager.dart';
 import '../widgets/printer_type_tile.dart';
 
@@ -124,23 +125,68 @@ class _PrinterSettingsPageState extends State<PrinterSettingsPage> {
 
   Future<void> _testPrint() async {
     HapticFeedback.mediumImpact();
-    final pdf = pw.Document();
+    final pdf = await AppPdfHelper.createDocument();
+    final is58mm = _paperSize == '58mm';
+    final now = DateTime.now();
+    final timeStr = '${now.hour.toString().padLeft(2, '0')}:${now.minute.toString().padLeft(2, '0')}:${now.second.toString().padLeft(2, '0')} - ${now.day}/${now.month}/${now.year}';
+
     pdf.addPage(
       pw.Page(
-        pageFormat: _paperSize == '58mm' ? PdfPageFormat.roll57 : PdfPageFormat.roll80,
+        pageFormat: is58mm ? PdfPageFormat.roll57 : PdfPageFormat.roll80,
         build: (context) {
-          return pw.Center(
-            child: pw.Column(
-              mainAxisSize: pw.MainAxisSize.min,
-              children: [
-                pw.Text('=== ${StringsManager.appName.lang} ===', style: pw.TextStyle(fontWeight: pw.FontWeight.bold, fontSize: 14)),
-                pw.SizedBox(height: 8),
-                pw.Text(StringsManager.printerTestPrintSuccess.lang, style: const pw.TextStyle(fontSize: 12)),
-                pw.SizedBox(height: 4),
-                pw.Text(DateTime.now().toString().substring(0, 19), style: const pw.TextStyle(fontSize: 10)),
-                pw.SizedBox(height: 8),
-                pw.Text('====================', style: const pw.TextStyle(fontSize: 10)),
-              ],
+          return AppPdfHelper.wrapDirectionality(
+            child: pw.Container(
+              padding: const pw.EdgeInsets.symmetric(horizontal: 4, vertical: 8),
+              child: pw.Column(
+                mainAxisSize: pw.MainAxisSize.min,
+                crossAxisAlignment: pw.CrossAxisAlignment.center,
+                children: [
+                  pw.Text(
+                    '=== ${StringsManager.appName.lang} ===',
+                    style: pw.TextStyle(fontWeight: pw.FontWeight.bold, fontSize: is58mm ? 13 : 15),
+                    textAlign: pw.TextAlign.center,
+                  ),
+                  pw.SizedBox(height: 4),
+                  pw.Text(
+                    'BASEET POS',
+                    style: const pw.TextStyle(fontSize: 10, color: PdfColors.grey700),
+                    textAlign: pw.TextAlign.center,
+                  ),
+                  pw.SizedBox(height: 6),
+                  pw.Divider(thickness: 1, borderStyle: pw.BorderStyle.dashed),
+                  pw.SizedBox(height: 6),
+                  pw.Text(
+                    StringsManager.printerTestPrintSuccess.lang,
+                    style: pw.TextStyle(fontSize: is58mm ? 10.5 : 12, fontWeight: pw.FontWeight.bold),
+                    textAlign: pw.TextAlign.center,
+                  ),
+                  pw.SizedBox(height: 6),
+                  pw.Text(
+                    '${StringsManager.printerConnectionType.lang}: ${_printerType.toUpperCase()}',
+                    style: const pw.TextStyle(fontSize: 9.5),
+                    textAlign: pw.TextAlign.center,
+                  ),
+                  pw.Text(
+                    '${StringsManager.printerPaperSize.lang}: $_paperSize',
+                    style: const pw.TextStyle(fontSize: 9.5),
+                    textAlign: pw.TextAlign.center,
+                  ),
+                  pw.SizedBox(height: 6),
+                  pw.Text(
+                    timeStr,
+                    style: const pw.TextStyle(fontSize: 8.5, color: PdfColors.grey700),
+                    textAlign: pw.TextAlign.center,
+                  ),
+                  pw.SizedBox(height: 8),
+                  pw.Divider(thickness: 1, borderStyle: pw.BorderStyle.dashed),
+                  pw.SizedBox(height: 4),
+                  pw.Text(
+                    '====================',
+                    style: const pw.TextStyle(fontSize: 10, color: PdfColors.grey700),
+                    textAlign: pw.TextAlign.center,
+                  ),
+                ],
+              ),
             ),
           );
         },
