@@ -28,4 +28,28 @@ class PosRepositoryImpl implements PosRepository {
   Future<Either<Failure, double>> getTodaySalesTotal() {
     return Failure.handleCall(() => localDataSource.getTodaySalesTotal());
   }
+
+  @override
+  Future<Either<Failure, List<OrderEntity>>> getOrders({String? searchQuery, DateTime? startDate, DateTime? endDate}) {
+    return Failure.handleCall(() => localDataSource.getOrders(
+          searchQuery: searchQuery,
+          startDate: startDate,
+          endDate: endDate,
+        ));
+  }
+
+  @override
+  Future<Either<Failure, OrderEntity?>> getOrderById(String orderId) {
+    return Failure.handleCall(() => localDataSource.getOrderById(orderId));
+  }
+
+  @override
+  Future<Either<Failure, void>> deleteOrder(String orderId) {
+    return Failure.handleCall(() => localDataSource.deleteOrder(orderId));
+  }
+
+  @override
+  Future<Either<Failure, void>> updateOrder(OrderEntity order) {
+    return Failure.handleCall(() => localDataSource.updateOrder(OrderModel.fromEntity(order)));
+  }
 }

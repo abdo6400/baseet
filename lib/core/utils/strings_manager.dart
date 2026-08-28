@@ -381,6 +381,68 @@ abstract class StringsManager {
   static const String showcaseNavReportsTitle = 'showcase_nav_reports_title';
   static const String showcaseNavReportsDesc = 'showcase_nav_reports_desc';
   static const String showcaseNavMoreTitle = 'showcase_nav_more_title';
-  static const String showcaseNavMoreDesc = 'showcase_nav_more_desc';
   static const String showcaseTourFinished = 'showcase_tour_finished';
+  static const String showcaseSkip = 'showcase_skip';
+  static const String showcaseNext = 'showcase_next';
+  static const String showcaseFinish = 'showcase_finish';
+  static const String showcaseNavReceiptsTitle = 'showcase_nav_receipts_title';
+  static const String showcaseNavReceiptsDesc = 'showcase_nav_receipts_desc';
+
+  // Receipts History & Management
+  static const String receiptsListTitle = 'receipts_list_title';
+  static const String receiptsListSubtitle = 'receipts_list_subtitle';
+  static const String receiptsSearchHint = 'receipts_search_hint';
+  static const String receiptsFilterAll = 'receipts_filter_all';
+  static const String receiptsFilterToday = 'receipts_filter_today';
+  static const String receiptsFilterYesterday = 'receipts_filter_yesterday';
+  static const String receiptsFilterThisWeek = 'receipts_filter_this_week';
+  static const String receiptsFilterThisMonth = 'receipts_filter_this_month';
+  static const String receiptsFilterCustom = 'receipts_filter_custom';
+  static const String receiptsCount = 'receipts_count';
+  static const String receiptsTotalSales = 'receipts_total_sales';
+  static const String receiptsNoFound = 'receipts_no_found';
+  static const String receiptsPreview = 'receipts_preview';
+  static const String receiptsShare = 'receipts_share';
+  static const String receiptsDownload = 'receipts_download';
+  static const String receiptsEdit = 'receipts_edit';
+  static const String receiptsDelete = 'receipts_delete';
+  static const String receiptsDeleteConfirm = 'receipts_delete_confirm';
+  static const String receiptsDeleteSuccess = 'receipts_delete_success';
+  static const String receiptsEditSuccess = 'receipts_edit_success';
+  static const String receiptsStockRestored = 'receipts_stock_restored';
+  static const String receiptsEditTitle = 'receipts_edit_title';
+  static const String receiptsItemsCount = 'receipts_items_count';
+  static const String receiptsOrderDetails = 'receipts_order_details';
+  static const String receiptsShareText = 'receipts_share_text';
+
+  // License & Activation
+  static const String activationTitle = 'activation_title';
+  static const String activationSubtitle = 'activation_subtitle';
+  static const String activationDeviceId = 'activation_device_id';
+  static const String activationDeviceIdHint = 'activation_device_id_hint';
+  static const String activationCopyDeviceId = 'activation_copy_device_id';
+  static const String activationDeviceIdCopied = 'activation_device_id_copied';
+  static const String activationKeyLabel = 'activation_key_label';
+  static const String activationKeyHint = 'activation_key_hint';
+  static const String activationPaste = 'activation_paste';
+  static const String activationBtn = 'activation_btn';
+  static const String activationSuccess = 'activation_success';
+  static const String activationExpiredTitle = 'activation_expired_title';
+  static const String activationExpiredDesc = 'activation_expired_desc';
+  static const String activationStatusActive = 'activation_status_active';
+  static const String activationStatusExpired = 'activation_status_expired';
+  static const String activationStatusUnactivated = 'activation_status_unactivated';
+  static const String activationDaysRemaining = 'activation_days_remaining';
+  static const String activationExpiresOn = 'activation_expires_on';
+  static const String activationSendToWhatsApp = 'activation_send_to_whatsapp';
+  static const String activationWhatsAppText = 'activation_whatsapp_text';
+  static const String activationErrorInvalidKey = 'activation_error_invalid_key';
+  static const String activationErrorDeviceMismatch = 'activation_error_device_mismatch';
+  static const String activationErrorExpired = 'activation_error_expired';
+  static const String activationErrorClock = 'activation_error_clock';
+  static const String activationRenewBtn = 'activation_renew_btn';
+  static const String moreLicense = 'more_license';
+  static const String moreLicenseSubtitle = 'more_license_subtitle';
+  static const String activationInstructions = 'activation_instructions';
 }
+

@@ -31,6 +31,36 @@ class OrderEntity extends Equatable {
     this.receiptPath,
   });
 
+  OrderEntity copyWith({
+    String? id,
+    String? invoiceNumber,
+    List<CartItemEntity>? items,
+    double? totalAmount,
+    double? paidAmount,
+    double? remainingAmount,
+    PaymentMethod? paymentMethod,
+    String? customerId,
+    String? customerName,
+    DateTime? createdAt,
+    String? notes,
+    String? receiptPath,
+  }) {
+    return OrderEntity(
+      id: id ?? this.id,
+      invoiceNumber: invoiceNumber ?? this.invoiceNumber,
+      items: items ?? this.items,
+      totalAmount: totalAmount ?? this.totalAmount,
+      paidAmount: paidAmount ?? this.paidAmount,
+      remainingAmount: remainingAmount ?? this.remainingAmount,
+      paymentMethod: paymentMethod ?? this.paymentMethod,
+      customerId: customerId ?? this.customerId,
+      customerName: customerName ?? this.customerName,
+      createdAt: createdAt ?? this.createdAt,
+      notes: notes ?? this.notes,
+      receiptPath: receiptPath ?? this.receiptPath,
+    );
+  }
+
   @override
   List<Object?> get props => [
         id,

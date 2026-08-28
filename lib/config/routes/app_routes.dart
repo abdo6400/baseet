@@ -1,9 +1,11 @@
 abstract class AppRoutes {
   static const String splash = '/splash';
+  static const String activation = '/activation';
 
-  // POS
+  // POS & Receipts
   static const String pos = '/pos';
   static const String checkout = '/pos/checkout';
+  static const String receipts = '/receipts';
 
   // Debt Ledger
   static const String debts = '/debt-ledger';

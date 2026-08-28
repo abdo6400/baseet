@@ -8,6 +8,7 @@ import '../../../../core/common/widgets/feedback/empty_state_widget.dart';
 import '../../../../core/common/widgets/form/app_search_field.dart';
 import '../../../../core/common/widgets/icon/app_icon.dart';
 import '../../../../core/common/widgets/scanner/barcode_scanner_modal.dart';
+import '../../../../core/common/widgets/showcase/app_showcase.dart';
 import '../../../../core/extensions/translation_extension.dart';
 import '../../../../core/services/settings_service.dart';
 import '../../../../core/theme/tokens/app_tokens.dart';
@@ -35,6 +36,7 @@ class _PosPageState extends State<PosPage> {
   final TextEditingController _searchController = TextEditingController();
 
   final GlobalKey _keyScanner = GlobalKey();
+  final GlobalKey _keyReceipts = GlobalKey();
   final GlobalKey _keySalesCard = GlobalKey();
   final GlobalKey _keySearch = GlobalKey();
   final GlobalKey _keyCategories = GlobalKey();
@@ -48,8 +50,9 @@ class _PosPageState extends State<PosPage> {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       final settings = sl<SettingsService>();
       if (!settings.hasSeenShowcase && mounted) {
-        ShowCaseWidget.of(context).startShowCase([
+        ShowcaseView.get().startShowCase([
           _keyScanner,
+          _keyReceipts,
           _keySalesCard,
           _keySearch,
           _keyCategories,
@@ -103,8 +106,8 @@ class _PosPageState extends State<PosPage> {
         backgroundColor: theme.colorScheme.surface,
         elevation: 0,
         scrolledUnderElevation: 0.5,
-        leading: Showcase(
-          key: _keyScanner,
+        leading: AppShowcase(
+          showcaseKey: _keyScanner,
           title: StringsManager.showcaseScannerTitle.lang,
           description: StringsManager.showcaseScannerDesc.lang,
           child: IconButton(
@@ -122,23 +125,14 @@ class _PosPageState extends State<PosPage> {
         ),
         centerTitle: true,
         actions: [
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
-            child: Container(
-              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
-              decoration: BoxDecoration(
-                color: theme.colorScheme.surfaceContainerLow,
-                borderRadius: BorderRadius.circular(AppRadius.full),
-              ),
-              alignment: Alignment.center,
-              child: Text(
-                StringsManager.cashier.lang,
-                style: TextStyle(
-                  fontSize: 12,
-                  fontWeight: FontWeight.w700,
-                  color: theme.colorScheme.primary,
-                ),
-              ),
+          AppShowcase(
+            showcaseKey: _keyReceipts,
+            title: StringsManager.showcaseNavReceiptsTitle.lang,
+            description: StringsManager.showcaseNavReceiptsDesc.lang,
+            child: IconButton(
+              tooltip: StringsManager.receiptsListTitle.lang,
+              icon: AppIcon(AppIcons.receipt, color: theme.colorScheme.primary),
+              onPressed: () => context.push(AppRoutes.receipts),
             ),
           ),
         ],
@@ -171,8 +165,8 @@ class _PosPageState extends State<PosPage> {
                         child: Column(
                           children: [
                             // Daily Sales Card
-                            Showcase(
-                              key: _keySalesCard,
+                            AppShowcase(
+                              showcaseKey: _keySalesCard,
                               title: StringsManager.showcaseSalesCardTitle.lang,
                               description: StringsManager.showcaseSalesCardDesc.lang,
                               child: PosHeaderSalesCard(todaySales: state.todaySales),
@@ -180,8 +174,8 @@ class _PosPageState extends State<PosPage> {
                             const SizedBox(height: 14),
 
                             // Search Field
-                            Showcase(
-                              key: _keySearch,
+                            AppShowcase(
+                              showcaseKey: _keySearch,
                               title: StringsManager.showcaseSearchTitle.lang,
                               description: StringsManager.showcaseSearchDesc.lang,
                               child: AppSearchField(
@@ -197,8 +191,8 @@ class _PosPageState extends State<PosPage> {
 
                             // Category Filters
                             if (state.categories.isNotEmpty)
-                              Showcase(
-                                key: _keyCategories,
+                              AppShowcase(
+                                showcaseKey: _keyCategories,
                                 title: StringsManager.showcaseCategoriesTitle.lang,
                                 description: StringsManager.showcaseCategoriesDesc.lang,
                                 child: PosCategoryFilterRow(
@@ -234,7 +228,7 @@ class _PosPageState extends State<PosPage> {
                             crossAxisCount: 2,
                             crossAxisSpacing: 12,
                             mainAxisSpacing: 12,
-                            childAspectRatio: 0.78,
+                            childAspectRatio: 0.72,
                           ),
                           delegate: SliverChildBuilderDelegate(
                             (context, index) {
@@ -272,10 +266,11 @@ class _PosPageState extends State<PosPage> {
             bottom: 20,
             child: BlocBuilder<CartBloc, CartState>(
               builder: (context, cartState) {
-                return Showcase(
-                  key: _keyCartBar,
+                return AppShowcase(
+                  showcaseKey: _keyCartBar,
                   title: StringsManager.showcaseCartBarTitle.lang,
                   description: StringsManager.showcaseCartBarDesc.lang,
+                  isLast: true,
                   child: PosFloatingCartBar(
                     itemCount: cartState.totalItemCount,
                     totalPrice: cartState.totalPrice,

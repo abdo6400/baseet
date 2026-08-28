@@ -44,14 +44,20 @@ class SupplierPdfHelper {
                 ),
                 pw.SizedBox(height: AppSpacing.md),
 
-                // Itemized table of purchased goods
+                // Itemized table of purchased goods (RTL column layout)
                 pw.Align(
                   alignment: pw.Alignment.centerRight,
                   child: pw.Text(StringsManager.suppliersPurchasedGoods.lang, style: pw.TextStyle(fontSize: 13, fontWeight: pw.FontWeight.bold)),
                 ),
                 pw.SizedBox(height: AppSpacing.sm),
-                pw.TableHelper.fromTextArray(
-                  headers: ['#', StringsManager.suppliersItemName.lang, StringsManager.suppliersItemQuantity.lang, StringsManager.inventoryBuyPrice.lang, StringsManager.posTotal.lang],
+                AppPdfHelper.fromRtlTextArray(
+                  headers: [
+                    '#',
+                    StringsManager.suppliersItemName.lang,
+                    StringsManager.suppliersItemQuantity.lang,
+                    StringsManager.inventoryBuyPrice.lang,
+                    StringsManager.posTotal.lang,
+                  ],
                   headerDecoration: const pw.BoxDecoration(color: PdfColors.grey200),
                   headerStyle: pw.TextStyle(fontSize: 10, fontWeight: pw.FontWeight.bold),
                   cellStyle: const pw.TextStyle(fontSize: 9),
@@ -148,9 +154,16 @@ class SupplierPdfHelper {
                 ),
                 pw.SizedBox(height: AppSpacing.sm),
 
-                // Invoices summary table
-                pw.TableHelper.fromTextArray(
-                  headers: [StringsManager.receiptInvoiceNo.lang, StringsManager.receiptDate.lang, StringsManager.suppliersPurchasedGoods.lang, StringsManager.posTotal.lang, StringsManager.receiptPaid.lang, StringsManager.receiptChange.lang],
+                // Invoices summary table (RTL column layout)
+                AppPdfHelper.fromRtlTextArray(
+                  headers: [
+                    StringsManager.receiptInvoiceNo.lang,
+                    StringsManager.receiptDate.lang,
+                    StringsManager.suppliersPurchasedGoods.lang,
+                    StringsManager.posTotal.lang,
+                    StringsManager.receiptPaid.lang,
+                    StringsManager.receiptChange.lang,
+                  ],
                   headerDecoration: const pw.BoxDecoration(color: PdfColors.grey200),
                   headerStyle: pw.TextStyle(fontSize: 9, fontWeight: pw.FontWeight.bold),
                   cellStyle: const pw.TextStyle(fontSize: 8),
@@ -186,4 +199,3 @@ class SupplierPdfHelper {
     return pdf.save();
   }
 }
-
