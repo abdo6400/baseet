@@ -256,17 +256,26 @@ class _PrinterSettingsPageState extends State<PrinterSettingsPage> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      Text(
-                        StringsManager.bluetoothDiscoveredDevices.lang,
-                        style: context.label(
-                          15,
-                          weight: FontWeight.w800,
-                          color: theme.colorScheme.primary,
+                      Expanded(
+                        child: Text(
+                          StringsManager.bluetoothDiscoveredDevices.lang,
+                          style: context.label(
+                            14.5,
+                            weight: FontWeight.w800,
+                            color: theme.colorScheme.primary,
+                          ),
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
                         ),
                       ),
+                      const SizedBox(width: 8),
                       TextButton.icon(
+                        style: TextButton.styleFrom(
+                          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                          visualDensity: VisualDensity.compact,
+                          tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                        ),
                         onPressed: _isScanning ? null : _startBtScan,
                         icon: _isScanning
                             ? const SizedBox(
@@ -275,9 +284,14 @@ class _PrinterSettingsPageState extends State<PrinterSettingsPage> {
                                 child: CircularProgressIndicator(strokeWidth: 2),
                               )
                             : const Icon(Icons.refresh, size: 16),
-                        label: Text(_isScanning
-                            ? StringsManager.bluetoothScanning.lang
-                            : StringsManager.bluetoothScanDevices.lang),
+                        label: Text(
+                          _isScanning
+                              ? StringsManager.bluetoothScanning.lang
+                              : StringsManager.bluetoothScanDevices.lang,
+                          style: const TextStyle(fontSize: 12),
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                        ),
                       ),
                     ],
                   ),
@@ -321,6 +335,8 @@ class _PrinterSettingsPageState extends State<PrinterSettingsPage> {
                           ),
                           title: Text(
                             dev.name,
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
                             style: TextStyle(
                               fontWeight: isConnected ? FontWeight.w800 : FontWeight.w600,
                               fontSize: 13.5,
@@ -328,6 +344,8 @@ class _PrinterSettingsPageState extends State<PrinterSettingsPage> {
                           ),
                           subtitle: Text(
                             dev.address,
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
                             style: TextStyle(color: theme.colorScheme.outline, fontSize: 11.5),
                           ),
                           trailing: isConnected
@@ -347,6 +365,10 @@ class _PrinterSettingsPageState extends State<PrinterSettingsPage> {
                                   ),
                                 )
                               : TextButton(
+                                  style: TextButton.styleFrom(
+                                    visualDensity: VisualDensity.compact,
+                                    padding: const EdgeInsets.symmetric(horizontal: 8),
+                                  ),
                                   onPressed: () => _connectDevice(dev),
                                   child: Text(StringsManager.bluetoothConnect.lang),
                                 ),
