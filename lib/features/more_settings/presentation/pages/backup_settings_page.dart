@@ -109,8 +109,8 @@ class _BackupSettingsPageState extends State<BackupSettingsPage> {
         allowedExtensions: ['json'],
       );
 
-      if (result != null && result.files.single.path != null) {
-        final filePath = result.files.single.path!;
+      if (result != null && result.single.path != null) {
+        final filePath = result.single.path!;
 
         if (!mounted) return;
         final confirmed = await context.showConfirmDialog(
