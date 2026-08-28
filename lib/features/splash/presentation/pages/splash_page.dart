@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../../../config/locators/global_locator.dart';
 import '../../../../config/routes/app_routes.dart';
 import '../../../../core/common/widgets/logo/app_logo.dart';
 import '../../../../core/extensions/translation_extension.dart';
+import '../../../../core/services/license_service.dart';
 import '../../../../core/utils/strings_manager.dart';
 
 class SplashPage extends StatefulWidget {
@@ -35,13 +37,25 @@ class _SplashPageState extends State<SplashPage> with SingleTickerProviderStateM
     );
 
     _controller.forward();
-    _navigateToHome();
+    _navigateToNext();
   }
 
-  Future<void> _navigateToHome() async {
-    await Future.delayed(const Duration(milliseconds: 2000));
-    if (mounted) {
+  Future<void> _navigateToNext() async {
+    // Wait minimum splash duration while verifying license
+    final results = await Future.wait([
+      Future.delayed(const Duration(milliseconds: 1500)),
+      sl<LicenseService>().checkLicense(),
+    ]);
+
+    if (!mounted) return;
+
+    final status = results[1] as LicenseStatus;
+    if (status == LicenseStatus.active) {
       context.go(AppRoutes.pos);
+    } else if (status == LicenseStatus.expired) {
+      context.go('${AppRoutes.activation}?expired=true');
+    } else {
+      context.go(AppRoutes.activation);
     }
   }
 

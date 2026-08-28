@@ -1,0 +1,761 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>مولد مفاتيح تفعيل تطبيق بسيط - Baseet License Generator</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --primary: #047857;
+      --primary-hover: #065f46;
+      --primary-light: #ecfdf5;
+      --primary-border: #a7f3d0;
+      --bg: #f8fafc;
+      --surface: #ffffff;
+      --surface-card: #ffffff;
+      --border: #e2e8f0;
+      --border-subtle: #cbd5e1;
+      --text: #0f172a;
+      --text-muted: #64748b;
+      --danger: #dc2626;
+      --danger-light: #fef2f2;
+      --success: #16a34a;
+      --success-light: #f0fdf4;
+      --radius: 12px;
+      --radius-sm: 8px;
+      --shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.05), 0 8px 10px -6px rgba(0, 0, 0, 0.01);
+      --shadow-lg: 0 20px 30px -10px rgba(0, 0, 0, 0.08);
+      --font-arabic: 'IBM Plex Sans Arabic', -apple-system, sans-serif;
+      --font-mono: 'JetBrains Mono', monospace;
+    }
+
+    [data-theme="dark"] {
+      --bg: #0b1120;
+      --surface: #1e293b;
+      --surface-card: #131d2e;
+      --border: #334155;
+      --border-subtle: #475569;
+      --text: #f8fafc;
+      --text-muted: #94a3b8;
+      --primary-light: #064e3b;
+      --primary-border: #047857;
+      --danger-light: #450a0a;
+      --success-light: #052e16;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: var(--font-arabic);
+      background-color: var(--bg);
+      color: var(--text);
+      line-height: 1.5;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 24px 16px;
+      transition: background-color 0.2s ease, color 0.2s ease;
+    }
+
+    .container {
+      width: 100%;
+      max-width: 680px;
+    }
+
+    header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 24px;
+      padding-bottom: 16px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .brand-icon {
+      width: 44px;
+      height: 44px;
+      border-radius: 10px;
+      background: linear-gradient(135deg, #047857, #10b981);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-weight: 800;
+      font-size: 22px;
+      box-shadow: 0 4px 12px rgba(4, 120, 87, 0.3);
+    }
+
+    .brand h1 {
+      font-size: 20px;
+      font-weight: 800;
+      color: var(--primary);
+    }
+
+    .brand p {
+      font-size: 12px;
+      color: var(--text-muted);
+    }
+
+    .header-actions {
+      display: flex;
+      gap: 8px;
+    }
+
+    .icon-btn {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      color: var(--text);
+      padding: 8px 12px;
+      border-radius: var(--radius-sm);
+      cursor: pointer;
+      font-size: 13px;
+      font-weight: 600;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      transition: all 0.15s ease;
+    }
+
+    .icon-btn:hover {
+      background: var(--border);
+    }
+
+    /* Tabs */
+    .tabs {
+      display: flex;
+      gap: 8px;
+      background: var(--surface);
+      padding: 6px;
+      border-radius: var(--radius);
+      border: 1px solid var(--border);
+      margin-bottom: 20px;
+    }
+
+    .tab-btn {
+      flex: 1;
+      padding: 10px;
+      border: none;
+      background: transparent;
+      color: var(--text-muted);
+      font-weight: 700;
+      font-size: 14px;
+      border-radius: var(--radius-sm);
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .tab-btn.active {
+      background: var(--primary);
+      color: white;
+      box-shadow: 0 2px 8px rgba(4, 120, 87, 0.25);
+    }
+
+    /* Cards */
+    .card {
+      background: var(--surface);
+      border-radius: var(--radius);
+      border: 1px solid var(--border);
+      padding: 24px;
+      box-shadow: var(--shadow);
+      margin-bottom: 20px;
+    }
+
+    .form-group {
+      margin-bottom: 18px;
+    }
+
+    label {
+      display: block;
+      font-size: 13px;
+      font-weight: 700;
+      margin-bottom: 6px;
+      color: var(--text);
+    }
+
+    .input-wrapper {
+      position: relative;
+      display: flex;
+    }
+
+    input, select, textarea {
+      width: 100%;
+      padding: 12px 14px;
+      background: var(--surface-card);
+      border: 1.5px solid var(--border);
+      border-radius: var(--radius-sm);
+      font-family: inherit;
+      font-size: 14px;
+      color: var(--text);
+      transition: border-color 0.15s ease, box-shadow 0.15s ease;
+      outline: none;
+    }
+
+    input:focus, select:focus, textarea:focus {
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px rgba(4, 120, 87, 0.15);
+    }
+
+    .input-mono {
+      font-family: var(--font-mono);
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      font-weight: 600;
+    }
+
+    /* Presets */
+    .presets {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+      gap: 8px;
+      margin-top: 8px;
+    }
+
+    .preset-chip {
+      padding: 8px 4px;
+      text-align: center;
+      background: var(--surface-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      cursor: pointer;
+      font-size: 12px;
+      font-weight: 600;
+      transition: all 0.15s ease;
+      user-select: none;
+    }
+
+    .preset-chip:hover {
+      border-color: var(--primary);
+    }
+
+    .preset-chip.active {
+      background: var(--primary-light);
+      border-color: var(--primary);
+      color: var(--primary);
+    }
+
+    /* Buttons */
+    .btn-primary {
+      width: 100%;
+      padding: 14px;
+      background: var(--primary);
+      color: white;
+      border: none;
+      border-radius: var(--radius-sm);
+      font-size: 15px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      box-shadow: 0 4px 12px rgba(4, 120, 87, 0.2);
+    }
+
+    .btn-primary:hover {
+      background: var(--primary-hover);
+      transform: translateY(-1px);
+    }
+
+    .btn-primary:active {
+      transform: translateY(0);
+    }
+
+    .action-row {
+      display: flex;
+      gap: 10px;
+      margin-top: 12px;
+    }
+
+    .btn-secondary {
+      flex: 1;
+      padding: 10px;
+      background: var(--surface-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--text);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      transition: all 0.15s ease;
+    }
+
+    .btn-secondary:hover {
+      background: var(--border);
+    }
+
+    /* Result Box */
+    .result-box {
+      margin-top: 20px;
+      padding: 16px;
+      background: var(--primary-light);
+      border: 1.5px solid var(--primary-border);
+      border-radius: var(--radius);
+      display: none;
+    }
+
+    .result-box.show {
+      display: block;
+      animation: fadeIn 0.3s ease;
+    }
+
+    .key-display {
+      background: var(--surface);
+      border: 1px dashed var(--primary);
+      padding: 14px;
+      border-radius: var(--radius-sm);
+      font-family: var(--font-mono);
+      font-size: 13px;
+      word-break: break-all;
+      color: var(--text);
+      margin: 10px 0;
+      user-select: all;
+    }
+
+    .toast {
+      position: fixed;
+      bottom: 24px;
+      left: 50%;
+      transform: translateX(-50%) translateY(100px);
+      background: #0f172a;
+      color: white;
+      padding: 10px 20px;
+      border-radius: 30px;
+      font-size: 13px;
+      font-weight: 600;
+      box-shadow: 0 10px 20px rgba(0,0,0,0.2);
+      transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      z-index: 1000;
+      pointer-events: none;
+    }
+
+    .toast.show {
+      transform: translateX(-50%) translateY(0);
+    }
+
+    /* Inspector items */
+    .info-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      margin-top: 14px;
+    }
+
+    .info-item {
+      background: var(--surface-card);
+      padding: 12px;
+      border-radius: var(--radius-sm);
+      border: 1px solid var(--border);
+    }
+
+    .info-label {
+      font-size: 11px;
+      color: var(--text-muted);
+      font-weight: 600;
+      margin-bottom: 4px;
+    }
+
+    .info-val {
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--text);
+    }
+
+    .badge {
+      display: inline-block;
+      padding: 4px 10px;
+      border-radius: 20px;
+      font-size: 12px;
+      font-weight: 700;
+    }
+
+    .badge-success {
+      background: var(--success-light);
+      color: var(--success);
+    }
+
+    .badge-danger {
+      background: var(--danger-light);
+      color: var(--danger);
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(-6px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <div class="brand">
+        <div class="brand-icon">ب</div>
+        <div>
+          <h1>بسيط - إدارة وتوليد التراخيص</h1>
+          <p>Baseet License Key Generator & Inspector</p>
+        </div>
+      </div>
+      <div class="header-actions">
+        <button class="icon-btn" onclick="toggleTheme()" id="themeBtn">🌙 المظهر</button>
+        <button class="icon-btn" onclick="toggleLanguage()" id="langBtn">English</button>
+      </div>
+    </header>
+
+    <div class="tabs">
+      <button class="tab-btn active" id="tabGenBtn" onclick="switchTab('generate')">🔑 توليد كود تفعيل جديد</button>
+      <button class="tab-btn" id="tabInspectBtn" onclick="switchTab('inspect')">🔍 فحص والتحقق من كود</button>
+    </div>
+
+    <!-- Generator Section -->
+    <div id="genTab" class="card">
+      <div class="form-group">
+        <label for="deviceIdInput">معرف الجهاز (Device ID)</label>
+        <div class="input-wrapper">
+          <input type="text" id="deviceIdInput" class="input-mono" placeholder="BST-XXXX-XXXX-XXXX" oninput="formatDeviceIdInput(this)">
+        </div>
+        <small style="color: var(--text-muted); font-size: 11px; margin-top: 4px; display: block;">
+          الصق المعرف المستلم من شاشة تفعيل العميل (مثال: BST-A1B2-C3D4-E5F6)
+        </small>
+      </div>
+
+      <div class="form-group">
+        <label>مدة صلاحية الترخيص (Expiration)</label>
+        <div class="presets">
+          <div class="preset-chip" onclick="setPreset(7, this)">7 أيام (تجربة)</div>
+          <div class="preset-chip" onclick="setPreset(30, this)">30 يوم (شهر)</div>
+          <div class="preset-chip" onclick="setPreset(90, this)">3 أشهر</div>
+          <div class="preset-chip" onclick="setPreset(180, this)">6 أشهر</div>
+          <div class="preset-chip active" onclick="setPreset(365, this)">سنة كاملة</div>
+          <div class="preset-chip" onclick="setPreset(3650, this)">مدى الحياة</div>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="customExpiryDate">تاريخ انتهاء مخصص (أو يتم حسابه تلقائياً)</label>
+        <input type="date" id="customExpiryDate">
+      </div>
+
+      <div class="form-group">
+        <label for="clientNameInput">اسم المتجر / العميل (اختياري)</label>
+        <input type="text" id="clientNameInput" placeholder="مثال: سوبرماركت الأمل">
+      </div>
+
+      <div class="form-group">
+        <label for="licenseTypeSelect">نوع الترخيص</label>
+        <select id="licenseTypeSelect">
+          <option value="standard">قياسي (Standard)</option>
+          <option value="pro">احترافي (Pro)</option>
+          <option value="enterprise">مؤسسي (Enterprise)</option>
+          <option value="trial">تجريبي (Trial)</option>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label for="secretKeyInput">مفتاح التشفير السري (Secret Key)</label>
+        <input type="password" id="secretKeyInput" value="baseet_pos_secure_hmac_secret_key_2026_v1_xyz99">
+      </div>
+
+      <button class="btn-primary" onclick="generateKey()">✨ إنشاء كود التفعيل الآن</button>
+
+      <div id="genResult" class="result-box">
+        <div style="display: flex; justify-content: space-between; align-items: center;">
+          <strong style="color: var(--primary);">✅ تم إنشاء كود التفعيل بنجاح:</strong>
+          <span id="genExpiryBadge" class="badge badge-success"></span>
+        </div>
+        <div id="generatedKey" class="key-display"></div>
+        <div class="action-row">
+          <button class="btn-secondary" onclick="copyKey()">📋 نسخ الكود فقط</button>
+          <button class="btn-secondary" onclick="copyWhatsAppMessage()">💬 نسخ رسالة الواتساب للعميل</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Inspector Section -->
+    <div id="inspectTab" class="card" style="display: none;">
+      <div class="form-group">
+        <label for="inspectKeyInput">الصق كود التفعيل للفحص والتحقق</label>
+        <textarea id="inspectKeyInput" rows="3" class="input-mono" placeholder="BST1.eyJ..."></textarea>
+      </div>
+      <button class="btn-primary" onclick="inspectKey()">🔍 فحص وتحليل الكود</button>
+
+      <div id="inspectResult" class="result-box">
+        <div style="display: flex; justify-content: space-between; align-items: center;">
+          <strong id="inspectStatusTitle"></strong>
+          <span id="inspectStatusBadge" class="badge"></span>
+        </div>
+        <div class="info-grid">
+          <div class="info-item">
+            <div class="info-label">معرف الجهاز المستهدف</div>
+            <div class="info-val" id="inspectDevId">-</div>
+          </div>
+          <div class="info-item">
+            <div class="info-label">الأيام المتبقية</div>
+            <div class="info-val" id="inspectDaysLeft">-</div>
+          </div>
+          <div class="info-item">
+            <div class="info-label">تاريخ الانتهاء</div>
+            <div class="info-val" id="inspectExpiresAt">-</div>
+          </div>
+          <div class="info-item">
+            <div class="info-label">تاريخ الإصدار</div>
+            <div class="info-val" id="inspectIssuedAt">-</div>
+          </div>
+          <div class="info-item">
+            <div class="info-label">اسم العميل</div>
+            <div class="info-val" id="inspectClient">-</div>
+          </div>
+          <div class="info-item">
+            <div class="info-label">نوع الترخيص</div>
+            <div class="info-val" id="inspectType">-</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div id="toast" class="toast">تم النسخ إلى الحافظة</div>
+
+  <script>
+    let isArabic = true;
+    let selectedDays = 365;
+
+    // Set initial custom date to 365 days from now
+    function updateDateInput(days) {
+      const targetDate = new Date();
+      targetDate.setDate(targetDate.getDate() + days);
+      const yyyy = targetDate.getFullYear();
+      const mm = String(targetDate.getMonth() + 1).padStart(2, '0');
+      const dd = String(targetDate.getDate()).padStart(2, '0');
+      document.getElementById('customExpiryDate').value = `${yyyy}-${mm}-${dd}`;
+    }
+
+    updateDateInput(365);
+
+    function setPreset(days, elem) {
+      selectedDays = days;
+      document.querySelectorAll('.preset-chip').forEach(c => c.classList.remove('active'));
+      if (elem) elem.classList.add('active');
+      updateDateInput(days);
+    }
+
+    function formatDeviceIdInput(input) {
+      let val = input.value.toUpperCase().replace(/[^A-Z0-9-]/g, '');
+      input.value = val;
+    }
+
+    function switchTab(tab) {
+      if (tab === 'generate') {
+        document.getElementById('genTab').style.display = 'block';
+        document.getElementById('inspectTab').style.display = 'none';
+        document.getElementById('tabGenBtn').classList.add('active');
+        document.getElementById('tabInspectBtn').classList.remove('active');
+      } else {
+        document.getElementById('genTab').style.display = 'none';
+        document.getElementById('inspectTab').style.display = 'block';
+        document.getElementById('tabGenBtn').classList.remove('active');
+        document.getElementById('tabInspectBtn').classList.add('active');
+      }
+    }
+
+    function toggleTheme() {
+      const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+      document.documentElement.setAttribute('data-theme', isDark ? 'light' : 'dark');
+      document.getElementById('themeBtn').textContent = isDark ? '🌙 المظهر' : '☀️ المظهر';
+    }
+
+    function toggleLanguage() {
+      isArabic = !isArabic;
+      document.documentElement.dir = isArabic ? 'rtl' : 'ltr';
+      document.documentElement.lang = isArabic ? 'ar' : 'en';
+      document.getElementById('langBtn').textContent = isArabic ? 'English' : 'العربية';
+    }
+
+    function showToast(msg) {
+      const toast = document.getElementById('toast');
+      toast.textContent = msg;
+      toast.classList.add('show');
+      setTimeout(() => toast.classList.remove('show'), 2500);
+    }
+
+    // SHA-256 HMAC implementation using Web Crypto API
+    async function hmacSha256(keyStr, dataStr) {
+      const encoder = new TextEncoder();
+      const keyData = encoder.encode(keyStr);
+      const messageData = encoder.encode(dataStr);
+
+      const cryptoKey = await crypto.subtle.importKey(
+        'raw',
+        keyData,
+        { name: 'HMAC', hash: 'SHA-256' },
+        false,
+        ['sign']
+      );
+
+      const signatureBuffer = await crypto.subtle.sign('HMAC', cryptoKey, messageData);
+      const signatureArray = Array.from(new Uint8Array(signatureBuffer));
+      return signatureArray.map(b => b.toString(16).padStart(2, '0')).join('');
+    }
+
+    // Base64URL encoding
+    function base64UrlEncode(str) {
+      const bytes = new TextEncoder().encode(str);
+      let binary = '';
+      for (let i = 0; i < bytes.byteLength; i++) {
+        binary += String.fromCharCode(bytes[i]);
+      }
+      return btoa(binary)
+        .replace(/\+/g, '-')
+        .replace(/\//g, '_')
+        .replace(/=+$/, '');
+    }
+
+    function base64UrlDecode(base64url) {
+      let base64 = base64url.replace(/-/g, '+').replace(/_/g, '/');
+      while (base64.length % 4) {
+        base64 += '=';
+      }
+      const binary = atob(base64);
+      const bytes = new Uint8Array(binary.length);
+      for (let i = 0; i < binary.length; i++) {
+        bytes[i] = binary.charCodeAt(i);
+      }
+      return new TextDecoder().decode(bytes);
+    }
+
+    async function generateKey() {
+      const deviceId = document.getElementById('deviceIdInput').value.trim().toUpperCase();
+      if (!deviceId) {
+        alert(isArabic ? 'يرجى إدخال معرف الجهاز أولاً' : 'Please enter Device ID');
+        return;
+      }
+
+      const expiryInput = document.getElementById('customExpiryDate').value;
+      if (!expiryInput) {
+        alert(isArabic ? 'يرجى تحديد تاريخ انتهاء الصلاحية' : 'Please select expiration date');
+        return;
+      }
+
+      const expiryDate = new Date(expiryInput + 'T23:59:59Z');
+      const clientName = document.getElementById('clientNameInput').value.trim();
+      const licenseType = document.getElementById('licenseTypeSelect').value;
+      const secretKey = document.getElementById('secretKeyInput').value;
+
+      const payload = {
+        v: 1,
+        dev: deviceId,
+        exp: expiryDate.toISOString(),
+        type: licenseType,
+        iat: Date.now(),
+        ...(clientName ? { client: clientName } : {})
+      };
+
+      const payloadJson = JSON.stringify(payload);
+      const base64Payload = base64UrlEncode(payloadJson);
+      const signatureHex = await hmacSha256(secretKey, base64Payload);
+
+      const finalKey = `BST1.${base64Payload}.${signatureHex}`;
+
+      document.getElementById('generatedKey').textContent = finalKey;
+      document.getElementById('genExpiryBadge').textContent = isArabic
+        ? `صالح حتى: ${expiryDate.toLocaleDateString('ar-EG')}`
+        : `Valid until: ${expiryDate.toLocaleDateString()}`;
+
+      document.getElementById('genResult').classList.add('show');
+    }
+
+    function copyKey() {
+      const key = document.getElementById('generatedKey').textContent;
+      navigator.clipboard.writeText(key);
+      showToast(isArabic ? 'تم نسخ كود التفعيل بنجاح' : 'Activation key copied');
+    }
+
+    function copyWhatsAppMessage() {
+      const key = document.getElementById('generatedKey').textContent;
+      const deviceId = document.getElementById('deviceIdInput').value.trim().toUpperCase();
+      const expiryInput = document.getElementById('customExpiryDate').value;
+
+      const msg = isArabic
+        ? `مرحباً بك! تم إصدار كود تفعيل تطبيق بسيط لجهازك:\n\n🔑 معرف الجهاز: ${deviceId}\n📅 تاريخ الصلاحية: ${expiryInput}\n\nكود التفعيل (انسخ الكود بالكامل والصقه في خانة التفعيل بالتطبيق):\n${key}\n\nشكراً لاستخدامك تطبيق بسيط!`
+        : `Hello! Here is your Baseet Activation Key:\n\nDevice ID: ${deviceId}\nExpires on: ${expiryInput}\n\nActivation Key:\n${key}`;
+
+      navigator.clipboard.writeText(msg);
+      showToast(isArabic ? 'تم نسخ رسالة الواتساب الجاهزة' : 'WhatsApp message copied');
+    }
+
+    async function inspectKey() {
+      const raw = document.getElementById('inspectKeyInput').value.trim();
+      if (!raw) {
+        alert(isArabic ? 'يرجى لصق كود التفعيل' : 'Please paste activation key');
+        return;
+      }
+
+      const parts = raw.split('.');
+      if (parts.length !== 3 || parts[0] !== 'BST1') {
+        alert(isArabic ? 'صيغة كود التفعيل غير صحيحة' : 'Invalid activation key format');
+        return;
+      }
+
+      try {
+        const base64Payload = parts[1];
+        const receivedSignature = parts[2].toLowerCase();
+        const secretKey = document.getElementById('secretKeyInput').value;
+
+        const expectedSignature = await hmacSha256(secretKey, base64Payload);
+        const isSignatureValid = receivedSignature === expectedSignature;
+
+        const decodedJson = base64UrlDecode(base64Payload);
+        const data = JSON.parse(decodedJson);
+
+        const expDate = new Date(data.exp);
+        const issuedDate = new Date(data.iat);
+        const now = new Date();
+        const isExpired = now > expDate;
+        const diffMs = expDate - now;
+        const daysLeft = Math.max(0, Math.floor(diffMs / (1000 * 60 * 60 * 24)));
+
+        document.getElementById('inspectDevId').textContent = data.dev || '-';
+        document.getElementById('inspectDaysLeft').textContent = `${daysLeft} يوم`;
+        document.getElementById('inspectExpiresAt').textContent = expDate.toLocaleString();
+        document.getElementById('inspectIssuedAt').textContent = issuedDate.toLocaleString();
+        document.getElementById('inspectClient').textContent = data.client || 'غير محدد';
+        document.getElementById('inspectType').textContent = data.type || 'standard';
+
+        const badge = document.getElementById('inspectStatusBadge');
+        const title = document.getElementById('inspectStatusTitle');
+
+        if (!isSignatureValid) {
+          title.textContent = '❌ التوقيع الرقمي غير صالح (كود مزور أو مفتاح خاطئ)';
+          badge.className = 'badge badge-danger';
+          badge.textContent = 'توقيع غير صالح';
+        } else if (isExpired) {
+          title.textContent = '⚠️ الكود منتهي الصلاحية';
+          badge.className = 'badge badge-danger';
+          badge.textContent = 'منتهي';
+        } else {
+          title.textContent = '✅ الكود أصلي وساري الصلاحية';
+          badge.className = 'badge badge-success';
+          badge.textContent = 'ساري ونشط';
+        }
+
+        document.getElementById('inspectResult').classList.add('show');
+      } catch (e) {
+        alert('Error decoding key: ' + e.message);
+      }
+    }
+  </script>
+</body>
+</html>

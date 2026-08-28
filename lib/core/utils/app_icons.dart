@@ -62,4 +62,8 @@ abstract class AppIcons {
   static const dynamic tag = HugeIcons.strokeRoundedTag01;
   static const dynamic box = HugeIcons.strokeRoundedDropbox;
   static const dynamic grid = HugeIcons.strokeRoundedGrid;
+  static const dynamic copy = HugeIcons.strokeRoundedCopy01;
+  static const dynamic key = HugeIcons.strokeRoundedKey01;
+  static const dynamic lock = HugeIcons.strokeRoundedLockPassword;
+  static const dynamic shield = HugeIcons.strokeRoundedShield01;
 }

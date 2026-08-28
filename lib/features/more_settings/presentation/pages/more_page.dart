@@ -25,6 +25,7 @@ import '../../../reports/presentation/blocs/reports/reports_bloc.dart';
 import '../../../reports/presentation/blocs/reports/reports_event.dart';
 import '../widgets/about_app_dialog.dart';
 import '../widgets/help_support_modal.dart';
+import '../widgets/license_info_dialog.dart';
 import '../widgets/more_menu_item.dart';
 import '../widgets/store_profile_card.dart';
 import '../widgets/store_settings_dialog.dart';
@@ -117,6 +118,12 @@ class MorePage extends StatelessWidget {
                   ),
                   const Divider(height: 1),
                   MoreMenuItem(
+                    title: StringsManager.receiptsListTitle.lang,
+                    icon: AppIcons.receipt,
+                    onTap: () => context.push(AppRoutes.receipts),
+                  ),
+                  const Divider(height: 1),
+                  MoreMenuItem(
                     title: StringsManager.suppliersTitle.lang,
                     icon: AppIcons.user,
                     onTap: () => context.push(AppRoutes.suppliers),
@@ -171,6 +178,12 @@ class MorePage extends StatelessWidget {
                     title: StringsManager.moreHelp.lang,
                     icon: AppIcons.info,
                     onTap: () => HelpSupportModal.show(context),
+                  ),
+                  const Divider(height: 1),
+                  MoreMenuItem(
+                    title: StringsManager.moreLicense.lang,
+                    icon: AppIcons.shield,
+                    onTap: () => LicenseInfoDialog.show(context),
                   ),
                   const Divider(height: 1),
                   MoreMenuItem(

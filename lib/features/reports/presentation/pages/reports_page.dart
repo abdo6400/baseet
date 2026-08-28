@@ -79,7 +79,7 @@ class _ReportsPageState extends State<ReportsPage> {
                     style: pw.TextStyle(
                         fontSize: 15, fontWeight: pw.FontWeight.bold)),
                 pw.SizedBox(height: 8),
-                pw.TableHelper.fromTextArray(
+                AppPdfHelper.fromRtlTextArray(
                   headers: [
                     StringsManager.addProductName.lang,
                     StringsManager.pdfSoldQuantity.lang,

@@ -111,7 +111,7 @@ class SupplierLocalDataSourceImpl implements SupplierLocalDataSource {
         conflictAlgorithm: ConflictAlgorithm.replace,
       );
 
-      // 2. Insert items
+      // 2. Insert items and update stock for matching products
       for (int i = 0; i < invoice.items.length; i++) {
         final item = invoice.items[i];
         final itemModel = SupplierInvoiceItemModel.fromEntity(item);
@@ -120,6 +120,13 @@ class SupplierLocalDataSourceImpl implements SupplierLocalDataSource {
           itemModel.toMap(invoice.id, i),
           conflictAlgorithm: ConflictAlgorithm.replace,
         );
+
+        // Increase product stock for matching inventory items
+        await txn.rawUpdate('''
+          UPDATE products
+          SET stockQuantity = stockQuantity + ?
+          WHERE name = ? OR barcode = ?
+        ''', [item.quantity, item.productName, item.productName]);
       }
 
       // 3. Update supplier's debt balance and last transaction date
