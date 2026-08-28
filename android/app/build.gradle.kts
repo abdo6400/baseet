@@ -9,7 +9,7 @@ plugins {
 
 android {
     namespace = "com.ama.baseet"
-    compileSdk = 37
+    compileSdk = 36
     ndkVersion = flutter.ndkVersion
 
     compileOptions {
