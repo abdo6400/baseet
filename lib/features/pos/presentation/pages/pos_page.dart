@@ -9,6 +9,8 @@ import '../../../../core/common/widgets/form/app_search_field.dart';
 import '../../../../core/common/widgets/icon/app_icon.dart';
 import '../../../../core/common/widgets/scanner/barcode_scanner_modal.dart';
 import '../../../../core/common/widgets/showcase/app_showcase.dart';
+import '../../../../core/extensions/responsive_extension.dart';
+import '../../../../core/extensions/responsive_text_extension.dart';
 import '../../../../core/extensions/translation_extension.dart';
 import '../../../../core/services/settings_service.dart';
 import '../../../../core/theme/tokens/app_tokens.dart';
@@ -50,6 +52,7 @@ class _PosPageState extends State<PosPage> {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       final settings = sl<SettingsService>();
       if (!settings.hasSeenShowcase && mounted) {
+        settings.setHasSeenShowcase(true);
         ShowcaseView.get().startShowCase([
           _keyScanner,
           _keyReceipts,
@@ -117,9 +120,9 @@ class _PosPageState extends State<PosPage> {
         ),
         title: Text(
           StringsManager.appName.lang,
-          style: TextStyle(
-            fontSize: 22,
-            fontWeight: FontWeight.w800,
+          style: context.label(
+            22,
+            weight: FontWeight.w800,
             color: theme.colorScheme.primary,
           ),
         ),
@@ -224,10 +227,12 @@ class _PosPageState extends State<PosPage> {
                       SliverPadding(
                         padding: const EdgeInsets.fromLTRB(16, 0, 16, 100),
                         sliver: SliverGrid(
-                          gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                            crossAxisCount: 2,
-                            crossAxisSpacing: 12,
-                            mainAxisSpacing: 12,
+                          gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                            crossAxisCount: context.isDesktop
+                                ? 4
+                                : (context.isTablet ? 3 : 2),
+                            crossAxisSpacing: context.safeDp(12),
+                            mainAxisSpacing: context.safeDp(12),
                             childAspectRatio: 0.72,
                           ),
                           delegate: SliverChildBuilderDelegate(
@@ -261,8 +266,8 @@ class _PosPageState extends State<PosPage> {
 
           // Floating Cart Bar
           Positioned(
-            left: 20,
-            right: 20,
+            left: context.isTablet ? (context.screenWidth - 520) / 2 : 20,
+            right: context.isTablet ? (context.screenWidth - 520) / 2 : 20,
             bottom: 20,
             child: BlocBuilder<CartBloc, CartState>(
               builder: (context, cartState) {

@@ -10,6 +10,8 @@ import '../../../../core/common/widgets/feedback/empty_state_widget.dart';
 import '../../../../core/common/widgets/icon/app_icon.dart';
 import '../../../../core/common/widgets/layout/page_header.dart';
 import '../../../../core/enums/enums.dart';
+import '../../../../core/extensions/responsive_extension.dart';
+import '../../../../core/extensions/responsive_text_extension.dart';
 import '../../../../core/extensions/spacing_extension.dart';
 import '../../../../core/extensions/translation_extension.dart';
 import '../../../../core/utils/app_icons.dart';
@@ -174,7 +176,7 @@ class _CustomerStatementPageState extends State<CustomerStatementPage> {
           final customer = state.customer!;
 
           return SingleChildScrollView(
-            padding: const EdgeInsets.all(16),
+            padding: EdgeInsets.all(context.safeDp(16)),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -193,7 +195,7 @@ class _CustomerStatementPageState extends State<CustomerStatementPage> {
                 // Transactions History Section Header
                 Text(
                   StringsManager.customerTransactionsHistory.lang,
-                  style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w800),
+                  style: context.label(16, weight: FontWeight.w800),
                 ),
                 12.vSpace,
 

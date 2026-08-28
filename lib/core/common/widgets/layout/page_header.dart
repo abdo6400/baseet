@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:baseet/core/extensions/responsive_extension.dart';
+import 'package:baseet/core/extensions/responsive_text_extension.dart';
 import 'package:baseet/core/utils/app_icons.dart';
 import '../icon/app_icon.dart';
 
@@ -34,7 +36,7 @@ class PageHeader extends StatelessWidget implements PreferredSizeWidget {
       leading: leading ??
           (showBackButton
               ? IconButton(
-                  icon: AppIcon(AppIcons.arrowBack, size: 20),
+                  icon: AppIcon(AppIcons.arrowBack, size: context.safeDp(20)),
                   onPressed: onBack ?? () => Navigator.of(context).maybePop(),
                 )
               : null),
@@ -44,9 +46,9 @@ class PageHeader extends StatelessWidget implements PreferredSizeWidget {
         children: [
           Text(
             title,
-            style: TextStyle(
-              fontSize: 18,
-              fontWeight: FontWeight.w700,
+            style: context.label(
+              18,
+              weight: FontWeight.w700,
               color: theme.colorScheme.onSurface,
             ),
           ),
@@ -54,8 +56,8 @@ class PageHeader extends StatelessWidget implements PreferredSizeWidget {
             const SizedBox(height: 2),
             Text(
               subtitle!,
-              style: TextStyle(
-                fontSize: 12,
+              style: context.label(
+                12,
                 color: theme.colorScheme.onSurfaceVariant,
               ),
             ),

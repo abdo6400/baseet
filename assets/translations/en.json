@@ -419,6 +419,8 @@
   "activation_renew_btn": "Renew / Enter New Key",
   "more_license": "License & Activation",
   "more_license_subtitle": "License details, validity date and device ID",
-  "activation_instructions": "1. Tap 'Copy Device ID'.\n2. Send the ID to administrator to get your key.\n3. Paste the activation key and tap 'Activate'."
+  "activation_instructions": "1. Tap 'Copy Device ID'.\n2. Send the ID to administrator to get your key.\n3. Paste the activation key and tap 'Activate'.",
+  "activation_seed_dummy_data": "Include sample demo data (products, customers, suppliers)",
+  "activation_seed_dummy_data_desc": "Allows you to explore and test the system immediately with ready sample data"
 }
 

@@ -5,6 +5,7 @@ import '../../core/services/device_id_service.dart';
 import '../../core/services/license_service.dart';
 import '../../core/services/settings_service.dart';
 import '../../core/theme/theme_bloc/theme_bloc.dart';
+import '../../features/activation/presentation/cubit/activation_cubit.dart';
 import '../routes/route_config.dart';
 
 final GetIt sl = GetIt.instance;
@@ -26,6 +27,15 @@ Future<void> initGlobalLocator(GetIt sl) async {
 
   // License Service
   sl.registerLazySingleton<LicenseService>(() => LicenseService(sl(), sl()));
+
+  // Activation Cubit
+  sl.registerFactory<ActivationCubit>(
+    () => ActivationCubit(
+      deviceIdService: sl(),
+      licenseService: sl(),
+      appDatabase: sl(),
+    ),
+  );
 
   // Router
   sl.registerLazySingleton<AppRouter>(() => AppRouter());

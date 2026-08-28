@@ -5,6 +5,8 @@ import 'package:printing/printing.dart';
 import '../../../../core/common/widgets/icon/app_icon.dart';
 import '../../../../core/enums/enums.dart';
 import '../../../../core/extensions/dialog_extension.dart';
+import '../../../../core/extensions/responsive_extension.dart';
+import '../../../../core/extensions/responsive_text_extension.dart';
 import '../../../../core/extensions/spacing_extension.dart';
 import '../../../../core/extensions/translation_extension.dart';
 import '../../../../core/theme/tokens/app_tokens.dart';
@@ -145,8 +147,8 @@ class ReceiptCard extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Container(
-                  width: 44,
-                  height: 44,
+                  width: context.safeDp(44),
+                  height: context.safeDp(44),
                   decoration: BoxDecoration(
                     color: paymentColor.withValues(alpha: 0.12),
                     borderRadius: BorderRadius.circular(AppRadius.md),
@@ -155,7 +157,7 @@ class ReceiptCard extends StatelessWidget {
                     child: AppIcon(
                       AppIcons.receipt,
                       color: paymentColor,
-                      size: 22,
+                      size: context.safeDp(22),
                     ),
                   ),
                 ),
@@ -169,16 +171,16 @@ class ReceiptCard extends StatelessWidget {
                         children: [
                           Text(
                             '#${order.invoiceNumber}',
-                            style: const TextStyle(
-                              fontSize: 15,
-                              fontWeight: FontWeight.w800,
+                            style: context.label(
+                              15,
+                              weight: FontWeight.w800,
                             ),
                           ),
                           Text(
                             '${order.totalAmount.toStringAsFixed(0)} ${StringsManager.posCurrency.lang}',
-                            style: TextStyle(
-                              fontSize: 16,
-                              fontWeight: FontWeight.w900,
+                            style: context.label(
+                              16,
+                              weight: FontWeight.w900,
                               color: theme.colorScheme.primary,
                             ),
                           ),
@@ -190,16 +192,16 @@ class ReceiptCard extends StatelessWidget {
                         children: [
                           Text(
                             customer,
-                            style: TextStyle(
-                              fontSize: 12,
-                              fontWeight: FontWeight.w600,
+                            style: context.label(
+                              12,
+                              weight: FontWeight.w600,
                               color: theme.colorScheme.onSurface,
                             ),
                           ),
                           Text(
                             '${order.createdAt.hour}:${order.createdAt.minute.toString().padLeft(2, '0')} - ${order.createdAt.day}/${order.createdAt.month}/${order.createdAt.year}',
-                            style: TextStyle(
-                              fontSize: 11,
+                            style: context.label(
+                              11,
                               color: theme.colorScheme.onSurfaceVariant,
                             ),
                           ),
