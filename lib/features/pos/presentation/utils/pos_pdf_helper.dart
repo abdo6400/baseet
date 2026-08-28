@@ -1,6 +1,7 @@
 import 'dart:typed_data';
 import 'package:pdf/pdf.dart';
 import 'package:pdf/widgets.dart' as pw;
+import 'package:printing/printing.dart';
 import '../../../../core/extensions/translation_extension.dart';
 import '../../../../core/theme/tokens/app_tokens.dart';
 import '../../../../core/utils/app_pdf_helper.dart';
@@ -50,9 +51,14 @@ class PosPdfHelper {
                 pw.SizedBox(height: AppSpacing.xs + 2),
                 pw.Divider(),
 
-                // Items table
-                pw.TableHelper.fromTextArray(
-                  headers: [StringsManager.addProductName.lang, StringsManager.inventoryStockQuantityLabel.lang, StringsManager.inventorySellPrice.lang, StringsManager.posTotal.lang],
+                // Items table (RTL column layout for Arabic)
+                AppPdfHelper.fromRtlTextArray(
+                  headers: [
+                    StringsManager.addProductName.lang,
+                    StringsManager.inventoryStockQuantityLabel.lang,
+                    StringsManager.inventorySellPrice.lang,
+                    StringsManager.posTotal.lang,
+                  ],
                   headerStyle: pw.TextStyle(fontSize: 9, fontWeight: pw.FontWeight.bold),
                   cellStyle: const pw.TextStyle(fontSize: 8),
                   data: items.map((item) {
@@ -161,14 +167,21 @@ class PosPdfHelper {
                 ),
                 pw.SizedBox(height: AppSpacing.md),
 
-                // Sold Items Table
+                // Sold Items Table (RTL column layout for Arabic)
                 pw.Align(
                   alignment: pw.Alignment.centerRight,
                   child: pw.Text(StringsManager.receiptSoldItems.lang, style: pw.TextStyle(fontSize: 13, fontWeight: pw.FontWeight.bold)),
                 ),
                 pw.SizedBox(height: AppSpacing.sm),
-                pw.TableHelper.fromTextArray(
-                  headers: ['#', StringsManager.addProductName.lang, StringsManager.addProductBarcode.lang, StringsManager.inventorySellPrice.lang, StringsManager.inventoryStockQuantityLabel.lang, StringsManager.posTotal.lang],
+                AppPdfHelper.fromRtlTextArray(
+                  headers: [
+                    '#',
+                    StringsManager.addProductName.lang,
+                    StringsManager.addProductBarcode.lang,
+                    StringsManager.inventorySellPrice.lang,
+                    StringsManager.inventoryStockQuantityLabel.lang,
+                    StringsManager.posTotal.lang,
+                  ],
                   headerDecoration: const pw.BoxDecoration(color: PdfColors.grey200),
                   headerStyle: pw.TextStyle(fontSize: 10, fontWeight: pw.FontWeight.bold),
                   cellStyle: const pw.TextStyle(fontSize: 9),
@@ -194,7 +207,7 @@ class PosPdfHelper {
                 pw.Row(
                   mainAxisAlignment: pw.MainAxisAlignment.end,
                   children: [
-                    pw.Container(
+                    pw.SizedBox(
                       width: 250,
                       child: pw.Column(
                         children: [
@@ -246,5 +259,32 @@ class PosPdfHelper {
 
     return doc.save();
   }
-}
 
+  /// Share Receipt PDF
+  static Future<void> shareReceiptPdf({
+    required String orderId,
+    required List<CartItemEntity> items,
+    required double totalPrice,
+    required double paidAmount,
+    required double changeAmount,
+    required String customerName,
+    required String paymentMethod,
+    required DateTime timestamp,
+  }) async {
+    final pdfBytes = await generateTaxInvoicePdf(
+      orderId: orderId,
+      items: items,
+      totalPrice: totalPrice,
+      paidAmount: paidAmount,
+      changeAmount: changeAmount,
+      customerName: customerName,
+      paymentMethod: paymentMethod,
+      timestamp: timestamp,
+    );
+
+    await Printing.sharePdf(
+      bytes: pdfBytes,
+      filename: 'invoice_$orderId.pdf',
+    );
+  }
+}

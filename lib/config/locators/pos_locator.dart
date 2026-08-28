@@ -9,6 +9,7 @@ import '../../features/pos/domain/usecases/process_checkout_usecase.dart';
 import '../../features/pos/presentation/blocs/cart/cart_bloc.dart';
 import '../../features/pos/presentation/blocs/catalog/pos_catalog_bloc.dart';
 import '../../features/pos/presentation/blocs/checkout/checkout_bloc.dart';
+import '../../features/pos/presentation/blocs/receipts/pos_receipts_bloc.dart';
 
 void initPosLocator(GetIt sl) {
   // Datasource
@@ -30,4 +31,5 @@ void initPosLocator(GetIt sl) {
       ));
   sl.registerLazySingleton(() => CartBloc());
   sl.registerFactory(() => CheckoutBloc(processCheckoutUseCase: sl()));
+  sl.registerFactory(() => PosReceiptsBloc(repository: sl()));
 }

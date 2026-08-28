@@ -1,6 +1,7 @@
 import 'package:go_router/go_router.dart';
 import '../../core/common/widgets/layout/main_layout_page.dart';
 import '../../core/utils/constants_manager.dart';
+import '../../features/activation/presentation/pages/activation_page.dart';
 import '../../features/debt_ledger/presentation/pages/add_customer_page.dart';
 import '../../features/debt_ledger/presentation/pages/customer_statement_page.dart';
 import '../../features/debt_ledger/presentation/pages/debt_ledger_page.dart';
@@ -12,6 +13,7 @@ import '../../features/more_settings/presentation/pages/more_page.dart';
 import '../../features/more_settings/presentation/pages/printer_settings_page.dart';
 import '../../features/pos/presentation/pages/checkout_page.dart';
 import '../../features/pos/presentation/pages/pos_page.dart';
+import '../../features/pos/presentation/pages/receipts_page.dart';
 import '../../features/reports/presentation/pages/reports_page.dart';
 import '../../features/splash/presentation/pages/splash_page.dart';
 import '../../features/suppliers/presentation/pages/add_supplier_page.dart';
@@ -28,8 +30,21 @@ class AppRouter {
         parentNavigatorKey: ConstantsManager.rootNavigatorKey,
         builder: (context, state) => const SplashPage(),
       ),
+      GoRoute(
+        path: AppRoutes.activation,
+        parentNavigatorKey: ConstantsManager.rootNavigatorKey,
+        builder: (context, state) {
+          final isExpired = state.uri.queryParameters['expired'] == 'true';
+          return ActivationPage(isExpired: isExpired);
+        },
+      ),
 
-      // Direct Supplier Routes
+      // Direct Routes
+      GoRoute(
+        path: AppRoutes.receipts,
+        parentNavigatorKey: ConstantsManager.rootNavigatorKey,
+        builder: (context, state) => const ReceiptsPage(),
+      ),
       GoRoute(
         path: AppRoutes.suppliers,
         parentNavigatorKey: ConstantsManager.rootNavigatorKey,

@@ -23,6 +23,7 @@ class MainLayoutPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // ignore: deprecated_member_use
     return ShowCaseWidget(
       onFinish: () {
         sl<SettingsService>().setHasSeenShowcase(true);

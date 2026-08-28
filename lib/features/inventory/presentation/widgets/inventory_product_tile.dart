@@ -36,9 +36,14 @@ class InventoryProductTile extends StatelessWidget {
               borderRadius: BorderRadius.circular(AppRadius.md),
             ),
             clipBehavior: Clip.antiAlias,
-            child: product.imageUrl != null
+            child: (product.imageUrl != null &&
+                    product.imageUrl!.trim().isNotEmpty &&
+                    (product.imageUrl!.startsWith('http://') ||
+                        product.imageUrl!.startsWith('https://') ||
+                        product.imageUrl!.startsWith('assets/') ||
+                        product.imageUrl!.startsWith('/')))
                 ? Image.network(
-                    product.imageUrl!,
+                    product.imageUrl!.trim(),
                     fit: BoxFit.cover,
                     errorBuilder: (_, __, ___) => AppIcon(AppIcons.inventory,
                         color: theme.colorScheme.onSurfaceVariant),

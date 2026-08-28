@@ -89,7 +89,7 @@ class _CustomerStatementPageState extends State<CustomerStatementPage> {
                 ),
                 pw.SizedBox(height: 12),
                 pw.Divider(),
-                pw.TableHelper.fromTextArray(
+                AppPdfHelper.fromRtlTextArray(
                   headers: [
                     StringsManager.pdfDate.lang,
                     StringsManager.pdfTransactionType.lang,

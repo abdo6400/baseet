@@ -21,6 +21,7 @@ import 'features/inventory/presentation/blocs/inventory_list/inventory_list_bloc
 import 'features/pos/presentation/blocs/cart/cart_bloc.dart';
 import 'features/pos/presentation/blocs/catalog/pos_catalog_bloc.dart';
 import 'features/pos/presentation/blocs/checkout/checkout_bloc.dart';
+import 'features/pos/presentation/blocs/receipts/pos_receipts_bloc.dart';
 import 'features/reports/presentation/blocs/reports/reports_bloc.dart';
 
 class BaseetApp extends StatelessWidget {
@@ -34,6 +35,7 @@ class BaseetApp extends StatelessWidget {
         BlocProvider<CartBloc>(create: (_) => sl<CartBloc>()),
         BlocProvider<PosCatalogBloc>(create: (_) => sl<PosCatalogBloc>()),
         BlocProvider<CheckoutBloc>(create: (_) => sl<CheckoutBloc>()),
+        BlocProvider<PosReceiptsBloc>(create: (_) => sl<PosReceiptsBloc>()),
         BlocProvider<CustomersListBloc>(create: (_) => sl<CustomersListBloc>()),
         BlocProvider<CustomerStatementBloc>(create: (_) => sl<CustomerStatementBloc>()),
         BlocProvider<AddCustomerBloc>(create: (_) => sl<AddCustomerBloc>()),
