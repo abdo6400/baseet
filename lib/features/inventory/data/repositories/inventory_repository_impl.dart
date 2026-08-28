@@ -41,6 +41,11 @@ class InventoryRepositoryImpl implements InventoryRepository {
   }
 
   @override
+  Future<Either<Failure, void>> deleteCategory(String id) {
+    return Failure.handleCall(() => localDataSource.deleteCategory(id));
+  }
+
+  @override
   Future<Either<Failure, Map<String, dynamic>>> getInventoryStats() {
     return Failure.handleCall(() => localDataSource.getInventoryStats());
   }

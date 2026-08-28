@@ -1,12 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+import 'package:showcaseview/showcaseview.dart';
+import '../../../../config/locators/global_locator.dart';
 import '../../../../config/routes/app_routes.dart';
 import '../../../../core/common/widgets/feedback/empty_state_widget.dart';
 import '../../../../core/common/widgets/form/app_search_field.dart';
 import '../../../../core/common/widgets/icon/app_icon.dart';
 import '../../../../core/common/widgets/scanner/barcode_scanner_modal.dart';
 import '../../../../core/extensions/translation_extension.dart';
+import '../../../../core/services/settings_service.dart';
 import '../../../../core/theme/tokens/app_tokens.dart';
 import '../../../../core/utils/app_icons.dart';
 import '../../../../core/utils/strings_manager.dart';
@@ -31,10 +34,29 @@ class PosPage extends StatefulWidget {
 class _PosPageState extends State<PosPage> {
   final TextEditingController _searchController = TextEditingController();
 
+  final GlobalKey _keyScanner = GlobalKey();
+  final GlobalKey _keySalesCard = GlobalKey();
+  final GlobalKey _keySearch = GlobalKey();
+  final GlobalKey _keyCategories = GlobalKey();
+  final GlobalKey _keyCartBar = GlobalKey();
+
   @override
   void initState() {
     super.initState();
     context.read<PosCatalogBloc>().add(const LoadPosCatalogEvent());
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      final settings = sl<SettingsService>();
+      if (!settings.hasSeenShowcase && mounted) {
+        ShowCaseWidget.of(context).startShowCase([
+          _keyScanner,
+          _keySalesCard,
+          _keySearch,
+          _keyCategories,
+          _keyCartBar,
+        ]);
+      }
+    });
   }
 
   @override
@@ -81,9 +103,14 @@ class _PosPageState extends State<PosPage> {
         backgroundColor: theme.colorScheme.surface,
         elevation: 0,
         scrolledUnderElevation: 0.5,
-        leading: IconButton(
-          icon: AppIcon(AppIcons.barcode, color: theme.colorScheme.primary),
-          onPressed: _startBarcodeScanning,
+        leading: Showcase(
+          key: _keyScanner,
+          title: StringsManager.showcaseScannerTitle.lang,
+          description: StringsManager.showcaseScannerDesc.lang,
+          child: IconButton(
+            icon: AppIcon(AppIcons.barcode, color: theme.colorScheme.primary),
+            onPressed: _startBarcodeScanning,
+          ),
         ),
         title: Text(
           StringsManager.appName.lang,
@@ -144,28 +171,43 @@ class _PosPageState extends State<PosPage> {
                         child: Column(
                           children: [
                             // Daily Sales Card
-                            PosHeaderSalesCard(todaySales: state.todaySales),
+                            Showcase(
+                              key: _keySalesCard,
+                              title: StringsManager.showcaseSalesCardTitle.lang,
+                              description: StringsManager.showcaseSalesCardDesc.lang,
+                              child: PosHeaderSalesCard(todaySales: state.todaySales),
+                            ),
                             const SizedBox(height: 14),
 
                             // Search Field
-                            AppSearchField(
-                              controller: _searchController,
-                              hint: StringsManager.posSearchProduct.lang,
-                              onBarcodeTap: _startBarcodeScanning,
-                              onChanged: (q) {
-                                context.read<PosCatalogBloc>().add(SearchCatalogEvent(q));
-                              },
+                            Showcase(
+                              key: _keySearch,
+                              title: StringsManager.showcaseSearchTitle.lang,
+                              description: StringsManager.showcaseSearchDesc.lang,
+                              child: AppSearchField(
+                                controller: _searchController,
+                                hint: StringsManager.posSearchProduct.lang,
+                                onBarcodeTap: _startBarcodeScanning,
+                                onChanged: (q) {
+                                  context.read<PosCatalogBloc>().add(SearchCatalogEvent(q));
+                                },
+                              ),
                             ),
                             const SizedBox(height: 14),
 
                             // Category Filters
                             if (state.categories.isNotEmpty)
-                              PosCategoryFilterRow(
-                                categories: state.categories,
-                                selectedCategoryId: state.selectedCategoryId,
-                                onSelect: (catId) {
-                                  context.read<PosCatalogBloc>().add(SelectCategoryEvent(catId));
-                                },
+                              Showcase(
+                                key: _keyCategories,
+                                title: StringsManager.showcaseCategoriesTitle.lang,
+                                description: StringsManager.showcaseCategoriesDesc.lang,
+                                child: PosCategoryFilterRow(
+                                  categories: state.categories,
+                                  selectedCategoryId: state.selectedCategoryId,
+                                  onSelect: (catId) {
+                                    context.read<PosCatalogBloc>().add(SelectCategoryEvent(catId));
+                                  },
+                                ),
                               ),
                           ],
                         ),
@@ -230,12 +272,17 @@ class _PosPageState extends State<PosPage> {
             bottom: 20,
             child: BlocBuilder<CartBloc, CartState>(
               builder: (context, cartState) {
-                return PosFloatingCartBar(
-                  itemCount: cartState.totalItemCount,
-                  totalPrice: cartState.totalPrice,
-                  onCheckout: () {
-                    context.push(AppRoutes.checkout);
-                  },
+                return Showcase(
+                  key: _keyCartBar,
+                  title: StringsManager.showcaseCartBarTitle.lang,
+                  description: StringsManager.showcaseCartBarDesc.lang,
+                  child: PosFloatingCartBar(
+                    itemCount: cartState.totalItemCount,
+                    totalPrice: cartState.totalPrice,
+                    onCheckout: () {
+                      context.push(AppRoutes.checkout);
+                    },
+                  ),
                 );
               },
             ),

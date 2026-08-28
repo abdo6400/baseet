@@ -25,7 +25,7 @@ class CustomersListBloc extends Bloc<CustomersListEvent, CustomersListState> {
 
     final statsResult = await getDebtStatsUseCase();
     final stats = statsResult.fold(
-      (l) => {'total': 45200.0, 'overdue': 12500.0, 'todayCollections': 3400.0},
+      (l) => {'total': 0.0, 'overdue': 0.0, 'todayCollections': 0.0},
       (r) => r,
     );
 
@@ -43,9 +43,9 @@ class CustomersListBloc extends Bloc<CustomersListEvent, CustomersListState> {
       (customers) => emit(state.copyWith(
         status: CustomersListStatus.loaded,
         customers: customers,
-        totalDebt: stats['total'] ?? 45200.0,
-        overdueDebt: stats['overdue'] ?? 12500.0,
-        todayCollections: stats['todayCollections'] ?? 3400.0,
+        totalDebt: stats['total'] ?? 0.0,
+        overdueDebt: stats['overdue'] ?? 0.0,
+        todayCollections: stats['todayCollections'] ?? 0.0,
       )),
     );
   }
