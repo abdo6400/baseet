@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
-import 'package:go_router/go_router.dart';
-import '../../../../config/database/local/mock_data.dart';
 import '../../../../core/common/widgets/button/app_button.dart';
 import '../../../../core/common/widgets/form/app_form.dart';
 import '../../../../core/common/widgets/form/app_form_text_field.dart';
@@ -18,12 +16,15 @@ import '../../../../core/utils/app_form_validators.dart';
 import '../../../../core/utils/app_icons.dart';
 import '../../../../core/utils/strings_manager.dart';
 import '../../../../core/utils/uuid_generator.dart';
+import '../../../pos/presentation/blocs/catalog/pos_catalog_bloc.dart';
+import '../../../pos/presentation/blocs/catalog/pos_catalog_event.dart';
 import '../../domain/entities/category_entity.dart';
 import '../blocs/add_category/add_category_bloc.dart';
 import '../blocs/add_category/add_category_event.dart';
 import '../blocs/add_category/add_category_state.dart';
 import '../blocs/inventory_list/inventory_list_bloc.dart';
 import '../blocs/inventory_list/inventory_list_event.dart';
+import '../blocs/inventory_list/inventory_list_state.dart';
 
 class AddCategoryPage extends StatefulWidget {
   const AddCategoryPage({super.key});
@@ -47,6 +48,12 @@ class _AddCategoryPageState extends State<AddCategoryPage> {
     Color(0xFF64748B), // Slate
   ];
   int _selectedColorIndex = 0;
+
+  @override
+  void initState() {
+    super.initState();
+    context.read<InventoryListBloc>().add(const LoadInventoryEvent());
+  }
 
   void _onSave() {
     if (_formKey.currentState?.saveAndValidate() ?? false) {
@@ -84,21 +91,13 @@ class _AddCategoryPageState extends State<AddCategoryPage> {
     );
 
     if (confirmed == true && mounted) {
-      setState(() {
-        BaseetMockData.initialCategories.removeWhere((c) => c.id == category.id);
-      });
-      context.showStateHandler(
-        isLoading: false,
-        isSuccess: true,
-        successMessage: StringsManager.commonSuccess.lang,
-      );
+      context.read<AddCategoryBloc>().add(DeleteCategoryEvent(category.id));
     }
   }
 
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final categories = BaseetMockData.initialCategories;
 
     return BlocConsumer<AddCategoryBloc, AddCategoryState>(
       listener: (context, state) {
@@ -112,8 +111,8 @@ class _AddCategoryPageState extends State<AddCategoryPage> {
               : StringsManager.addCategorySuccess.lang,
           onSuccess: () {
             context.read<InventoryListBloc>().add(const LoadInventoryEvent());
+            context.read<PosCatalogBloc>().add(const LoadPosCatalogEvent());
             _clearEditing();
-            context.pop();
           },
         );
       },
@@ -224,82 +223,84 @@ class _AddCategoryPageState extends State<AddCategoryPage> {
               ),
               24.vSpace,
 
-              // Existing Categories List
-              Text(
-                '${StringsManager.categoryExistingList.lang} (${categories.length})',
-                style: TextStyle(
-                  fontSize: 16,
-                  fontWeight: FontWeight.w700,
-                  color: theme.colorScheme.onSurface,
-                ),
-              ),
-              12.vSpace,
-
-              ListView.separated(
-                shrinkWrap: true,
-                physics: const NeverScrollableScrollPhysics(),
-                itemCount: categories.length,
-                separatorBuilder: (_, __) => 8.vSpace,
-                itemBuilder: (context, index) {
-                  final cat = categories[index];
-                  final isAllCategory = cat.id == 'cat_0';
-                  final isCurrentlyEditing = _editingCategory?.id == cat.id;
-
-                  return Container(
-                    decoration: BoxDecoration(
-                      color: isCurrentlyEditing
-                          ? theme.colorScheme.primary.withValues(alpha: 0.08)
-                          : theme.colorScheme.surfaceContainerLowest,
-                      borderRadius: BorderRadius.circular(AppRadius.md),
-                      border: Border.all(
-                        color: isCurrentlyEditing
-                            ? theme.colorScheme.primary
-                            : theme.colorScheme.outlineVariant,
-                      ),
-                    ),
-                    child: ListTile(
-                      leading: Container(
-                        width: 36,
-                        height: 36,
-                        decoration: BoxDecoration(
-                          color: isAllCategory
-                              ? theme.colorScheme.primaryContainer
-                              : _categoryColors[index % _categoryColors.length].withValues(alpha: 0.15),
-                          shape: BoxShape.circle,
-                        ),
-                        child: Center(
-                          child: Icon(
-                            isAllCategory ? Icons.dashboard_rounded : Icons.category_rounded,
-                            color: isAllCategory
-                                ? theme.colorScheme.primary
-                                : _categoryColors[index % _categoryColors.length],
-                            size: 18,
-                          ),
-                        ),
-                      ),
-                      title: Text(
-                        cat.name,
+              // Existing Categories List from SQLite
+              BlocBuilder<InventoryListBloc, InventoryListState>(
+                builder: (context, invState) {
+                  final categories = invState.categories.where((c) => c.id != 'cat_0').toList();
+                  return Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        '${StringsManager.categoryExistingList.lang} (${categories.length})',
                         style: TextStyle(
-                          fontWeight: FontWeight.w600,
-                          color: isCurrentlyEditing ? theme.colorScheme.primary : theme.colorScheme.onSurface,
+                          fontSize: 16,
+                          fontWeight: FontWeight.w700,
+                          color: theme.colorScheme.onSurface,
                         ),
                       ),
-                      trailing: isAllCategory
-                          ? null
-                          : Row(
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                IconButton(
-                                  icon: AppIcon(AppIcons.edit, size: 18, color: theme.colorScheme.primary),
-                                  onPressed: () => _startEditing(cat),
-                                ),
-                                IconButton(
-                                  icon: AppIcon(AppIcons.delete, size: 18, color: theme.colorScheme.error),
-                                  onPressed: () => _confirmDelete(cat),
-                                ),
-                              ],
+                      12.vSpace,
+                      ListView.separated(
+                        shrinkWrap: true,
+                        physics: const NeverScrollableScrollPhysics(),
+                        itemCount: categories.length,
+                        separatorBuilder: (_, __) => 8.vSpace,
+                        itemBuilder: (context, index) {
+                          final cat = categories[index];
+                          final isCurrentlyEditing = _editingCategory?.id == cat.id;
+
+                          return Container(
+                            decoration: BoxDecoration(
+                              color: isCurrentlyEditing
+                                  ? theme.colorScheme.primary.withValues(alpha: 0.08)
+                                  : theme.colorScheme.surfaceContainerLowest,
+                              borderRadius: BorderRadius.circular(AppRadius.md),
+                              border: Border.all(
+                                color: isCurrentlyEditing
+                                    ? theme.colorScheme.primary
+                                    : theme.colorScheme.outlineVariant,
+                              ),
                             ),
-                    ),
+                            child: ListTile(
+                              leading: Container(
+                                width: 36,
+                                height: 36,
+                                decoration: BoxDecoration(
+                                  color: _categoryColors[index % _categoryColors.length].withValues(alpha: 0.15),
+                                  shape: BoxShape.circle,
+                                ),
+                                child: Center(
+                                  child: Icon(
+                                    Icons.category_rounded,
+                                    color: _categoryColors[index % _categoryColors.length],
+                                    size: 18,
+                                  ),
+                                ),
+                              ),
+                              title: Text(
+                                cat.name,
+                                style: TextStyle(
+                                  fontWeight: FontWeight.w600,
+                                  color: isCurrentlyEditing ? theme.colorScheme.primary : theme.colorScheme.onSurface,
+                                ),
+                              ),
+                              trailing: Row(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  IconButton(
+                                    icon: AppIcon(AppIcons.edit, size: 18, color: theme.colorScheme.primary),
+                                    onPressed: () => _startEditing(cat),
+                                  ),
+                                  IconButton(
+                                    icon: AppIcon(AppIcons.delete, size: 18, color: theme.colorScheme.error),
+                                    onPressed: () => _confirmDelete(cat),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          );
+                        },
+                      ),
+                    ],
                   );
                 },
               ),

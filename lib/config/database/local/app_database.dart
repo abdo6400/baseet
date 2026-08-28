@@ -1,6 +1,5 @@
 import 'package:path/path.dart';
 import 'package:sqflite/sqflite.dart';
-import 'mock_data.dart';
 
 class AppDatabase {
   static final AppDatabase _instance = AppDatabase._internal();
@@ -15,7 +14,7 @@ class AppDatabase {
     return _db!;
   }
 
-  Future<Database> init({bool seedIfEmpty = true}) async {
+  Future<Database> init({bool seedIfEmpty = false}) async {
     final dbPath = await getDatabasesPath();
     final path = join(dbPath, 'baseet.db');
 
@@ -24,20 +23,8 @@ class AppDatabase {
       version: 1,
       onCreate: (db, version) async {
         await _createTables(db);
-        if (seedIfEmpty) {
-          await _seedInitialData(db);
-        }
       },
     );
-
-    if (seedIfEmpty) {
-      final count = Sqflite.firstIntValue(
-        await db.rawQuery('SELECT COUNT(*) FROM products'),
-      );
-      if (count == null || count == 0) {
-        await _seedInitialData(db);
-      }
-    }
 
     _db = db;
     return db;
@@ -171,129 +158,6 @@ class AppDatabase {
     ''');
   }
 
-  Future<void> _seedInitialData(Database db) async {
-    final batch = db.batch();
-
-    // Seed Categories
-    for (final cat in BaseetMockData.initialCategories) {
-      batch.insert(
-          'categories',
-          {
-            'id': cat.id,
-            'name': cat.name,
-            'iconName': cat.iconName,
-            'colorHex': cat.colorHex,
-          },
-          conflictAlgorithm: ConflictAlgorithm.replace);
-    }
-
-    // Seed Products
-    for (final prod in BaseetMockData.initialProducts) {
-      batch.insert(
-          'products',
-          {
-            'id': prod.id,
-            'name': prod.name,
-            'barcode': prod.barcode,
-            'categoryId': prod.categoryId,
-            'categoryName': prod.categoryName,
-            'buyPrice': prod.buyPrice,
-            'sellPrice': prod.sellPrice,
-            'stockQuantity': prod.stockQuantity,
-            'minStockLimit': prod.minStockLimit,
-            'imageUrl': prod.imageUrl,
-          },
-          conflictAlgorithm: ConflictAlgorithm.replace);
-    }
-
-    // Seed Customers
-    for (final cust in BaseetMockData.initialCustomers) {
-      batch.insert(
-          'customers',
-          {
-            'id': cust.id,
-            'name': cust.name,
-            'phone': cust.phone,
-            'totalDebt': cust.totalDebt,
-            'creditLimit': cust.creditLimit,
-            'lastPaymentDate': cust.lastPaymentDate?.toIso8601String(),
-            'address': cust.address,
-            'notes': cust.notes,
-            'status': cust.status.name,
-          },
-          conflictAlgorithm: ConflictAlgorithm.replace);
-    }
-
-    // Seed Transactions
-    for (final tx in BaseetMockData.initialTransactions) {
-      batch.insert(
-          'debt_transactions',
-          {
-            'id': tx.id,
-            'customerId': tx.customerId,
-            'type': tx.type.name,
-            'amount': tx.amount,
-            'date': tx.date.toIso8601String(),
-            'notes': tx.notes,
-            'remainingBalance': tx.remainingBalance,
-          },
-          conflictAlgorithm: ConflictAlgorithm.replace);
-    }
-
-    // Seed Suppliers
-    for (final sup in BaseetMockData.initialSuppliers) {
-      batch.insert(
-        'suppliers',
-        {
-          'id': sup.id,
-          'name': sup.name,
-          'companyName': sup.companyName,
-          'phone': sup.phone,
-          'totalDebt': sup.totalDebt,
-          'address': sup.address,
-          'lastTransactionDate': sup.lastTransactionDate?.toIso8601String(),
-        },
-        conflictAlgorithm: ConflictAlgorithm.replace,
-      );
-    }
-
-    // Seed Supplier Invoices & Items
-    for (final inv in BaseetMockData.initialSupplierInvoices) {
-      batch.insert(
-        'supplier_invoices',
-        {
-          'id': inv.id,
-          'supplierId': inv.supplierId,
-          'supplierName': inv.supplierName,
-          'date': inv.date.toIso8601String(),
-          'totalAmount': inv.totalAmount,
-          'paidAmount': inv.paidAmount,
-          'remainingAmount': inv.remainingAmount,
-          'notes': inv.notes,
-        },
-        conflictAlgorithm: ConflictAlgorithm.replace,
-      );
-
-      for (int i = 0; i < inv.items.length; i++) {
-        final item = inv.items[i];
-        batch.insert(
-          'supplier_invoice_items',
-          {
-            'id': 'sii_${inv.id}_$i',
-            'invoiceId': inv.id,
-            'productName': item.productName,
-            'quantity': item.quantity,
-            'unitPrice': item.unitPrice,
-            'subtotal': item.subtotal,
-          },
-          conflictAlgorithm: ConflictAlgorithm.replace,
-        );
-      }
-    }
-
-    await batch.commit(noResult: true);
-  }
-
   Future<void> clearAllData() async {
     final db = await database;
     await db.transaction((txn) async {
@@ -307,11 +171,5 @@ class AppDatabase {
       await txn.delete('products');
       await txn.delete('categories');
     });
-  }
-
-  Future<void> reseedDemoData() async {
-    await clearAllData();
-    final db = await database;
-    await _seedInitialData(db);
   }
 }

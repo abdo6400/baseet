@@ -4,6 +4,7 @@ import '../../features/inventory/data/repositories/inventory_repository_impl.dar
 import '../../features/inventory/domain/repositories/inventory_repository.dart';
 import '../../features/inventory/domain/usecases/add_category_usecase.dart';
 import '../../features/inventory/domain/usecases/add_product_usecase.dart';
+import '../../features/inventory/domain/usecases/delete_category_usecase.dart';
 import '../../features/inventory/domain/usecases/get_categories_usecase.dart';
 import '../../features/inventory/domain/usecases/get_inventory_stats_usecase.dart';
 import '../../features/inventory/domain/usecases/get_inventory_usecase.dart';
@@ -23,6 +24,7 @@ void initInventoryLocator(GetIt sl) {
   sl.registerLazySingleton(() => GetCategoriesUseCase(sl()));
   sl.registerLazySingleton(() => AddProductUseCase(sl()));
   sl.registerLazySingleton(() => AddCategoryUseCase(sl()));
+  sl.registerLazySingleton(() => DeleteCategoryUseCase(sl()));
   sl.registerLazySingleton(() => GetInventoryStatsUseCase(sl()));
 
   // BLoCs
@@ -32,5 +34,8 @@ void initInventoryLocator(GetIt sl) {
         getInventoryStatsUseCase: sl(),
       ));
   sl.registerFactory(() => AddProductBloc(addProductUseCase: sl()));
-  sl.registerFactory(() => AddCategoryBloc(addCategoryUseCase: sl()));
+  sl.registerFactory(() => AddCategoryBloc(
+        addCategoryUseCase: sl(),
+        deleteCategoryUseCase: sl(),
+      ));
 }

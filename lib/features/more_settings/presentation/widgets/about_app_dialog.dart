@@ -46,10 +46,10 @@ class AboutAppDialog extends StatelessWidget {
             style: const TextStyle(fontSize: 13, fontWeight: FontWeight.w600),
           ),
           16.vSpace,
-          const Text(
-            'تطبيق بسيط هو نظام نقاط بيع (POS) ودفتر ديون إلكتروني ذكي للمحلات والأنشطة التجارية.',
+          Text(
+            StringsManager.aboutAppDescription.lang,
             textAlign: TextAlign.center,
-            style: TextStyle(fontSize: 12, color: Colors.grey),
+            style: const TextStyle(fontSize: 12, color: Colors.grey),
           ),
         ],
       ),

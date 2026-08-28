@@ -37,6 +37,7 @@ dependencies:
   firebase_core: ^4.14.0
   pdf: ^3.11.1
   printing: ^5.13.2
+  showcaseview: ^5.1.0
 
 dev_dependencies:
   flutter_test:

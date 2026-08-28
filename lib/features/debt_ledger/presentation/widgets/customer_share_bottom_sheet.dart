@@ -56,7 +56,7 @@ class CustomerShareBottomSheet extends StatelessWidget {
               borderRadius: BorderRadius.circular(AppRadius.md),
             ),
             child: Text(
-              'كشف حساب العميل: ${customer.name}\nإجمالي الدين: ${customer.totalDebt.toStringAsFixed(0)} ${StringsManager.posCurrency.lang}\nرقم الهاتف: ${customer.phone}',
+              '${StringsManager.customerStatementTitle.lang}: ${customer.name}\n${StringsManager.debtsTotal.lang}: ${customer.totalDebt.toStringAsFixed(0)} ${StringsManager.posCurrency.lang}\n${StringsManager.customerPhone.lang}: ${customer.phone}',
               style: const TextStyle(fontWeight: FontWeight.w600),
             ),
           ),

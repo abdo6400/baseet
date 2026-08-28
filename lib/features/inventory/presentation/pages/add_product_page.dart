@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
 import 'package:go_router/go_router.dart';
-import 'package:baseet/config/database/local/mock_data.dart';
 import 'package:baseet/core/common/widgets/button/app_button.dart';
 import 'package:baseet/core/common/widgets/form/app_form.dart';
 import 'package:baseet/core/common/widgets/form/app_form_dropdown.dart';
@@ -24,6 +23,7 @@ import 'package:baseet/features/inventory/presentation/blocs/add_product/add_pro
 import 'package:baseet/features/inventory/presentation/blocs/add_product/add_product_state.dart';
 import 'package:baseet/features/inventory/presentation/blocs/inventory_list/inventory_list_bloc.dart';
 import 'package:baseet/features/inventory/presentation/blocs/inventory_list/inventory_list_event.dart';
+import 'package:baseet/features/inventory/presentation/blocs/inventory_list/inventory_list_state.dart';
 import 'package:baseet/features/pos/domain/entities/product_entity.dart';
 import 'package:baseet/features/pos/presentation/blocs/catalog/pos_catalog_bloc.dart';
 import 'package:baseet/features/pos/presentation/blocs/catalog/pos_catalog_event.dart';
@@ -38,14 +38,19 @@ class AddProductPage extends StatefulWidget {
 class _AddProductPageState extends State<AddProductPage> {
   final _formKey = GlobalKey<FormBuilderState>();
 
+  @override
+  void initState() {
+    super.initState();
+    context.read<InventoryListBloc>().add(const LoadInventoryEvent());
+  }
+
   void _onSave() {
     if (_formKey.currentState?.saveAndValidate() ?? false) {
       final values = _formKey.currentState!.value;
       final categoryId = values['category_id']?.toString() ?? 'cat_1';
-      final category = BaseetMockData.initialCategories.firstWhere(
-        (c) => c.id == categoryId,
-        orElse: () => BaseetMockData.initialCategories[1],
-      );
+      final categories = context.read<InventoryListBloc>().state.categories;
+      final category = categories.where((c) => c.id == categoryId).firstOrNull;
+      final categoryName = category?.name ?? StringsManager.posAllCategories.lang;
 
       final barcode = (values['barcode'] as String?)?.trim();
 
@@ -54,12 +59,12 @@ class _AddProductPageState extends State<AddProductPage> {
         name: (values['name'] as String?)?.trim() ?? '',
         barcode: (barcode != null && barcode.isNotEmpty) ? barcode : UuidGenerator.generate('622'),
         categoryId: categoryId,
-        categoryName: category.name,
+        categoryName: categoryName,
         buyPrice: double.tryParse(values['buy_price']?.toString() ?? '0') ?? 0.0,
         sellPrice: double.tryParse(values['sell_price']?.toString() ?? '0') ?? 0.0,
         stockQuantity: int.tryParse(values['stock']?.toString() ?? '10') ?? 10,
         minStockLimit: int.tryParse(values['min_stock']?.toString() ?? '3') ?? 3,
-        imageUrl: 'https://images.unsplash.com/photo-1550583724-b2692b85b150?auto=format&fit=crop&w=300&q=80',
+        imageUrl: '',
       );
 
       context.read<AddProductBloc>().add(SubmitAddProductEvent(product));
@@ -68,8 +73,6 @@ class _AddProductPageState extends State<AddProductPage> {
 
   @override
   Widget build(BuildContext context) {
-    final categories = BaseetMockData.initialCategories.where((c) => c.id != 'cat_0').toList();
-
     return BlocConsumer<AddProductBloc, AddProductState>(
       listener: (context, state) {
         context.showStateHandler(
@@ -96,7 +99,6 @@ class _AddProductPageState extends State<AddProductPage> {
           child: AppForm(
             formKey: _formKey,
             initialValue: const {
-              'category_id': 'cat_1',
               'stock': '10',
               'min_stock': '3',
             },
@@ -118,32 +120,31 @@ class _AddProductPageState extends State<AddProductPage> {
                     icon: AppIcon(AppIcons.barcode, size: 20),
                     tooltip: StringsManager.barcodeScannerTitle.lang,
                     onPressed: () async {
+                      final inventoryBloc = context.read<InventoryListBloc>();
                       final code = await BarcodeScannerModal.show(context);
-                      if (code != null && code.isNotEmpty) {
-                        final existing = BaseetMockData.initialProducts
-                            .where((p) => p.barcode == code)
-                            .firstOrNull;
+                      if (!mounted || code == null || code.isEmpty) return;
 
-                        if (existing != null) {
-                          _formKey.currentState?.patchValue({
-                            'barcode': code,
-                            'name': existing.name,
-                            'buy_price': existing.buyPrice.toStringAsFixed(0),
-                            'sell_price': existing.sellPrice.toStringAsFixed(0),
-                            'stock': existing.stockQuantity.toString(),
-                            'min_stock': existing.minStockLimit.toString(),
-                            'category_id': existing.categoryId,
-                          });
-                          if (context.mounted) {
-                            context.showStateHandler(
-                              isLoading: false,
-                              isSuccess: true,
-                              successMessage: StringsManager.barcodeProductAdded.trArgs(args: [existing.name]),
-                            );
-                          }
-                        } else {
-                          _formKey.currentState?.patchValue({'barcode': code});
-                        }
+                      final products = inventoryBloc.state.products;
+                      final existing = products.where((p) => p.barcode == code).firstOrNull;
+
+                      if (existing != null) {
+                        _formKey.currentState?.patchValue({
+                          'barcode': code,
+                          'name': existing.name,
+                          'buy_price': existing.buyPrice.toStringAsFixed(0),
+                          'sell_price': existing.sellPrice.toStringAsFixed(0),
+                          'stock': existing.stockQuantity.toString(),
+                          'min_stock': existing.minStockLimit.toString(),
+                          'category_id': existing.categoryId,
+                        });
+                        // ignore: use_build_context_synchronously
+                        context.showStateHandler(
+                          isLoading: false,
+                          isSuccess: true,
+                          successMessage: StringsManager.barcodeProductAdded.trArgs(args: [existing.name]),
+                        );
+                      } else {
+                        _formKey.currentState?.patchValue({'barcode': code});
                       }
                     },
                   ),
@@ -151,16 +152,21 @@ class _AddProductPageState extends State<AddProductPage> {
                 16.vSpace,
 
                 // Category Dropdown
-                AppFormDropdown<String>(
-                  name: 'category_id',
-                  label: StringsManager.addProductCategory.lang,
-                  items: categories.map((c) {
-                    return DropdownMenuItem<String>(
-                      value: c.id,
-                      child: Text(c.name),
+                BlocBuilder<InventoryListBloc, InventoryListState>(
+                  builder: (context, invState) {
+                    final categories = invState.categories.where((c) => c.id != 'cat_0').toList();
+                    return AppFormDropdown<String>(
+                      name: 'category_id',
+                      label: StringsManager.addProductCategory.lang,
+                      items: categories.map((c) {
+                        return DropdownMenuItem<String>(
+                          value: c.id,
+                          child: Text(c.name),
+                        );
+                      }).toList(),
+                      validator: AppFormValidators.required(),
                     );
-                  }).toList(),
-                  validator: AppFormValidators.required(),
+                  },
                 ),
                 16.vSpace,
 

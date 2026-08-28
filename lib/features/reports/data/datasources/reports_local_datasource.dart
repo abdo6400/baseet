@@ -75,36 +75,27 @@ class ReportsLocalDataSourceImpl implements ReportsLocalDataSource {
 
     final double totalSales = (salesResult.isNotEmpty && salesResult.first['totalSales'] != null)
         ? (salesResult.first['totalSales'] as num).toDouble()
-        : (period == 'today' ? 2450.0 : (period == 'week' ? 15925.0 : 63700.0));
+        : 0.0;
 
     final int invoiceCount = (salesResult.isNotEmpty && salesResult.first['invoiceCount'] != null)
         ? (salesResult.first['invoiceCount'] as int)
-        : (period == 'today' ? 18 : (period == 'week' ? 117 : 468));
+        : 0;
 
     final double netProfit = (profitResult.isNotEmpty && profitResult.first['profit'] != null)
         ? (profitResult.first['profit'] as num).toDouble()
-        : (period == 'today' ? 780.0 : (period == 'week' ? 5070.0 : 20280.0));
+        : 0.0;
 
     final double cashSales = (cashResult.isNotEmpty && cashResult.first['cashSales'] != null)
         ? (cashResult.first['cashSales'] as num).toDouble()
-        : (period == 'today' ? 1800.0 : (period == 'week' ? 11700.0 : 46800.0));
+        : 0.0;
 
     final double debtSales = (debtResult.isNotEmpty && debtResult.first['debtSales'] != null)
         ? (debtResult.first['debtSales'] as num).toDouble()
-        : (period == 'today' ? 650.0 : (period == 'week' ? 4225.0 : 16900.0));
+        : 0.0;
 
-    List<TopProductStat> topProducts = topResult.map((m) {
+    final List<TopProductStat> topProducts = topResult.map((m) {
       return TopProductStatModel.fromMap(m);
     }).toList();
-
-    if (topProducts.isEmpty) {
-      topProducts = const [
-        TopProductStat(productName: 'حليب جهينة 1 لتر', soldQuantity: 24, totalRevenue: 1200.0),
-        TopProductStat(productName: 'كوكاكولا كانز 330 مل', soldQuantity: 45, totalRevenue: 675.0),
-        TopProductStat(productName: 'أرز الضحى 1 كجم', soldQuantity: 15, totalRevenue: 525.0),
-        TopProductStat(productName: 'زيت عافية ذرة 800 مل', soldQuantity: 6, totalRevenue: 510.0),
-      ];
-    }
 
     return ReportSummaryModel(
       totalSales: totalSales,

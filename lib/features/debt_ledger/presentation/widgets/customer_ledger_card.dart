@@ -195,7 +195,7 @@ class CustomerLedgerCard extends StatelessWidget {
                 IconButton(
                   icon: Icon(Icons.phone, size: 20, color: theme.colorScheme.primary),
                   onPressed: () => _makePhoneCall(customer.phone),
-                  tooltip: 'اتصال بالعميل',
+                  tooltip: StringsManager.customerCall.lang,
                 ),
                 const SizedBox(width: 4),
 
