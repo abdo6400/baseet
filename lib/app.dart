@@ -23,6 +23,8 @@ import 'features/pos/presentation/blocs/catalog/pos_catalog_bloc.dart';
 import 'features/pos/presentation/blocs/checkout/checkout_bloc.dart';
 import 'features/pos/presentation/blocs/receipts/pos_receipts_bloc.dart';
 import 'features/reports/presentation/blocs/reports/reports_bloc.dart';
+import 'features/suppliers/presentation/blocs/supplier_statement/supplier_statement_bloc.dart';
+import 'features/suppliers/presentation/blocs/suppliers/suppliers_bloc.dart';
 
 class BaseetApp extends StatelessWidget {
   const BaseetApp({super.key});
@@ -44,6 +46,8 @@ class BaseetApp extends StatelessWidget {
         BlocProvider<AddProductBloc>(create: (_) => sl<AddProductBloc>()),
         BlocProvider<AddCategoryBloc>(create: (_) => sl<AddCategoryBloc>()),
         BlocProvider<ReportsBloc>(create: (_) => sl<ReportsBloc>()),
+        BlocProvider<SuppliersBloc>(create: (_) => sl<SuppliersBloc>()),
+        BlocProvider<SupplierStatementBloc>(create: (_) => sl<SupplierStatementBloc>()),
       ],
       child: BlocBuilder<ThemeBloc, ThemeState>(
         builder: (context, themeState) {

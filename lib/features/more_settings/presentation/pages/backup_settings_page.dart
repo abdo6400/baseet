@@ -109,7 +109,7 @@ class _BackupSettingsPageState extends State<BackupSettingsPage> {
         allowedExtensions: ['json'],
       );
 
-      if (result != null && result.single.path != null) {
+      if (result.single.path != null) {
         final filePath = result.single.path!;
 
         if (!mounted) return;
@@ -177,18 +177,22 @@ class _BackupSettingsPageState extends State<BackupSettingsPage> {
               children: [
                 Text(
                   StringsManager.backupDirectoryLabel.lang,
-                  style: context.label(15, weight: FontWeight.w800, color: theme.colorScheme.primary),
+                  style: context.label(15,
+                      weight: FontWeight.w800,
+                      color: theme.colorScheme.primary),
                 ),
                 8.vSpace,
                 Row(
                   children: [
                     Expanded(
                       child: Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 12, vertical: 10),
                         decoration: BoxDecoration(
                           color: theme.colorScheme.surfaceContainerLowest,
                           borderRadius: BorderRadius.circular(AppRadius.md),
-                          border: Border.all(color: theme.colorScheme.outlineVariant),
+                          border: Border.all(
+                              color: theme.colorScheme.outlineVariant),
                         ),
                         child: Text(
                           _backupDirectory.isNotEmpty
@@ -210,11 +214,13 @@ class _BackupSettingsPageState extends State<BackupSettingsPage> {
                       style: ElevatedButton.styleFrom(
                         backgroundColor: theme.colorScheme.primary,
                         foregroundColor: Colors.white,
-                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(AppRadius.md)),
+                        shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(AppRadius.md)),
                       ),
                       onPressed: _pickDirectory,
                       icon: const Icon(Icons.folder_open, size: 18),
-                      label: Text(StringsManager.backupChooseDirectory.lang, style: const TextStyle(fontSize: 12)),
+                      label: Text(StringsManager.backupChooseDirectory.lang,
+                          style: const TextStyle(fontSize: 12)),
                     ),
                   ],
                 ),
@@ -255,7 +261,9 @@ class _BackupSettingsPageState extends State<BackupSettingsPage> {
                   ),
                   trailing: Text(
                     _lastBackupDate.isNotEmpty
-                        ? _lastBackupDate.replaceFirst('T', ' ').substring(0, 16)
+                        ? _lastBackupDate
+                            .replaceFirst('T', ' ')
+                            .substring(0, 16)
                         : StringsManager.backupNever.lang,
                     style: TextStyle(
                       fontSize: 12.5,

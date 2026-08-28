@@ -1,3 +1,4 @@
+import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:go_router/go_router.dart';
@@ -17,6 +18,37 @@ class InventoryProductTile extends StatelessWidget {
     super.key,
     required this.product,
   });
+
+  Widget _buildImage(ThemeData theme) {
+    final url = product.imageUrl?.trim() ?? '';
+    if (url.isEmpty) {
+      return AppIcon(AppIcons.inventory, color: theme.colorScheme.onSurfaceVariant);
+    }
+
+    if (url.startsWith('http://') || url.startsWith('https://')) {
+      return Image.network(
+        url,
+        fit: BoxFit.cover,
+        errorBuilder: (_, __, ___) => AppIcon(AppIcons.inventory, color: theme.colorScheme.onSurfaceVariant),
+      );
+    } else if (url.startsWith('assets/')) {
+      return Image.asset(
+        url,
+        fit: BoxFit.cover,
+        errorBuilder: (_, __, ___) => AppIcon(AppIcons.inventory, color: theme.colorScheme.onSurfaceVariant),
+      );
+    } else {
+      final file = File(url);
+      if (file.existsSync()) {
+        return Image.file(
+          file,
+          fit: BoxFit.cover,
+          errorBuilder: (_, __, ___) => AppIcon(AppIcons.inventory, color: theme.colorScheme.onSurfaceVariant),
+        );
+      }
+      return AppIcon(AppIcons.inventory, color: theme.colorScheme.onSurfaceVariant);
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -45,24 +77,7 @@ class InventoryProductTile extends StatelessWidget {
                 borderRadius: BorderRadius.circular(AppRadius.md),
               ),
               clipBehavior: Clip.antiAlias,
-              child: (product.imageUrl != null &&
-                      product.imageUrl!.trim().isNotEmpty &&
-                      (product.imageUrl!.startsWith('http://') ||
-                          product.imageUrl!.startsWith('https://') ||
-                          product.imageUrl!.startsWith('assets/') ||
-                          product.imageUrl!.startsWith('/')))
-                  ? Image.network(
-                      product.imageUrl!.trim(),
-                      fit: BoxFit.cover,
-                      errorBuilder: (_, __, ___) => AppIcon(
-                        AppIcons.inventory,
-                        color: theme.colorScheme.onSurfaceVariant,
-                      ),
-                    )
-                  : AppIcon(
-                      AppIcons.inventory,
-                      color: theme.colorScheme.onSurfaceVariant,
-                    ),
+              child: _buildImage(theme),
             ),
             12.hSpace,
             Expanded(

@@ -1,7 +1,9 @@
+import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
 import 'package:go_router/go_router.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:baseet/core/common/widgets/button/app_button.dart';
 import 'package:baseet/core/common/widgets/button/app_outlined_button.dart';
 import 'package:baseet/core/common/widgets/form/app_form.dart';
@@ -41,13 +43,166 @@ class AddProductPage extends StatefulWidget {
 
 class _AddProductPageState extends State<AddProductPage> {
   final _formKey = GlobalKey<FormBuilderState>();
+  final ImagePicker _picker = ImagePicker();
+  String _imageUrl = '';
 
   bool get isEditMode => widget.productToEdit != null;
 
   @override
   void initState() {
     super.initState();
+    _imageUrl = widget.productToEdit?.imageUrl?.trim() ?? '';
     context.read<InventoryListBloc>().add(const LoadInventoryEvent());
+  }
+
+  Future<void> _pickImage(ImageSource source) async {
+    try {
+      final XFile? pickedFile = await _picker.pickImage(
+        source: source,
+        maxWidth: 1024,
+        maxHeight: 1024,
+        imageQuality: 85,
+      );
+      if (pickedFile != null && mounted) {
+        setState(() {
+          _imageUrl = pickedFile.path;
+        });
+      }
+    } catch (_) {
+      // Ignore or handle permission error gracefully
+    }
+  }
+
+  Future<void> _enterImageUrl() async {
+    final url = await context.showTextInputDialog(
+      title: StringsManager.productImageEnterUrl.lang,
+      hintText: StringsManager.productImageEnterUrlHint.lang,
+      initialValue: _imageUrl.startsWith('http') ? _imageUrl : '',
+      icon: AppIcons.document,
+    );
+    if (url != null && url.isNotEmpty && mounted) {
+      setState(() {
+        _imageUrl = url.trim();
+      });
+    }
+  }
+
+  void _showImageSourcePicker() {
+    final theme = Theme.of(context);
+
+    showModalBottomSheet(
+      context: context,
+      backgroundColor: theme.colorScheme.surface,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(AppRadius.xl)),
+      ),
+      builder: (ctx) {
+        return SafeArea(
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Center(
+                  child: Container(
+                    width: 40,
+                    height: 4,
+                    decoration: BoxDecoration(
+                      color: theme.colorScheme.outlineVariant,
+                      borderRadius: BorderRadius.circular(2),
+                    ),
+                  ),
+                ),
+                16.vSpace,
+                Text(
+                  StringsManager.productImageSource.lang,
+                  style: const TextStyle(fontWeight: FontWeight.w800, fontSize: 16),
+                ),
+                16.vSpace,
+                ListTile(
+                  leading: Container(
+                    padding: const EdgeInsets.all(8),
+                    decoration: BoxDecoration(
+                      color: theme.colorScheme.primary.withValues(alpha: 0.12),
+                      shape: BoxShape.circle,
+                    ),
+                    child: AppIcon(AppIcons.inventory, color: theme.colorScheme.primary, size: 20),
+                  ),
+                  title: Text(
+                    StringsManager.productImagePickGallery.lang,
+                    style: const TextStyle(fontWeight: FontWeight.w700, fontSize: 14),
+                  ),
+                  onTap: () {
+                    Navigator.pop(ctx);
+                    _pickImage(ImageSource.gallery);
+                  },
+                ),
+                ListTile(
+                  leading: Container(
+                    padding: const EdgeInsets.all(8),
+                    decoration: BoxDecoration(
+                      color: AppPrimitiveTokens.emerald600.withValues(alpha: 0.12),
+                      shape: BoxShape.circle,
+                    ),
+                    child: const Icon(Icons.camera_alt_outlined, color: AppPrimitiveTokens.emerald600, size: 20),
+                  ),
+                  title: Text(
+                    StringsManager.productImageTakeCamera.lang,
+                    style: const TextStyle(fontWeight: FontWeight.w700, fontSize: 14),
+                  ),
+                  onTap: () {
+                    Navigator.pop(ctx);
+                    _pickImage(ImageSource.camera);
+                  },
+                ),
+                ListTile(
+                  leading: Container(
+                    padding: const EdgeInsets.all(8),
+                    decoration: BoxDecoration(
+                      color: theme.colorScheme.secondary.withValues(alpha: 0.12),
+                      shape: BoxShape.circle,
+                    ),
+                    child: Icon(Icons.link_rounded, color: theme.colorScheme.secondary, size: 20),
+                  ),
+                  title: Text(
+                    StringsManager.productImageEnterUrl.lang,
+                    style: const TextStyle(fontWeight: FontWeight.w700, fontSize: 14),
+                  ),
+                  onTap: () {
+                    Navigator.pop(ctx);
+                    _enterImageUrl();
+                  },
+                ),
+                if (_imageUrl.isNotEmpty) ...[
+                  const Divider(height: 1),
+                  ListTile(
+                    leading: Container(
+                      padding: const EdgeInsets.all(8),
+                      decoration: BoxDecoration(
+                        color: AppPrimitiveTokens.red700.withValues(alpha: 0.12),
+                        shape: BoxShape.circle,
+                      ),
+                      child: const AppIcon(AppIcons.delete, color: AppPrimitiveTokens.red700, size: 20),
+                    ),
+                    title: Text(
+                      StringsManager.productImageRemove.lang,
+                      style: const TextStyle(fontWeight: FontWeight.w700, fontSize: 14, color: AppPrimitiveTokens.red700),
+                    ),
+                    onTap: () {
+                      Navigator.pop(ctx);
+                      setState(() {
+                        _imageUrl = '';
+                      });
+                    },
+                  ),
+                ],
+              ],
+            ),
+          ),
+        );
+      },
+    );
   }
 
   void _onSave() {
@@ -72,7 +227,7 @@ class _AddProductPageState extends State<AddProductPage> {
         sellPrice: double.tryParse(values['sell_price']?.toString() ?? '0') ?? 0.0,
         stockQuantity: int.tryParse(values['stock']?.toString() ?? '10') ?? 10,
         minStockLimit: int.tryParse(values['min_stock']?.toString() ?? '3') ?? 3,
-        imageUrl: isEditMode ? widget.productToEdit!.imageUrl : '',
+        imageUrl: _imageUrl.trim(),
       );
 
       if (isEditMode) {
@@ -96,6 +251,43 @@ class _AddProductPageState extends State<AddProductPage> {
     }
   }
 
+  Widget _buildPreviewImage(ThemeData theme) {
+    final cleanUrl = _imageUrl.trim();
+    if (cleanUrl.startsWith('http://') || cleanUrl.startsWith('https://')) {
+      return Image.network(
+        cleanUrl,
+        fit: BoxFit.cover,
+        errorBuilder: (_, __, ___) => _buildFallbackIcon(theme),
+      );
+    } else if (cleanUrl.startsWith('assets/')) {
+      return Image.asset(
+        cleanUrl,
+        fit: BoxFit.cover,
+        errorBuilder: (_, __, ___) => _buildFallbackIcon(theme),
+      );
+    } else {
+      final file = File(cleanUrl);
+      if (file.existsSync()) {
+        return Image.file(
+          file,
+          fit: BoxFit.cover,
+          errorBuilder: (_, __, ___) => _buildFallbackIcon(theme),
+        );
+      }
+      return _buildFallbackIcon(theme);
+    }
+  }
+
+  Widget _buildFallbackIcon(ThemeData theme) {
+    return Center(
+      child: AppIcon(
+        AppIcons.inventory,
+        size: 36,
+        color: theme.colorScheme.onSurfaceVariant,
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return BlocConsumer<AddProductBloc, AddProductState>(
@@ -116,6 +308,7 @@ class _AddProductPageState extends State<AddProductPage> {
         );
       },
       builder: (context, state) {
+        final theme = Theme.of(context);
         return AppPageWrapper(
           scrollable: true,
           padding: const EdgeInsets.all(AppSpacing.md),
@@ -152,6 +345,124 @@ class _AddProductPageState extends State<AddProductPage> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
+                // Product Image Selector / Preview Card
+                Center(
+                  child: Stack(
+                    children: [
+                      InkWell(
+                        onTap: _showImageSourcePicker,
+                        borderRadius: BorderRadius.circular(AppRadius.xl),
+                        child: Container(
+                          width: 140,
+                          height: 140,
+                          decoration: BoxDecoration(
+                            color: theme.colorScheme.surfaceContainer,
+                            borderRadius: BorderRadius.circular(AppRadius.xl),
+                            border: Border.all(
+                              color: _imageUrl.isNotEmpty
+                                  ? theme.colorScheme.primary
+                                  : theme.colorScheme.outlineVariant,
+                              width: _imageUrl.isNotEmpty ? 2 : 1.2,
+                            ),
+                            boxShadow: [
+                              BoxShadow(
+                                color: Colors.black.withValues(alpha: 0.04),
+                                blurRadius: 8,
+                                offset: const Offset(0, 3),
+                              ),
+                            ],
+                          ),
+                          clipBehavior: Clip.antiAlias,
+                          child: _imageUrl.isNotEmpty
+                              ? Stack(
+                                  fit: StackFit.expand,
+                                  children: [
+                                    _buildPreviewImage(theme),
+                                    Positioned(
+                                      bottom: 0,
+                                      left: 0,
+                                      right: 0,
+                                      child: Container(
+                                        padding: const EdgeInsets.symmetric(vertical: 4),
+                                        color: Colors.black.withValues(alpha: 0.55),
+                                        child: Text(
+                                          StringsManager.commonEdit.lang,
+                                          textAlign: TextAlign.center,
+                                          style: const TextStyle(
+                                            color: Colors.white,
+                                            fontSize: 11,
+                                            fontWeight: FontWeight.w700,
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                )
+                              : Column(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    Container(
+                                      padding: const EdgeInsets.all(12),
+                                      decoration: BoxDecoration(
+                                        color: theme.colorScheme.primary.withValues(alpha: 0.1),
+                                        shape: BoxShape.circle,
+                                      ),
+                                      child: AppIcon(
+                                        AppIcons.inventory,
+                                        size: 30,
+                                        color: theme.colorScheme.primary,
+                                      ),
+                                    ),
+                                    8.vSpace,
+                                    Text(
+                                      StringsManager.productImageTitle.lang,
+                                      style: TextStyle(
+                                        fontSize: 12,
+                                        fontWeight: FontWeight.w700,
+                                        color: theme.colorScheme.primary,
+                                      ),
+                                    ),
+                                    2.vSpace,
+                                    Text(
+                                      StringsManager.commonOptional.lang,
+                                      style: TextStyle(
+                                        fontSize: 10,
+                                        color: theme.colorScheme.onSurfaceVariant,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                        ),
+                      ),
+                      if (_imageUrl.isNotEmpty)
+                        PositionedDirectional(
+                          top: 4,
+                          end: 4,
+                          child: GestureDetector(
+                            onTap: () {
+                              setState(() {
+                                _imageUrl = '';
+                              });
+                            },
+                            child: Container(
+                              padding: const EdgeInsets.all(4),
+                              decoration: const BoxDecoration(
+                                color: AppPrimitiveTokens.red700,
+                                shape: BoxShape.circle,
+                              ),
+                              child: const Icon(
+                                Icons.close,
+                                color: Colors.white,
+                                size: 14,
+                              ),
+                            ),
+                          ),
+                        ),
+                    ],
+                  ),
+                ),
+                20.vSpace,
+
                 AppFormTextField(
                   name: 'name',
                   label: StringsManager.addProductName.lang,

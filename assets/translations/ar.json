@@ -496,6 +496,18 @@
   "common_optional": "اختياري",
   "common_no_phone": "لا يوجد هاتف مسجل",
   "common_call": "اتصال هاتفياً",
-  "common_loading": "جارٍ التحميل..."
+  "common_loading": "جارٍ التحميل...",
+
+  "product_image_title": "صورة المنتج",
+  "product_image_pick_gallery": "اختيار من المعرض",
+  "product_image_take_camera": "التقاط بالكاميرا",
+  "product_image_enter_url": "إدخال رابط صورة عبر الإنترنت",
+  "product_image_enter_url_hint": "https://example.com/product.jpg",
+  "product_image_remove": "حذف الصورة",
+  "product_image_source": "تحديد مصدر الصورة",
+
+  "more_section_store": "المتجر والعتاد",
+  "more_section_preferences": "التفضيلات والبيانات",
+  "more_section_system": "النظام والدعم"
 }
 

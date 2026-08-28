@@ -496,6 +496,18 @@
   "common_optional": "Optional",
   "common_no_phone": "No registered phone",
   "common_call": "Phone Call",
-  "common_loading": "Loading..."
+  "common_loading": "Loading...",
+
+  "product_image_title": "Product Image",
+  "product_image_pick_gallery": "Pick from Gallery",
+  "product_image_take_camera": "Take from Camera",
+  "product_image_enter_url": "Enter Image URL",
+  "product_image_enter_url_hint": "https://example.com/product.jpg",
+  "product_image_remove": "Remove Image",
+  "product_image_source": "Select Image Source",
+
+  "more_section_store": "Store & Hardware",
+  "more_section_preferences": "Preferences & Data",
+  "more_section_system": "System & Support"
 }
 

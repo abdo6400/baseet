@@ -542,6 +542,20 @@ abstract class StringsManager {
   static const String printerTestPrint = 'bluetooth_test_print';
   static const String printerTestPrintSuccess = 'bluetooth_test_print_success';
 
+  // Product Image & Media
+  static const String productImageTitle = 'product_image_title';
+  static const String productImagePickGallery = 'product_image_pick_gallery';
+  static const String productImageTakeCamera = 'product_image_take_camera';
+  static const String productImageEnterUrl = 'product_image_enter_url';
+  static const String productImageEnterUrlHint = 'product_image_enter_url_hint';
+  static const String productImageRemove = 'product_image_remove';
+  static const String productImageSource = 'product_image_source';
+
+  // Settings Sections
+  static const String moreSectionStore = 'more_section_store';
+  static const String moreSectionPreferences = 'more_section_preferences';
+  static const String moreSectionSystem = 'more_section_system';
+
   // Common & Activation Aliases
   static const String commonOptional = 'common_optional';
   static const String commonNoPhone = 'common_no_phone';
