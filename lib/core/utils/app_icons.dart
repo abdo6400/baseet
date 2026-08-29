@@ -66,4 +66,6 @@ abstract class AppIcons {
   static const dynamic key = HugeIcons.strokeRoundedKey01;
   static const dynamic lock = HugeIcons.strokeRoundedLockPassword;
   static const dynamic shield = HugeIcons.strokeRoundedShield01;
+  static const dynamic document = HugeIcons.strokeRoundedFile02;
+  static const dynamic database = HugeIcons.strokeRoundedCloudUpload;
 }

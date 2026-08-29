@@ -46,3 +46,8 @@ app.*.map.json
 
 # Widget Preview related
 .widget_preview/
+# Keygen & APK artifacts
+/keygen_app/
+Baseet_Keygen.apk
+*.apk
+

@@ -36,6 +36,16 @@ class InventoryRepositoryImpl implements InventoryRepository {
   }
 
   @override
+  Future<Either<Failure, ProductEntity>> updateProduct(ProductEntity product) {
+    return Failure.handleCall(() => localDataSource.updateProduct(ProductModel.fromEntity(product)));
+  }
+
+  @override
+  Future<Either<Failure, void>> deleteProduct(String id) {
+    return Failure.handleCall(() => localDataSource.deleteProduct(id));
+  }
+
+  @override
   Future<Either<Failure, CategoryEntity>> addCategory(CategoryEntity category) {
     return Failure.handleCall(() => localDataSource.addCategory(CategoryModel.fromEntity(category)));
   }

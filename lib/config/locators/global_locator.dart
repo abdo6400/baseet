@@ -1,6 +1,8 @@
 import 'package:get_it/get_it.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:baseet/config/database/local/app_database.dart';
+import '../../core/services/backup_service.dart';
+import '../../core/services/debt_reminder_service.dart';
 import '../../core/services/device_id_service.dart';
 import '../../core/services/license_service.dart';
 import '../../core/services/settings_service.dart';
@@ -27,6 +29,12 @@ Future<void> initGlobalLocator(GetIt sl) async {
 
   // License Service
   sl.registerLazySingleton<LicenseService>(() => LicenseService(sl(), sl()));
+
+  // Debt Reminder Service
+  sl.registerLazySingleton<DebtReminderService>(() => DebtReminderService(database: sl()));
+
+  // Backup Service
+  sl.registerLazySingleton<BackupService>(() => BackupService(database: sl(), settingsService: sl()));
 
   // Activation Cubit
   sl.registerFactory<ActivationCubit>(

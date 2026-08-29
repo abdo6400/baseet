@@ -9,6 +9,7 @@ abstract class DebtRepository {
   Future<Either<Failure, CustomerEntity>> getCustomerById(String id);
   Future<Either<Failure, List<DebtTransactionEntity>>> getCustomerTransactions(String customerId);
   Future<Either<Failure, CustomerEntity>> addCustomer(CustomerEntity customer);
+  Future<Either<Failure, void>> deleteCustomer(String id);
   Future<Either<Failure, DebtTransactionEntity>> addPaymentVoucher({
     required String customerId,
     required double amount,

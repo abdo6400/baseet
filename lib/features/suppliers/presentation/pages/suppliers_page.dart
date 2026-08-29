@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:url_launcher/url_launcher.dart';
-import '../../../../config/locators/global_locator.dart';
 import '../../../../core/common/widgets/feedback/empty_state_widget.dart';
 import '../../../../core/common/widgets/form/app_search_field.dart';
 import '../../../../core/common/widgets/icon/app_icon.dart';
@@ -20,27 +19,21 @@ import 'add_supplier_page.dart';
 import 'add_supplier_invoice_page.dart';
 import 'supplier_statement_page.dart';
 
-class SuppliersPage extends StatelessWidget {
+class SuppliersPage extends StatefulWidget {
   const SuppliersPage({super.key});
 
   @override
-  Widget build(BuildContext context) {
-    return BlocProvider(
-      create: (_) => sl<SuppliersBloc>()..add(const LoadSuppliersEvent()),
-      child: const _SuppliersView(),
-    );
-  }
+  State<SuppliersPage> createState() => _SuppliersPageState();
 }
 
-class _SuppliersView extends StatefulWidget {
-  const _SuppliersView();
+class _SuppliersPageState extends State<SuppliersPage> {
+  final _searchController = TextEditingController();
 
   @override
-  State<_SuppliersView> createState() => _SuppliersViewState();
-}
-
-class _SuppliersViewState extends State<_SuppliersView> {
-  final _searchController = TextEditingController();
+  void initState() {
+    super.initState();
+    context.read<SuppliersBloc>().add(const LoadSuppliersEvent());
+  }
 
   @override
   void dispose() {

@@ -4,6 +4,7 @@ import '../../features/debt_ledger/data/repositories/debt_repository_impl.dart';
 import '../../features/debt_ledger/domain/repositories/debt_repository.dart';
 import '../../features/debt_ledger/domain/usecases/add_customer_usecase.dart';
 import '../../features/debt_ledger/domain/usecases/add_payment_voucher_usecase.dart';
+import '../../features/debt_ledger/domain/usecases/delete_customer_usecase.dart';
 import '../../features/debt_ledger/domain/usecases/get_customer_statement_usecase.dart';
 import '../../features/debt_ledger/domain/usecases/get_customers_usecase.dart';
 import '../../features/debt_ledger/domain/usecases/get_debt_stats_usecase.dart';
@@ -23,6 +24,7 @@ void initDebtLocator(GetIt sl) {
   sl.registerLazySingleton(() => GetCustomersUseCase(sl()));
   sl.registerLazySingleton(() => GetCustomerStatementUseCase(sl()));
   sl.registerLazySingleton(() => AddCustomerUseCase(sl()));
+  sl.registerLazySingleton(() => DeleteCustomerUseCase(sl()));
   sl.registerLazySingleton(() => AddPaymentVoucherUseCase(sl()));
   sl.registerLazySingleton(() => GetDebtStatsUseCase(sl()));
 
@@ -30,6 +32,7 @@ void initDebtLocator(GetIt sl) {
   sl.registerFactory(() => CustomersListBloc(
         getCustomersUseCase: sl(),
         getDebtStatsUseCase: sl(),
+        deleteCustomerUseCase: sl(),
       ));
   sl.registerFactory(() => CustomerStatementBloc(getCustomerStatementUseCase: sl()));
   sl.registerFactory(() => AddCustomerBloc(addCustomerUseCase: sl()));

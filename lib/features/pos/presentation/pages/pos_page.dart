@@ -225,7 +225,7 @@ class _PosPageState extends State<PosPage> {
                       )
                     else
                       SliverPadding(
-                        padding: const EdgeInsets.fromLTRB(16, 0, 16, 100),
+                        padding: const EdgeInsets.fromLTRB(16, 0, 16, 120),
                         sliver: SliverGrid(
                           gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                             crossAxisCount: context.isDesktop
@@ -250,6 +250,13 @@ class _PosPageState extends State<PosPage> {
                                     onAddToCart: () {
                                       context.read<CartBloc>().add(AddProductToCartEvent(product));
                                     },
+                                    onRemoveFromCart: () {
+                                      if (qty > 1) {
+                                        context.read<CartBloc>().add(UpdateItemQuantityEvent(product.id, qty - 1));
+                                      } else {
+                                        context.read<CartBloc>().add(RemoveProductFromCartEvent(product.id));
+                                      }
+                                    },
                                   );
                                 },
                               );
@@ -266,9 +273,9 @@ class _PosPageState extends State<PosPage> {
 
           // Floating Cart Bar
           Positioned(
-            left: context.isTablet ? (context.screenWidth - 520) / 2 : 20,
-            right: context.isTablet ? (context.screenWidth - 520) / 2 : 20,
-            bottom: 20,
+            left: context.isTablet ? (context.screenWidth - 520) / 2 : 16,
+            right: context.isTablet ? (context.screenWidth - 520) / 2 : 16,
+            bottom: 12,
             child: BlocBuilder<CartBloc, CartState>(
               builder: (context, cartState) {
                 return AppShowcase(

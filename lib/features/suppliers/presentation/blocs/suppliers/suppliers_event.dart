@@ -24,3 +24,12 @@ class SearchSuppliersEvent extends SuppliersEvent {
   @override
   List<Object?> get props => [query];
 }
+
+class DeleteSupplierEvent extends SuppliersEvent {
+  final String supplierId;
+
+  const DeleteSupplierEvent(this.supplierId);
+
+  @override
+  List<Object?> get props => [supplierId];
+}

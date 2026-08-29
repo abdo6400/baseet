@@ -98,12 +98,15 @@ class MorePage extends StatelessWidget {
       body: SingleChildScrollView(
         padding: EdgeInsets.all(context.safeDp(16)),
         child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             // Store Profile Card
             const StoreProfileCard(),
-            16.vSpace,
+            20.vSpace,
 
-            // Settings Menu Container
+            // Section 1: Store & Hardware
+            _buildSectionHeader(context, StringsManager.moreSectionStore.lang),
+            8.vSpace,
             Material(
               color: theme.colorScheme.surfaceContainerLowest,
               shape: RoundedRectangleBorder(
@@ -120,12 +123,6 @@ class MorePage extends StatelessWidget {
                   ),
                   const Divider(height: 1),
                   MoreMenuItem(
-                    title: StringsManager.receiptsListTitle.lang,
-                    icon: AppIcons.receipt,
-                    onTap: () => context.push(AppRoutes.receipts),
-                  ),
-                  const Divider(height: 1),
-                  MoreMenuItem(
                     title: StringsManager.suppliersTitle.lang,
                     icon: AppIcons.user,
                     onTap: () => context.push(AppRoutes.suppliers),
@@ -138,9 +135,31 @@ class MorePage extends StatelessWidget {
                   ),
                   const Divider(height: 1),
                   MoreMenuItem(
-                    title: StringsManager.showcaseReplayTour.lang,
-                    icon: AppIcons.help,
-                    onTap: () => _onReplayTour(context),
+                    title: StringsManager.receiptSettingsTitle.lang,
+                    icon: AppIcons.document,
+                    onTap: () => context.push(AppRoutes.receiptSettings),
+                  ),
+                ],
+              ),
+            ),
+            20.vSpace,
+
+            // Section 2: Preferences & Data
+            _buildSectionHeader(context, StringsManager.moreSectionPreferences.lang),
+            8.vSpace,
+            Material(
+              color: theme.colorScheme.surfaceContainerLowest,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(AppRadius.lg),
+                side: BorderSide(color: theme.colorScheme.outlineVariant),
+              ),
+              clipBehavior: Clip.antiAlias,
+              child: Column(
+                children: [
+                  MoreMenuItem(
+                    title: StringsManager.backupSettingsTitle.lang,
+                    icon: AppIcons.database,
+                    onTap: () => context.push(AppRoutes.backupSettings),
                   ),
                   const Divider(height: 1),
                   MoreMenuItem(
@@ -151,8 +170,7 @@ class MorePage extends StatelessWidget {
                       activeThumbColor: theme.colorScheme.primary,
                       onChanged: (val) {
                         context.read<ThemeBloc>().add(
-                              ToggleThemeEvent(
-                                  val ? ThemeMode.dark : ThemeMode.light),
+                              ToggleThemeEvent(val ? ThemeMode.dark : ThemeMode.light),
                             );
                       },
                     ),
@@ -162,11 +180,8 @@ class MorePage extends StatelessWidget {
                     title: StringsManager.moreLanguage.lang,
                     icon: AppIcons.language,
                     trailing: Text(
-                      context.locale.languageCode == 'ar'
-                          ? 'العربية'
-                          : 'English',
-                      style: const TextStyle(
-                          fontWeight: FontWeight.w600, fontSize: 12),
+                      context.locale.languageCode == 'ar' ? 'العربية' : 'English',
+                      style: const TextStyle(fontWeight: FontWeight.w700, fontSize: 12),
                     ),
                     onTap: () {
                       final newLocale = context.locale.languageCode == 'ar'
@@ -174,6 +189,34 @@ class MorePage extends StatelessWidget {
                           : const Locale('ar');
                       context.setLocale(newLocale);
                     },
+                  ),
+                ],
+              ),
+            ),
+            20.vSpace,
+
+            // Section 3: System & Support
+            _buildSectionHeader(context, StringsManager.moreSectionSystem.lang),
+            8.vSpace,
+            Material(
+              color: theme.colorScheme.surfaceContainerLowest,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(AppRadius.lg),
+                side: BorderSide(color: theme.colorScheme.outlineVariant),
+              ),
+              clipBehavior: Clip.antiAlias,
+              child: Column(
+                children: [
+                  MoreMenuItem(
+                    title: StringsManager.moreLicense.lang,
+                    icon: AppIcons.shield,
+                    onTap: () => LicenseInfoDialog.show(context),
+                  ),
+                  const Divider(height: 1),
+                  MoreMenuItem(
+                    title: StringsManager.showcaseReplayTour.lang,
+                    icon: AppIcons.help,
+                    onTap: () => _onReplayTour(context),
                   ),
                   const Divider(height: 1),
                   MoreMenuItem(
@@ -183,16 +226,9 @@ class MorePage extends StatelessWidget {
                   ),
                   const Divider(height: 1),
                   MoreMenuItem(
-                    title: StringsManager.moreLicense.lang,
-                    icon: AppIcons.shield,
-                    onTap: () => LicenseInfoDialog.show(context),
-                  ),
-                  const Divider(height: 1),
-                  MoreMenuItem(
                     title: StringsManager.moreAbout.lang,
                     icon: AppIcons.store,
-                    trailing: const Text('v1.0.0',
-                        style: TextStyle(color: Colors.grey, fontSize: 12)),
+                    trailing: const Text('v1.0.0', style: TextStyle(color: Colors.grey, fontSize: 12)),
                     onTap: () => AboutAppDialog.show(context),
                   ),
                   const Divider(height: 1),
@@ -205,7 +241,22 @@ class MorePage extends StatelessWidget {
                 ],
               ),
             ),
+            32.vSpace,
           ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildSectionHeader(BuildContext context, String title) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 4),
+      child: Text(
+        title,
+        style: TextStyle(
+          fontSize: 13,
+          fontWeight: FontWeight.w800,
+          color: Theme.of(context).colorScheme.primary,
         ),
       ),
     );

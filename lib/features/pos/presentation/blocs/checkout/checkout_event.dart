@@ -19,12 +19,12 @@ class SetPaymentMethodEvent extends CheckoutEvent {
 }
 
 class SelectCustomerForDebtEvent extends CheckoutEvent {
-  final String customerId;
-  final String customerName;
+  final String? customerId;
+  final String? customerName;
 
   const SelectCustomerForDebtEvent({
-    required this.customerId,
-    required this.customerName,
+    this.customerId,
+    this.customerName,
   });
 
   @override

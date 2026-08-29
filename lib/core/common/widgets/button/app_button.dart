@@ -12,6 +12,9 @@ class AppButton extends StatelessWidget {
   final double? width;
   final double height;
   final double borderRadius;
+  final double fontSize;
+  final double iconSize;
+  final EdgeInsetsGeometry? padding;
 
   const AppButton({
     super.key,
@@ -24,6 +27,9 @@ class AppButton extends StatelessWidget {
     this.width,
     this.height = 50.0,
     this.borderRadius = AppRadius.md,
+    this.fontSize = 14.5,
+    this.iconSize = 18.0,
+    this.padding,
   });
 
   @override
@@ -40,6 +46,7 @@ class AppButton extends StatelessWidget {
           backgroundColor: bg,
           foregroundColor: fg,
           elevation: 0,
+          padding: padding ?? const EdgeInsets.symmetric(horizontal: 10),
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(borderRadius),
           ),
@@ -48,26 +55,31 @@ class AppButton extends StatelessWidget {
         onPressed: isLoading ? null : onPressed,
         child: isLoading
             ? SizedBox(
-                width: 24,
-                height: 24,
+                width: 20,
+                height: 20,
                 child: CircularProgressIndicator(
-                  strokeWidth: 2.5,
+                  strokeWidth: 2.2,
                   valueColor: AlwaysStoppedAnimation<Color>(fg),
                 ),
               )
             : Row(
+                mainAxisSize: MainAxisSize.min,
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   if (icon != null) ...[
-                    AppIcon(icon, size: 20, color: fg),
-                    const SizedBox(width: 8),
+                    AppIcon(icon, size: iconSize, color: fg),
+                    const SizedBox(width: 6),
                   ],
-                  Text(
-                    text,
-                    style: TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.w600,
-                      color: fg,
+                  Flexible(
+                    child: Text(
+                      text,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: TextStyle(
+                        fontSize: fontSize,
+                        fontWeight: FontWeight.w600,
+                        color: fg,
+                      ),
                     ),
                   ),
                 ],
