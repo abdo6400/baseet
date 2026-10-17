@@ -29,7 +29,6 @@ class AddProductUseCase extends ParamsUseCase<ProductEntity, AddProductParams> {
             ? context.newId('622')
             : params.product.barcode);
     if (product.name.trim().isEmpty ||
-        product.categoryId.isEmpty ||
         product.barcode.isEmpty ||
         !product.buyPrice.isFinite ||
         !product.sellPrice.isFinite ||

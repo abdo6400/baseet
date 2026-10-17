@@ -1,4 +1,4 @@
-import 'package:path/path.dart';
+import 'package:baseet/core/database/platform_database.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:baseet/core/database/demo_data.dart';
 
@@ -20,12 +20,12 @@ class AppDatabase {
   }
 
   Future<Database> init({bool seedIfEmpty = false}) async {
-    final dbPath = await getDatabasesPath();
-    final path = join(dbPath, 'baseet.db');
+    final path = await configureDatabase();
 
     final db = await openDatabase(
       path,
-      version: 1,
+      version: 2,
+      onUpgrade: upgradeSchema,
       onCreate: (db, version) async {
         await createSchema(db);
         if (seedIfEmpty) {
@@ -47,7 +47,17 @@ class AppDatabase {
     return db;
   }
 
+  static Future<void> upgradeSchema(
+      Database db, int oldVersion, int newVersion) async {
+    if (oldVersion < 2) {
+      await db.execute(
+          'CREATE TABLE IF NOT EXISTS store_settings (key TEXT PRIMARY KEY, value TEXT NOT NULL)');
+    }
+  }
+
   static Future<void> createSchema(Database db) async {
+    await db.execute(
+        'CREATE TABLE IF NOT EXISTS store_settings (key TEXT PRIMARY KEY, value TEXT NOT NULL)');
     // 1. Categories
     await db.execute('''
       CREATE TABLE categories (

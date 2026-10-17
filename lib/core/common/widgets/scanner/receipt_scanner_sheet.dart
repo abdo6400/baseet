@@ -1,3 +1,7 @@
+import 'dart:io';
+import 'package:path_provider/path_provider.dart';
+import 'package:path/path.dart' as p;
+import 'package:file_selector/file_selector.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:baseet/core/common/widgets/icon/app_icon.dart';
@@ -9,7 +13,18 @@ import 'package:baseet/core/utils/strings_manager.dart';
 class ReceiptScannerSheet extends StatelessWidget {
   const ReceiptScannerSheet({super.key});
 
-  static Future<String?> show(BuildContext context) {
+  static Future<String?> show(BuildContext context) async {
+    if (Platform.isWindows || Platform.isLinux) {
+      final file = await openFile(acceptedTypeGroups: [
+        const XTypeGroup(label: 'Image', extensions: ['png', 'jpg', 'jpeg'])
+      ]);
+      if (file == null) return null;
+      final folder = await getApplicationSupportDirectory();
+      final destination = p.join(folder.path,
+          'receipt-${DateTime.now().microsecondsSinceEpoch}${p.extension(file.path)}');
+      await File(file.path).copy(destination);
+      return destination;
+    }
     return showModalBottomSheet<String>(
       context: context,
       shape: const RoundedRectangleBorder(
@@ -30,7 +45,11 @@ class ReceiptScannerSheet extends StatelessWidget {
       );
 
       if (file != null && context.mounted) {
-        Navigator.of(context).pop(file.path);
+        final folder = await getApplicationSupportDirectory();
+        final destination = p.join(folder.path,
+            'receipt-${DateTime.now().microsecondsSinceEpoch}${p.extension(file.path)}');
+        await File(file.path).copy(destination);
+        if (context.mounted) Navigator.of(context).pop(destination);
       }
     } catch (e) {
       if (context.mounted) {

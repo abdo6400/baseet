@@ -73,7 +73,7 @@ class PosFloatingCartBar extends StatelessWidget {
                     ),
                   ),
                   Text(
-                    '${totalPrice.toStringAsFixed(0)} ${StringsManager.posCurrency.lang}',
+                    '${totalPrice.toStringAsFixed(2)} ${StringsManager.posCurrency.lang}',
                     style: const TextStyle(
                       fontSize: 15,
                       color: Colors.white,

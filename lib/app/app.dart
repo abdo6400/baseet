@@ -1,5 +1,6 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
+import 'package:baseet/features/business/presentation/cubits/business_cubit.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:toastification/toastification.dart';
 
@@ -24,6 +25,7 @@ class BaseetApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MultiBlocProvider(
       providers: [
+        BlocProvider<BusinessCubit>(create: (_) => sl<BusinessCubit>()..load()),
         BlocProvider<ThemeBloc>.value(value: sl<ThemeBloc>()),
         BlocProvider<CartBloc>.value(value: sl<CartBloc>()),
         BlocProvider<PosCatalogBloc>(create: (_) => sl<PosCatalogBloc>()),

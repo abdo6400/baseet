@@ -46,7 +46,7 @@ class PosHeaderSalesCard extends StatelessWidget {
               Row(
                 children: [
                   Text(
-                    todaySales.toStringAsFixed(0),
+                    todaySales.toStringAsFixed(2),
                     style: TextStyle(
                       fontSize: 22,
                       fontWeight: FontWeight.w800,

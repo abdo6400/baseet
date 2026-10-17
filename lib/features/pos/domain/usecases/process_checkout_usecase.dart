@@ -1,3 +1,4 @@
+import 'package:baseet/core/utils/money.dart';
 import 'package:dartz/dartz.dart';
 import 'package:equatable/equatable.dart';
 import 'package:baseet/core/error/failures.dart';
@@ -46,11 +47,16 @@ class ProcessCheckoutUseCase
         params.items.any((item) =>
             item.quantity <= 0 ||
             !item.customPrice.isFinite ||
-            item.customPrice < 0)) {
+            item.customPrice < 0 ||
+            item.customPrice > 1000000000 ||
+            item.quantity > 1000000)) {
       return const Left(ValidationFailure(message: 'validation.invalid_cart'));
     }
-    final total =
-        params.items.fold<double>(0, (sum, item) => sum + item.subtotal);
+    final total = params.items.fold<int>(
+            0,
+            (sum, item) =>
+                sum + Money.cents(item.customPrice) * item.quantity) /
+        100;
     if (!total.isFinite ||
         !params.paidAmount.isFinite ||
         params.paidAmount < 0 ||
@@ -70,8 +76,8 @@ class ProcessCheckoutUseCase
         invoiceNumber: invoice,
         items: List.unmodifiable(params.items),
         totalAmount: total,
-        paidAmount: debt ? params.paidAmount : total,
-        remainingAmount: debt ? total - params.paidAmount : 0,
+        paidAmount: debt ? Money.round(params.paidAmount) : total,
+        remainingAmount: debt ? Money.round(total - params.paidAmount) : 0,
         paymentMethod: params.paymentMethod,
         customerId: debt ? params.customerId : null,
         customerName: debt ? params.customerName : null,

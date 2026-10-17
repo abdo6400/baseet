@@ -1,3 +1,4 @@
+import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:mobile_scanner/mobile_scanner.dart';
@@ -11,7 +12,33 @@ import 'package:baseet/core/utils/strings_manager.dart';
 class BarcodeScannerModal extends StatefulWidget {
   const BarcodeScannerModal({super.key});
 
-  static Future<String?> show(BuildContext context) {
+  static Future<String?> show(BuildContext context) async {
+    if (Platform.isWindows || Platform.isLinux) {
+      final controller = TextEditingController();
+      final value = await showDialog<String>(
+          context: context,
+          builder: (dialog) => AlertDialog(
+                  title: Text('simple.desktop_scan'.lang),
+                  content: TextField(
+                      controller: controller,
+                      autofocus: true,
+                      textDirection: TextDirection.ltr,
+                      onSubmitted: (value) =>
+                          Navigator.pop(dialog, value.trim()),
+                      decoration: InputDecoration(
+                          hintText: 'simple.desktop_scan_hint'.lang)),
+                  actions: [
+                    TextButton(
+                        onPressed: () => Navigator.pop(dialog),
+                        child: Text('common_cancel'.lang)),
+                    FilledButton(
+                        onPressed: () =>
+                            Navigator.pop(dialog, controller.text.trim()),
+                        child: Text('simple.continue'.lang))
+                  ]));
+      controller.dispose();
+      return value;
+    }
     return showModalBottomSheet<String>(
       context: context,
       isScrollControlled: true,

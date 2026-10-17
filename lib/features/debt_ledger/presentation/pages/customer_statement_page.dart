@@ -4,7 +4,6 @@ import 'package:go_router/go_router.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:baseet/app/router/app_routes.dart';
 import 'package:baseet/core/common/widgets/feedback/empty_state_widget.dart';
-import 'package:baseet/core/common/widgets/feedback/status_badge.dart';
 import 'package:baseet/core/common/widgets/icon/app_icon.dart';
 import 'package:baseet/core/common/widgets/layout/page_header.dart';
 import 'package:baseet/core/common/widgets/scanner/receipt_preview_dialog.dart';
@@ -181,14 +180,6 @@ class _CustomerStatementPageState extends State<CustomerStatementPage> {
                               ),
                             ],
                           ),
-                          StatusBadge(
-                            label: customer.isOverdue
-                                ? StringsManager.debtsStatusOverdue.lang
-                                : StringsManager.debtsStatusRegular.lang,
-                            variant: customer.isOverdue
-                                ? StatusBadgeVariant.error
-                                : StatusBadgeVariant.success,
-                          ),
                         ],
                       ),
                       const SizedBox(height: 16),
@@ -214,7 +205,7 @@ class _CustomerStatementPageState extends State<CustomerStatementPage> {
                               ),
                               const SizedBox(height: 4),
                               Text(
-                                '${customer.totalDebt.toStringAsFixed(0)} ${StringsManager.posCurrency.lang}',
+                                '${customer.totalDebt.toStringAsFixed(2)} ${StringsManager.posCurrency.lang}',
                                 style: TextStyle(
                                   fontSize: 22,
                                   fontWeight: FontWeight.w900,
@@ -237,7 +228,7 @@ class _CustomerStatementPageState extends State<CustomerStatementPage> {
                               ),
                               const SizedBox(height: 4),
                               Text(
-                                '${customer.creditLimit.toStringAsFixed(0)} ${StringsManager.posCurrency.lang}',
+                                '${customer.creditLimit.toStringAsFixed(2)} ${StringsManager.posCurrency.lang}',
                                 style: TextStyle(
                                   fontSize: 16,
                                   fontWeight: FontWeight.w700,
@@ -282,7 +273,9 @@ class _CustomerStatementPageState extends State<CustomerStatementPage> {
                             borderRadius: BorderRadius.circular(AppRadius.md),
                           ),
                         ),
-                        onPressed: () => _callPhone(customer.phone),
+                        onPressed: customer.phone.isEmpty
+                            ? null
+                            : () => _callPhone(customer.phone),
                         icon: AppIcon(AppIcons.phone, size: 18),
                         label: Text(StringsManager.customerCall.lang),
                       ),
@@ -298,8 +291,10 @@ class _CustomerStatementPageState extends State<CustomerStatementPage> {
                             borderRadius: BorderRadius.circular(AppRadius.md),
                           ),
                         ),
-                        onPressed: () => _openWhatsApp(
-                            customer.phone, customer.name, customer.totalDebt),
+                        onPressed: customer.phone.isEmpty
+                            ? null
+                            : () => _openWhatsApp(customer.phone, customer.name,
+                                customer.totalDebt),
                         icon: AppIcon(AppIcons.whatsapp,
                             size: 18, color: Colors.green),
                         label: Text(StringsManager.customerWhatsapp.lang),
@@ -408,7 +403,7 @@ class _CustomerStatementPageState extends State<CustomerStatementPage> {
                                   if (tx.notes != null) ...[
                                     const SizedBox(height: 2),
                                     Text(
-                                      tx.notes!,
+                                      tx.notes!.lang,
                                       style: TextStyle(
                                         fontSize: 11,
                                         color:
@@ -483,7 +478,7 @@ class _CustomerStatementPageState extends State<CustomerStatementPage> {
                               crossAxisAlignment: CrossAxisAlignment.end,
                               children: [
                                 Text(
-                                  '${isPayment ? "-" : "+"}${tx.amount.toStringAsFixed(0)} ${StringsManager.posCurrency.lang}',
+                                  '${isPayment ? "-" : "+"}${tx.amount.toStringAsFixed(2)} ${StringsManager.posCurrency.lang}',
                                   style: TextStyle(
                                     fontWeight: FontWeight.w800,
                                     fontSize: 15,
@@ -492,7 +487,7 @@ class _CustomerStatementPageState extends State<CustomerStatementPage> {
                                 ),
                                 const SizedBox(height: 2),
                                 Text(
-                                  '${StringsManager.customerTotalBalance.lang}: ${tx.remainingBalance.toStringAsFixed(0)} ${StringsManager.posCurrency.lang}',
+                                  '${StringsManager.customerTotalBalance.lang}: ${tx.remainingBalance.toStringAsFixed(2)} ${StringsManager.posCurrency.lang}',
                                   style: TextStyle(
                                     fontSize: 11,
                                     color: theme.colorScheme.onSurfaceVariant,

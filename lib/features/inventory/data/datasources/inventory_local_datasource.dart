@@ -65,6 +65,11 @@ class InventoryLocalDataSourceImpl implements InventoryLocalDataSource {
   Future<ProductModel> addProduct(ProductModel product) async {
     final db = await appDatabase.database;
 
+    if (product.categoryId == 'general') {
+      await db.rawInsert(
+          'INSERT OR IGNORE INTO categories(id,name,iconName) VALUES(?,?,?)',
+          ['general', 'general', 'grid']);
+    }
     await db.insert(
       'products',
       product.toMap(),

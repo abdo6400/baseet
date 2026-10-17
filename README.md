@@ -1,6 +1,6 @@
 # بسيط — Baseet
 
-Flutter point of sale, inventory, debt ledger, and reporting application.
+A simple Arabic-first shop app for local sales, stock, customer debt and payments. English is also available.
 
 ## Run
 
@@ -9,50 +9,43 @@ flutter pub get
 flutter run
 ```
 
-The default startup uses real local data and creates an empty SQLite database on first launch. Existing installations keep their database and records. Add a category, products, and customers through the app to begin.
+Start on Home, add a product with just its name, selling price and quantity, and record your first sale. A category is created automatically; barcodes, purchase costs and other details are optional. Customers require only a name and can have an optional previous balance.
 
-For explicit demo data on an empty database:
+Daily work is offline. SQLite records are stored in application-support storage outside the Windows installation folder. Schema version 2 migrates existing version 1 records without clearing them. Mobile databases from the previous location are preserved during migration.
 
-```sh
-flutter run --dart-define=DEMO_MODE=true
-```
+## Backup and QR transfer
 
-Settings also provides a confirmed restore-demo action that replaces local records. Clear-data and restore-demo operations run atomically; the shared cart is cleared after success. Database schema remains version 1, so this refactor does not require a destructive migration.
+Open **Backup & device transfer** to save/open a `.baseet` backup or transfer a complete snapshot on the same Wi-Fi. One device shows a five-minute QR code; the other scans it or pastes the code, previews counts, and confirms replacement. QR transfer uses AES-GCM encryption. Backup files themselves are not encrypted.
+
+Transfers replace the receiver's records; they do not merge independent edits. A recovery backup is retained before replacement. Use one device as the current source of truth. Windows supports USB scanners and pasted codes rather than camera scanning.
+
+## Test builds
+
+- **Windows test installer**: automatic on `main` pushes/PRs, plus manual runs. Downloads are available as `Baseet-Windows-Installer` and `Baseet-Windows-Portable` GitHub Actions artifacts. The workflow bundles the C++ runtime, packages an Inno Setup EXE, and performs an install/start smoke test.
+- **Android test APK**: manual run or `v*` tag. Artifact: `Baseet-Android-Test-APK`. Current signing is for testing, not store distribution.
+- To build Windows locally, install Visual Studio's **Desktop development with C++** workload, then run `flutter build windows --release`.
+- Installer and APK workflows are test delivery workflows. Public distribution needs release signing and device acceptance tests.
 
 ## Architecture
 
 ```text
 lib/
   main.dart
-  app/
-    app.dart
-    di/                     # Composition root and dependency registrations
-    router/                 # Route-owned process BLoCs
-    presentation/           # Cross-feature lookup state and loading/error UI
-  core/
-    database/               # SQLite connection, schema and explicit demo seed
-    error/                  # Domain failures and data exception mapping
-    services/               # Injectable time and identifier source
-    common/widgets/
-    theme/
-    usecase/
+  app/                     # Dependency composition, routing and shared UI coordination
+  core/                    # Database, errors, services, money, theme and common widgets
   features/
-    catalog/                # Shared product/category types and category reads
+    business/              # Home, product editing, invoice history and shop settings
+    catalog/               # Shared product/category domain types
+    device_transfer/       # Validated backups and encrypted local QR transfer
     inventory/
     pos/
     debt_ledger/
     reports/
-    more_settings/
+    more_settings/         # Data-management domain and process BLoC
     splash/
 ```
 
-Business features use `presentation → domain` and `data → domain`. Domain contains repository contracts, business validation, entities, and use cases. Data owns SQLite queries, atomic writes, serialization, and exception mapping. Domain policies are evaluated against current records inside transactions when consistency requires it.
-
-Checkout derives totals from cart lines, validates payment input, and atomically persists the invoice, stock changes and customer debt. Missing customers, unavailable stock, credit-limit violations, and duplicate invoices fail without partial writes. Payments must be finite, positive, and no greater than the current debt.
-
-Process BLoCs are created per route for checkout, add-product/category/customer, customer statements, and payment vouchers. Cart and list BLoCs are shared at app level. Selection lists come from use cases; production UI does not read demo fixtures.
-
-See `rules/architecture_rules.md` for dependency rules.
+Features use `presentation → domain` and `data → domain`. Presentation never accesses the database. Business validation lives in domain policies and use cases; SQLite queries and atomic writes stay in data. Process BLoCs/Cubits are scoped to routes; cart/list state is shared at app level.
 
 ## Checks
 
@@ -62,4 +55,6 @@ flutter analyze
 flutter test
 ```
 
-Tests cover domain validation, dependency boundaries, real in-memory SQLite transactions and rollback, live lookups, empty reports, and exception-to-failure mapping. CI runs formatting, analysis, and tests. Device-specific scanner, image picker and platform UI behavior still requires testing on a supported device.
+The suite covers architecture boundaries, business validation, money precision, real SQLite transactions and rollback, backups with attachments, local encrypted HTTP transfer, migration, and Arabic phone/desktop layouts using the real router.
+
+Read [the readiness review](docs/readiness.md) for minimum data, supported flows, transfer behavior and remaining production gaps. Returns/refunds, thermal printing, stock-movement audit history, simultaneous two-way sync and full accounting are not implemented. Estimated profit excludes expenses and depends on recorded purchase costs.

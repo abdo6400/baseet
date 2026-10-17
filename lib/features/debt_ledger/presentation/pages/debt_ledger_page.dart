@@ -12,7 +12,6 @@ import 'package:baseet/features/debt_ledger/presentation/blocs/customers_list/cu
 import 'package:baseet/features/debt_ledger/presentation/blocs/customers_list/customers_list_event.dart';
 import 'package:baseet/features/debt_ledger/presentation/blocs/customers_list/customers_list_state.dart';
 import 'package:baseet/features/debt_ledger/presentation/widgets/customer_ledger_card.dart';
-import 'package:baseet/features/debt_ledger/presentation/widgets/debt_filter_chips_row.dart';
 import 'package:baseet/features/debt_ledger/presentation/widgets/debt_summary_carousel.dart';
 
 class DebtLedgerPage extends StatefulWidget {
@@ -48,7 +47,7 @@ class _DebtLedgerPageState extends State<DebtLedgerPage> {
         elevation: 0,
         scrolledUnderElevation: 0.5,
         title: Text(
-          StringsManager.appName.lang,
+          StringsManager.debtsTitle.lang,
           style: TextStyle(
             fontSize: 22,
             fontWeight: FontWeight.w800,
@@ -138,25 +137,6 @@ class _DebtLedgerPageState extends State<DebtLedgerPage> {
                     totalDebt: state.totalDebt,
                     overdueDebt: state.overdueDebt,
                     todayCollections: state.todayCollections,
-                  ),
-                ),
-
-                // Status Filter Chips
-                SliverToBoxAdapter(
-                  child: Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 14),
-                    child: DebtFilterChipsRow(
-                      selectedStatus: state.statusFilter,
-                      sortByHighest: state.sortByHighest,
-                      onFilterSelected: (status, sortByHighest) {
-                        context
-                            .read<CustomersListBloc>()
-                            .add(FilterCustomersByStatusEvent(
-                              status: status,
-                              sortByHighest: sortByHighest,
-                            ));
-                      },
-                    ),
                   ),
                 ),
 

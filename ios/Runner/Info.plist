@@ -64,5 +64,10 @@
 		<string>UIInterfaceOrientationLandscapeLeft</string>
 		<string>UIInterfaceOrientationLandscapeRight</string>
 	</array>
+
+	<key>NSCameraUsageDescription</key><string>Scan product barcodes and device transfer codes.</string>
+	<key>NSPhotoLibraryUsageDescription</key><string>Attach a receipt image to a sale or payment.</string>
+	<key>NSLocalNetworkUsageDescription</key><string>Transfer your shop data to another device on the same Wi-Fi.</string>
+	<key>NSAppTransportSecurity</key><dict><key>NSAllowsLocalNetworking</key><true/></dict>
 </dict>
 </plist>

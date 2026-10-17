@@ -1,3 +1,4 @@
+import 'package:baseet/features/business/presentation/cubits/business_cubit.dart';
 import 'package:baseet/app/presentation/cubits/process_lookups_cubit.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -90,6 +91,7 @@ class _PaymentVoucherPageState extends State<PaymentVoucherPage> {
           errorMessage: state.errorMessage,
           successMessage: StringsManager.voucherSuccess.lang,
           onSuccess: () {
+            context.read<BusinessCubit>().load();
             context
                 .read<CustomersListBloc>()
                 .add(const LoadCustomersListEvent());
@@ -154,7 +156,7 @@ class _PaymentVoucherPageState extends State<PaymentVoucherPage> {
                         return DropdownMenuItem<String>(
                           value: c.id,
                           child: Text(
-                              '${c.name} (${StringsManager.debtsDebtSuffix.lang}: ${c.totalDebt.toStringAsFixed(0)} ${StringsManager.posCurrency.lang})'),
+                              '${c.name} (${StringsManager.debtsDebtSuffix.lang}: ${c.totalDebt.toStringAsFixed(2)} ${StringsManager.posCurrency.lang})'),
                         );
                       }).toList(),
                       onChanged: (val) {
@@ -192,7 +194,7 @@ class _PaymentVoucherPageState extends State<PaymentVoucherPage> {
                               fontWeight: FontWeight.w600, fontSize: 13),
                         ),
                         Text(
-                          '${currentDebt.toStringAsFixed(0)} ${StringsManager.posCurrency.lang}',
+                          '${currentDebt.toStringAsFixed(2)} ${StringsManager.posCurrency.lang}',
                           style: const TextStyle(
                             fontWeight: FontWeight.w800,
                             fontSize: 16,
@@ -241,7 +243,7 @@ class _PaymentVoucherPageState extends State<PaymentVoucherPage> {
                               fontWeight: FontWeight.w600, fontSize: 13),
                         ),
                         Text(
-                          '${remaining.toStringAsFixed(0)} ${StringsManager.posCurrency.lang}',
+                          '${remaining.toStringAsFixed(2)} ${StringsManager.posCurrency.lang}',
                           style: const TextStyle(
                             fontWeight: FontWeight.w800,
                             fontSize: 16,

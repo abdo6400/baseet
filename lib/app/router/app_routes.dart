@@ -1,4 +1,9 @@
 abstract class AppRoutes {
+  static const String home = '/home';
+  static const String sales = '/sales';
+  static const String transfer = '/transfer';
+  static String editProductPath(String id) =>
+      '/inventory/edit/${Uri.encodeComponent(id)}';
   static const String splash = '/splash';
 
   // POS

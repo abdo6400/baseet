@@ -77,6 +77,22 @@ void main() {
     expect(repository.saved!.remainingAmount, 0);
   });
 
+  test('decimal prices and payments do not leave a residual balance', () async {
+    final result = await checkout(ProcessCheckoutParams(
+      items: [CartItemEntity(product: product, customPrice: 0.1, quantity: 3)],
+      paymentMethod: PaymentMethod.debt,
+      customerId: 'customer',
+      paidAmount: 0.3,
+    ));
+    expect(result.isRight(), isTrue);
+    expect(repository.saved!.totalAmount, 0.3);
+    expect(repository.saved!.remainingAmount, 0);
+    expect(
+        DebtPolicy.receivePayment(0.3, 0.1), const Right<Failure, double>(0.2));
+    expect(
+        DebtPolicy.addCredit(0.1, 0.2, 0.3), const Right<Failure, double>(0.3));
+  });
+
   test('invalid carts and payment inputs never reach persistence', () async {
     final cases = [
       const ProcessCheckoutParams(items: [], paymentMethod: PaymentMethod.cash),

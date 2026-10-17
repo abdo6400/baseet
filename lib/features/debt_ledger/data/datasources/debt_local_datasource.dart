@@ -105,11 +105,21 @@ class DebtLocalDataSourceImpl implements DebtLocalDataSource {
   Future<CustomerModel> addCustomer(CustomerModel customer) async {
     final db = await appDatabase.database;
 
-    await db.insert(
-      'customers',
-      customer.toMap(),
-      conflictAlgorithm: ConflictAlgorithm.abort,
-    );
+    await db.transaction((txn) async {
+      await txn.insert('customers', customer.toMap(),
+          conflictAlgorithm: ConflictAlgorithm.abort);
+      if (customer.totalDebt > 0) {
+        await txn.insert('debt_transactions', {
+          'id': context.newId('opening'),
+          'customerId': customer.id,
+          'type': TransactionType.saleCredit.name,
+          'amount': customer.totalDebt,
+          'date': context.now().toIso8601String(),
+          'notes': 'simple.opening_debt',
+          'remainingBalance': customer.totalDebt
+        });
+      }
+    });
 
     return customer;
   }

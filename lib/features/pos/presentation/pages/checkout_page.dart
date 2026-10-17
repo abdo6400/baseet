@@ -1,3 +1,4 @@
+import 'package:baseet/features/business/presentation/cubits/business_cubit.dart';
 import 'package:baseet/app/presentation/cubits/process_lookups_cubit.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -54,6 +55,7 @@ class _CheckoutPageState extends State<CheckoutPage> {
           errorMessage: state.errorMessage,
           successMessage: StringsManager.checkoutSuccess.lang,
           onSuccess: () {
+            context.read<BusinessCubit>().load();
             context.read<CartBloc>().add(ClearCartEvent());
             context.read<PosCatalogBloc>().add(const LoadPosCatalogEvent());
             context.pop();
@@ -130,7 +132,7 @@ class _CheckoutPageState extends State<CheckoutPage> {
                                       ),
                                       const SizedBox(height: 2),
                                       Text(
-                                        '${item.product.sellPrice.toStringAsFixed(0)} ${StringsManager.posCurrency.lang}',
+                                        '${item.product.sellPrice.toStringAsFixed(2)} ${StringsManager.posCurrency.lang}',
                                         style: TextStyle(
                                           fontSize: 12,
                                           color: theme
@@ -179,7 +181,7 @@ class _CheckoutPageState extends State<CheckoutPage> {
                                 ),
                                 const SizedBox(width: 8),
                                 Text(
-                                  '${item.subtotal.toStringAsFixed(0)} ${StringsManager.posCurrency.lang}',
+                                  '${item.subtotal.toStringAsFixed(2)} ${StringsManager.posCurrency.lang}',
                                   style: TextStyle(
                                     fontWeight: FontWeight.w800,
                                     fontSize: 14,
@@ -214,7 +216,7 @@ class _CheckoutPageState extends State<CheckoutPage> {
                                 fontSize: 16, fontWeight: FontWeight.w700),
                           ),
                           Text(
-                            '${cartState.totalPrice.toStringAsFixed(0)} ${StringsManager.posCurrency.lang}',
+                            '${cartState.totalPrice.toStringAsFixed(2)} ${StringsManager.posCurrency.lang}',
                             style: TextStyle(
                               fontSize: 20,
                               fontWeight: FontWeight.w800,
@@ -303,7 +305,7 @@ class _CheckoutPageState extends State<CheckoutPage> {
                               return DropdownMenuItem<String>(
                                 value: c.id,
                                 child: Text(
-                                    '${c.name} (${c.totalDebt.toStringAsFixed(0)} ${StringsManager.posCurrency.lang} ${StringsManager.debtsDebtSuffix.lang})'),
+                                    '${c.name} (${c.totalDebt.toStringAsFixed(2)} ${StringsManager.posCurrency.lang} ${StringsManager.debtsDebtSuffix.lang})'),
                               );
                             }).toList(),
                             onChanged: (val) {

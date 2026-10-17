@@ -1,6 +1,14 @@
+import 'package:baseet/features/device_transfer/presentation/cubits/transfer_cubit.dart';
+import 'package:baseet/features/device_transfer/presentation/pages/transfer_page.dart';
+import 'package:baseet/features/business/presentation/cubits/store_settings_cubit.dart';
+import 'package:baseet/features/business/presentation/cubits/product_editor_cubit.dart';
+import 'package:baseet/features/business/presentation/pages/settings_page.dart';
+import 'package:baseet/features/business/presentation/pages/sales_page.dart';
+import 'package:baseet/features/business/presentation/pages/product_editor_page.dart';
+import 'package:baseet/features/business/presentation/pages/products_page.dart';
+import 'package:baseet/features/business/presentation/pages/home_page.dart';
 import 'package:baseet/features/more_settings/presentation/blocs/data_management/data_management_bloc.dart';
 import 'package:baseet/features/inventory/presentation/blocs/add_category/add_category_bloc.dart';
-import 'package:baseet/features/inventory/presentation/blocs/add_product/add_product_bloc.dart';
 import 'package:baseet/features/debt_ledger/presentation/blocs/payment_voucher/payment_voucher_bloc.dart';
 import 'package:baseet/features/debt_ledger/presentation/blocs/customer_statement/customer_statement_bloc.dart';
 import 'package:baseet/features/debt_ledger/presentation/blocs/add_customer/add_customer_bloc.dart';
@@ -17,9 +25,6 @@ import 'package:baseet/features/debt_ledger/presentation/pages/customer_statemen
 import 'package:baseet/features/debt_ledger/presentation/pages/debt_ledger_page.dart';
 import 'package:baseet/features/debt_ledger/presentation/pages/payment_voucher_page.dart';
 import 'package:baseet/features/inventory/presentation/pages/add_category_page.dart';
-import 'package:baseet/features/inventory/presentation/pages/add_product_page.dart';
-import 'package:baseet/features/inventory/presentation/pages/inventory_page.dart';
-import 'package:baseet/features/more_settings/presentation/pages/more_page.dart';
 import 'package:baseet/features/pos/presentation/pages/checkout_page.dart';
 import 'package:baseet/features/pos/presentation/pages/pos_page.dart';
 import 'package:baseet/features/reports/presentation/pages/reports_page.dart';
@@ -32,6 +37,13 @@ class AppRouter {
     initialLocation: AppRoutes.splash,
     routes: [
       GoRoute(
+          path: AppRoutes.sales,
+          builder: (context, state) => const SalesPage()),
+      GoRoute(
+          path: AppRoutes.transfer,
+          builder: (context, state) => BlocProvider(
+              create: (_) => sl<TransferCubit>(), child: const TransferPage())),
+      GoRoute(
         path: AppRoutes.splash,
         parentNavigatorKey: ConstantsManager.rootNavigatorKey,
         builder: (context, state) => const SplashPage(),
@@ -41,6 +53,11 @@ class AppRouter {
           return MainLayoutPage(navigationShell: navigationShell);
         },
         branches: [
+          StatefulShellBranch(routes: [
+            GoRoute(
+                path: AppRoutes.home,
+                builder: (context, state) => const HomePage())
+          ]),
           // Branch 0: POS
           StatefulShellBranch(
             routes: [
@@ -115,20 +132,22 @@ class AppRouter {
             routes: [
               GoRoute(
                 path: AppRoutes.inventory,
-                builder: (context, state) => const InventoryPage(),
+                builder: (context, state) => const ProductsPage(),
                 routes: [
                   GoRoute(
                     path: 'add-product',
                     parentNavigatorKey: ConstantsManager.rootNavigatorKey,
                     builder: (context, state) => BlocProvider(
-                        create: (_) => sl<AddProductBloc>(),
-                        child: BlocProvider(
-                            create: (_) => ProcessLookupsCubit(sl(), sl())
-                              ..load(categories: true),
-                            child: ProcessLookupsGate(
-                                categories: true,
-                                child: const AddProductPage()))),
+                        create: (_) => sl<ProductEditorCubit>(),
+                        child: const ProductEditorPage()),
                   ),
+                  GoRoute(
+                      path: 'edit/:id',
+                      parentNavigatorKey: ConstantsManager.rootNavigatorKey,
+                      builder: (context, state) => BlocProvider(
+                          create: (_) => sl<ProductEditorCubit>(),
+                          child: ProductEditorPage(
+                              productId: state.pathParameters['id']))),
                   GoRoute(
                     path: 'add-category',
                     parentNavigatorKey: ConstantsManager.rootNavigatorKey,
@@ -158,7 +177,9 @@ class AppRouter {
                 path: AppRoutes.more,
                 builder: (context, state) => BlocProvider(
                     create: (_) => sl<DataManagementBloc>(),
-                    child: const MorePage()),
+                    child: BlocProvider(
+                        create: (_) => sl<StoreSettingsCubit>(),
+                        child: const SettingsPage())),
               ),
             ],
           ),

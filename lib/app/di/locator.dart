@@ -1,4 +1,5 @@
 import 'package:get_it/get_it.dart';
+import 'business_locator.dart';
 import 'package:baseet/features/catalog/data/datasources/catalog_local_datasource.dart';
 import 'package:baseet/app/di/settings_locator.dart';
 import 'package:baseet/features/catalog/data/repositories/catalog_repository_impl.dart';
@@ -22,4 +23,5 @@ Future<void> initLocator() async {
   initInventoryLocator(sl);
   initReportsLocator(sl);
   initSettingsLocator(sl);
+  await initBusinessLocator(sl);
 }

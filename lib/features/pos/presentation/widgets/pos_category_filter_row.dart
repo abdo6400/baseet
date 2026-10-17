@@ -31,7 +31,9 @@ class PosCategoryFilterRow extends StatelessWidget {
           final isSelected = cat.id == selectedCategoryId;
           final displayName = cat.id == 'cat_0'
               ? StringsManager.posAllCategories.lang
-              : cat.name;
+              : cat.id == 'general'
+                  ? 'simple.general'.lang
+                  : cat.name;
 
           return GestureDetector(
             onTap: () => onSelect(cat.id),

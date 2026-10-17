@@ -42,7 +42,7 @@ class _SplashPageState extends State<SplashPage>
   Future<void> _navigateToHome() async {
     await Future.delayed(const Duration(milliseconds: 2000));
     if (mounted) {
-      context.go(AppRoutes.pos);
+      context.go(AppRoutes.home);
     }
   }
 

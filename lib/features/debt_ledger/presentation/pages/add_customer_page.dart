@@ -1,3 +1,4 @@
+import 'package:baseet/features/business/presentation/cubits/business_cubit.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
@@ -27,6 +28,7 @@ class _AddCustomerPageState extends State<AddCustomerPage> {
   final _nameController = TextEditingController();
   final _phoneController = TextEditingController();
   final _limitController = TextEditingController();
+  final _openingController = TextEditingController();
   final _addressController = TextEditingController();
   final _notesController = TextEditingController();
 
@@ -35,6 +37,7 @@ class _AddCustomerPageState extends State<AddCustomerPage> {
     _nameController.dispose();
     _phoneController.dispose();
     _limitController.dispose();
+    _openingController.dispose();
     _addressController.dispose();
     _notesController.dispose();
     super.dispose();
@@ -46,7 +49,7 @@ class _AddCustomerPageState extends State<AddCustomerPage> {
         id: '',
         name: _nameController.text.trim(),
         phone: _phoneController.text.trim(),
-        totalDebt: 0.0,
+        totalDebt: double.tryParse(_openingController.text) ?? 0,
         creditLimit: double.tryParse(_limitController.text) ?? 3000.0,
         address: _addressController.text.trim().isNotEmpty
             ? _addressController.text.trim()
@@ -73,6 +76,7 @@ class _AddCustomerPageState extends State<AddCustomerPage> {
           errorMessage: state.errorMessage,
           successMessage: StringsManager.addCustomerSuccess.lang,
           onSuccess: () {
+            context.read<BusinessCubit>().load();
             context
                 .read<CustomersListBloc>()
                 .add(const LoadCustomersListEvent());
@@ -108,30 +112,47 @@ class _AddCustomerPageState extends State<AddCustomerPage> {
                     label: StringsManager.addCustomerPhone.lang,
                     hint: StringsManager.addCustomerPhoneHint.lang,
                     keyboardType: TextInputType.phone,
-                    validator: (val) => val == null || val.trim().isEmpty
-                        ? StringsManager.commonRequired.lang
-                        : null,
                   ),
                   const SizedBox(height: 16),
-                  AppTextField(
-                    controller: _limitController,
-                    label: StringsManager.addCustomerCreditLimit.lang,
-                    hint: StringsManager.addCustomerLimitHint.lang,
-                    keyboardType: TextInputType.number,
-                  ),
-                  const SizedBox(height: 16),
-                  AppTextField(
-                    controller: _addressController,
-                    label: StringsManager.addCustomerAddress.lang,
-                    hint: StringsManager.addCustomerAddressHint.lang,
-                  ),
-                  const SizedBox(height: 16),
-                  AppTextField(
-                    controller: _notesController,
-                    label: StringsManager.addCustomerNotes.lang,
-                    hint: StringsManager.addCustomerNotesHint.lang,
-                    maxLines: 3,
-                  ),
+                  ExpansionTile(
+                      tilePadding: EdgeInsets.zero,
+                      title: Text('simple.more_details'.lang),
+                      children: [
+                        AppTextField(
+                            controller: _openingController,
+                            label: 'simple.opening_debt'.lang,
+                            keyboardType: const TextInputType.numberWithOptions(
+                                decimal: true),
+                            validator: (value) {
+                              if ((value ?? '').isEmpty) return null;
+                              final amount = double.tryParse(value!);
+                              return amount == null ||
+                                      !amount.isFinite ||
+                                      amount < 0
+                                  ? 'simple.valid_number'.lang
+                                  : null;
+                            }),
+                        const SizedBox(height: 16),
+                        AppTextField(
+                          controller: _limitController,
+                          label: StringsManager.addCustomerCreditLimit.lang,
+                          hint: StringsManager.addCustomerLimitHint.lang,
+                          keyboardType: TextInputType.number,
+                        ),
+                        const SizedBox(height: 16),
+                        AppTextField(
+                          controller: _addressController,
+                          label: StringsManager.addCustomerAddress.lang,
+                          hint: StringsManager.addCustomerAddressHint.lang,
+                        ),
+                        const SizedBox(height: 16),
+                        AppTextField(
+                          controller: _notesController,
+                          label: StringsManager.addCustomerNotes.lang,
+                          hint: StringsManager.addCustomerNotesHint.lang,
+                          maxLines: 3,
+                        ),
+                      ]),
                   const SizedBox(height: 32),
                   AppButton(
                     text: StringsManager.addCustomerSave.lang,

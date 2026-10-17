@@ -1,3 +1,4 @@
+import 'package:baseet/core/utils/money.dart';
 import 'package:equatable/equatable.dart';
 import 'package:baseet/features/catalog/domain/entities/product_entity.dart';
 
@@ -12,7 +13,7 @@ class CartItemEntity extends Equatable {
     double? customPrice,
   }) : customPrice = customPrice ?? product.sellPrice;
 
-  double get subtotal => customPrice * quantity;
+  double get subtotal => Money.cents(customPrice) * quantity / 100;
 
   CartItemEntity copyWith({
     ProductEntity? product,

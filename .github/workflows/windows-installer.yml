@@ -1,0 +1,67 @@
+name: Windows test installer
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    tags: ['v*']
+  pull_request:
+permissions:
+  contents: read
+jobs:
+  windows:
+    runs-on: windows-latest
+    timeout-minutes: 35
+    steps:
+      - uses: actions/checkout@v4
+      - uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+          cache: true
+      - run: flutter pub get
+      - run: flutter analyze
+      - run: flutter test
+      - run: flutter build windows --release
+      - name: Bundle C++ runtime for a clean test machine
+        shell: pwsh
+        run: |
+          $vswhere = "${env:ProgramFiles(x86)}\Microsoft Visual Studio\Installer\vswhere.exe"
+          $install = & $vswhere -latest -products * -property installationPath
+          $runtime = Get-ChildItem -LiteralPath "$install\VC\Redist\MSVC" -Directory | Sort-Object Name -Descending | Select-Object -First 1
+          $crt = Get-ChildItem -LiteralPath "$($runtime.FullName)\x64" -Directory -Filter '*.CRT' | Select-Object -First 1
+          if (-not $crt) { throw 'C++ runtime directory was not found.' }
+          Copy-Item -Path "$($crt.FullName)\*.dll" -Destination 'build\windows\x64\runner\Release'
+      - name: Package installer
+        shell: pwsh
+        run: |
+          $compiler = "${env:ProgramFiles(x86)}\Inno Setup 6\ISCC.exe"
+          if (-not (Test-Path -LiteralPath $compiler)) {
+            choco install innosetup --no-progress -y
+          }
+          $versionLine = Select-String -Path pubspec.yaml -Pattern '^version:'
+          $appVersion = (($versionLine.Line -split ':')[1].Trim() -split '\+')[0]
+          & $compiler "/DAppVersion=$appVersion" windows\installer\baseet.iss
+          if ($LASTEXITCODE -ne 0) { throw 'Installer compilation failed.' }
+      - name: Install and launch smoke test
+        shell: pwsh
+        run: |
+          $setup = Get-ChildItem -LiteralPath build\installer -Filter '*.exe' | Select-Object -First 1
+          $installed = Join-Path $env:RUNNER_TEMP 'BaseetInstallTest'
+          $result = Start-Process -FilePath $setup.FullName -ArgumentList @('/VERYSILENT', '/SUPPRESSMSGBOXES', '/NORESTART', "/DIR=$installed") -WindowStyle Hidden -Wait -PassThru
+          if ($result.ExitCode -ne 0) { throw "Installer exited with $($result.ExitCode)." }
+          $app = Start-Process -FilePath (Join-Path $installed 'baseet.exe') -WindowStyle Hidden -PassThru
+          Start-Sleep -Seconds 15
+          $app.Refresh()
+          if ($app.HasExited) { throw 'Installed application exited during startup.' }
+          Stop-Process -Id $app.Id
+      - uses: actions/upload-artifact@v4
+        with:
+          name: Baseet-Windows-Installer
+          path: build/installer/*.exe
+          if-no-files-found: error
+          retention-days: 14
+      - uses: actions/upload-artifact@v4
+        with:
+          name: Baseet-Windows-Portable
+          path: build/windows/x64/runner/Release/
+          if-no-files-found: error
+          retention-days: 14

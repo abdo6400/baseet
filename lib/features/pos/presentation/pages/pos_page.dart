@@ -90,7 +90,7 @@ class _PosPageState extends State<PosPage> {
           onPressed: _startBarcodeScanning,
         ),
         title: Text(
-          StringsManager.appName.lang,
+          StringsManager.posTitle.lang,
           style: TextStyle(
             fontSize: 22,
             fontWeight: FontWeight.w800,
@@ -98,27 +98,6 @@ class _PosPageState extends State<PosPage> {
           ),
         ),
         centerTitle: true,
-        actions: [
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
-            child: Container(
-              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
-              decoration: BoxDecoration(
-                color: theme.colorScheme.surfaceContainerLow,
-                borderRadius: BorderRadius.circular(AppRadius.full),
-              ),
-              alignment: Alignment.center,
-              child: Text(
-                StringsManager.cashier.lang,
-                style: TextStyle(
-                  fontSize: 12,
-                  fontWeight: FontWeight.w700,
-                  color: theme.colorScheme.primary,
-                ),
-              ),
-            ),
-          ),
-        ],
         bottom: PreferredSize(
           preferredSize: const Size.fromHeight(1.0),
           child: Container(
@@ -200,11 +179,11 @@ class _PosPageState extends State<PosPage> {
                         padding: const EdgeInsets.fromLTRB(16, 0, 16, 100),
                         sliver: SliverGrid(
                           gridDelegate:
-                              const SliverGridDelegateWithFixedCrossAxisCount(
-                            crossAxisCount: 2,
+                              const SliverGridDelegateWithMaxCrossAxisExtent(
+                            maxCrossAxisExtent: 260,
+                            mainAxisExtent: 190,
                             crossAxisSpacing: 12,
                             mainAxisSpacing: 12,
-                            childAspectRatio: 0.78,
                           ),
                           delegate: SliverChildBuilderDelegate(
                             (context, index) {
@@ -212,6 +191,21 @@ class _PosPageState extends State<PosPage> {
                               return PosProductGridCard(
                                 product: product,
                                 onAddToCart: () {
+                                  final quantity = context
+                                      .read<CartBloc>()
+                                      .state
+                                      .items
+                                      .where((item) =>
+                                          item.product.id == product.id)
+                                      .fold<int>(0,
+                                          (sum, item) => sum + item.quantity);
+                                  if (quantity >= product.stockQuantity) {
+                                    ScaffoldMessenger.of(context).showSnackBar(
+                                        SnackBar(
+                                            content: Text(
+                                                'simple.stock_limit'.lang)));
+                                    return;
+                                  }
                                   context
                                       .read<CartBloc>()
                                       .add(AddProductToCartEvent(product));

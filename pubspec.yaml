@@ -1,7 +1,7 @@
 name: baseet
 description: "بسيط - Point of Sale & Smart Arabic Debt Ledger Application"
 publish_to: 'none'
-version: 1.0.0+1
+version: 1.1.0+2
 
 environment:
   sdk: ^3.5.0
@@ -34,13 +34,17 @@ dependencies:
   url_launcher: ^6.3.2
   mobile_scanner: ^7.4.0
   image_picker: ^1.2.3
+  sqflite_common_ffi: ^2.4.4
+  path_provider: ^2.1.6
+  file_selector: ^1.1.0
+  qr_flutter: ^4.1.0
+  cryptography: ^2.9.0
+  file_picker: ^11.0.3
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
   flutter_lints: ^5.0.0
-  sqflite_common_ffi: ^2.4.4
-
 flutter:
   uses-material-design: true
 
