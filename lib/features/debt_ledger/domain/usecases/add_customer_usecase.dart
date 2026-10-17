@@ -1,9 +1,10 @@
+import 'package:baseet/core/services/operation_context.dart';
 import 'package:dartz/dartz.dart';
 import 'package:equatable/equatable.dart';
-import '../../../../config/database/error/failures.dart';
-import '../../../../core/usecase/usecase.dart';
-import '../entities/customer_entity.dart';
-import '../repositories/debt_repository.dart';
+import 'package:baseet/core/error/failures.dart';
+import 'package:baseet/core/usecase/usecase.dart';
+import 'package:baseet/features/debt_ledger/domain/entities/customer_entity.dart';
+import 'package:baseet/features/debt_ledger/domain/repositories/debt_repository.dart';
 
 class AddCustomerParams extends Equatable {
   final CustomerEntity customer;
@@ -14,13 +15,24 @@ class AddCustomerParams extends Equatable {
   List<Object?> get props => [customer];
 }
 
-class AddCustomerUseCase extends ParamsUseCase<CustomerEntity, AddCustomerParams> {
+class AddCustomerUseCase
+    extends ParamsUseCase<CustomerEntity, AddCustomerParams> {
   final DebtRepository repository;
 
-  AddCustomerUseCase(this.repository);
+  final OperationContext context;
+  AddCustomerUseCase(this.repository, this.context);
 
   @override
   Future<Either<Failure, CustomerEntity>> call(AddCustomerParams params) {
-    return repository.addCustomer(params.customer);
+    final customer = params.customer;
+    if (customer.name.trim().isEmpty ||
+        !customer.totalDebt.isFinite ||
+        customer.totalDebt < 0 ||
+        !customer.creditLimit.isFinite ||
+        customer.creditLimit < 0) {
+      return Future.value(const Left(
+          ValidationFailure(message: 'validation.invalid_customer')));
+    }
+    return repository.addCustomer(customer.copyWith(id: context.newId('cust')));
   }
 }

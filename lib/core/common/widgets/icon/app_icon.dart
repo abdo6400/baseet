@@ -15,7 +15,8 @@ class AppIcon extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final defaultColor = IconTheme.of(context).color ?? Theme.of(context).colorScheme.onSurface;
+    final defaultColor =
+        IconTheme.of(context).color ?? Theme.of(context).colorScheme.onSurface;
     final defaultSize = IconTheme.of(context).size ?? 24.0;
 
     if (icon is IconData) {

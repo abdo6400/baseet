@@ -1,20 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
-import '../../../../core/common/widgets/button/app_button.dart';
-import '../../../../core/common/widgets/form/app_text_field.dart';
-import '../../../../core/common/widgets/layout/page_header.dart';
-import '../../../../core/extensions/state_handle_extension.dart';
-import '../../../../core/extensions/translation_extension.dart';
-import '../../../../core/utils/app_icons.dart';
-import '../../../../core/utils/strings_manager.dart';
-import '../../../../core/utils/uuid_generator.dart';
-import '../../domain/entities/category_entity.dart';
-import '../blocs/add_category/add_category_bloc.dart';
-import '../blocs/add_category/add_category_event.dart';
-import '../blocs/add_category/add_category_state.dart';
-import '../blocs/inventory_list/inventory_list_bloc.dart';
-import '../blocs/inventory_list/inventory_list_event.dart';
+import 'package:baseet/core/common/widgets/button/app_button.dart';
+import 'package:baseet/core/common/widgets/form/app_text_field.dart';
+import 'package:baseet/core/common/widgets/layout/page_header.dart';
+import 'package:baseet/core/extensions/state_handle_extension.dart';
+import 'package:baseet/core/extensions/translation_extension.dart';
+import 'package:baseet/core/utils/app_icons.dart';
+import 'package:baseet/core/utils/strings_manager.dart';
+import 'package:baseet/features/catalog/domain/entities/category_entity.dart';
+import 'package:baseet/features/inventory/presentation/blocs/add_category/add_category_bloc.dart';
+import 'package:baseet/features/inventory/presentation/blocs/add_category/add_category_event.dart';
+import 'package:baseet/features/inventory/presentation/blocs/add_category/add_category_state.dart';
+import 'package:baseet/features/inventory/presentation/blocs/inventory_list/inventory_list_bloc.dart';
+import 'package:baseet/features/inventory/presentation/blocs/inventory_list/inventory_list_event.dart';
 
 class AddCategoryPage extends StatefulWidget {
   const AddCategoryPage({super.key});
@@ -36,7 +35,7 @@ class _AddCategoryPageState extends State<AddCategoryPage> {
   void _onSave() {
     if (_formKey.currentState?.validate() ?? false) {
       final category = CategoryEntity(
-        id: UuidGenerator.generate('cat'),
+        id: '',
         name: _nameController.text.trim(),
         iconName: 'category',
       );
@@ -81,7 +80,9 @@ class _AddCategoryPageState extends State<AddCategoryPage> {
                     controller: _nameController,
                     label: StringsManager.addCategoryName.lang,
                     hint: StringsManager.addCategoryExampleHint.lang,
-                    validator: (val) => val == null || val.trim().isEmpty ? StringsManager.commonRequired.lang : null,
+                    validator: (val) => val == null || val.trim().isEmpty
+                        ? StringsManager.commonRequired.lang
+                        : null,
                   ),
                   const SizedBox(height: 32),
                   AppButton(

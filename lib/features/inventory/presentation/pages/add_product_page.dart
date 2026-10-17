@@ -1,7 +1,7 @@
+import 'package:baseet/app/presentation/cubits/process_lookups_cubit.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
-import 'package:baseet/config/database/local/mock_data.dart';
 import 'package:baseet/core/common/widgets/button/app_button.dart';
 import 'package:baseet/core/common/widgets/form/app_text_field.dart';
 import 'package:baseet/core/common/widgets/icon/app_icon.dart';
@@ -12,13 +12,12 @@ import 'package:baseet/core/extensions/translation_extension.dart';
 import 'package:baseet/core/theme/tokens/app_tokens.dart';
 import 'package:baseet/core/utils/app_icons.dart';
 import 'package:baseet/core/utils/strings_manager.dart';
-import 'package:baseet/core/utils/uuid_generator.dart';
 import 'package:baseet/features/inventory/presentation/blocs/add_product/add_product_bloc.dart';
 import 'package:baseet/features/inventory/presentation/blocs/add_product/add_product_event.dart';
 import 'package:baseet/features/inventory/presentation/blocs/add_product/add_product_state.dart';
 import 'package:baseet/features/inventory/presentation/blocs/inventory_list/inventory_list_bloc.dart';
 import 'package:baseet/features/inventory/presentation/blocs/inventory_list/inventory_list_event.dart';
-import 'package:baseet/features/pos/domain/entities/product_entity.dart';
+import 'package:baseet/features/catalog/domain/entities/product_entity.dart';
 import 'package:baseet/features/pos/presentation/blocs/catalog/pos_catalog_bloc.dart';
 import 'package:baseet/features/pos/presentation/blocs/catalog/pos_catalog_event.dart';
 
@@ -37,7 +36,7 @@ class _AddProductPageState extends State<AddProductPage> {
   final _sellPriceController = TextEditingController();
   final _stockController = TextEditingController(text: '10');
   final _minStockController = TextEditingController(text: '3');
-  String _selectedCategoryId = 'cat_1';
+  String? _selectedCategoryId;
 
   @override
   void dispose() {
@@ -52,24 +51,25 @@ class _AddProductPageState extends State<AddProductPage> {
 
   void _onSave() {
     if (_formKey.currentState?.validate() ?? false) {
-      final category = BaseetMockData.initialCategories.firstWhere(
-        (c) => c.id == _selectedCategoryId,
-        orElse: () => BaseetMockData.initialCategories[1],
-      );
+      final categories = context.read<ProcessLookupsCubit>().state.categories;
+      final matches = categories.where((c) => c.id == _selectedCategoryId);
+      if (matches.isEmpty) {
+        ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text('validation.category_required'.lang)));
+        return;
+      }
+      final category = matches.first;
 
       final product = ProductEntity(
-        id: UuidGenerator.generate('prod'),
+        id: '',
         name: _nameController.text.trim(),
-        barcode: _barcodeController.text.trim().isNotEmpty
-            ? _barcodeController.text.trim()
-            : UuidGenerator.generate('622'),
-        categoryId: _selectedCategoryId,
+        barcode: _barcodeController.text.trim(),
+        categoryId: category.id,
         categoryName: category.name,
         buyPrice: double.tryParse(_buyPriceController.text) ?? 0.0,
         sellPrice: double.tryParse(_sellPriceController.text) ?? 0.0,
         stockQuantity: int.tryParse(_stockController.text) ?? 0,
         minStockLimit: int.tryParse(_minStockController.text) ?? 3,
-        imageUrl: 'https://images.unsplash.com/photo-1550583724-b2692b85b150?auto=format&fit=crop&w=300&q=80',
       );
 
       context.read<AddProductBloc>().add(SubmitAddProductEvent(product));
@@ -79,7 +79,12 @@ class _AddProductPageState extends State<AddProductPage> {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final categories = BaseetMockData.initialCategories.where((c) => c.id != 'cat_0').toList();
+    final categories = context
+        .watch<ProcessLookupsCubit>()
+        .state
+        .categories
+        .where((c) => c.id != 'cat_0')
+        .toList();
 
     return BlocConsumer<AddProductBloc, AddProductState>(
       listener: (context, state) {
@@ -114,7 +119,9 @@ class _AddProductPageState extends State<AddProductPage> {
                     controller: _nameController,
                     label: StringsManager.addProductName.lang,
                     hint: StringsManager.addProductExampleHint.lang,
-                    validator: (val) => val == null || val.trim().isEmpty ? StringsManager.commonRequired.lang : null,
+                    validator: (val) => val == null || val.trim().isEmpty
+                        ? StringsManager.commonRequired.lang
+                        : null,
                   ),
                   const SizedBox(height: 16),
                   AppTextField(
@@ -137,7 +144,8 @@ class _AddProductPageState extends State<AddProductPage> {
                   // Category Selector
                   Text(
                     StringsManager.addProductCategory.lang,
-                    style: const TextStyle(fontSize: 13, fontWeight: FontWeight.w600),
+                    style: const TextStyle(
+                        fontSize: 13, fontWeight: FontWeight.w600),
                   ),
                   const SizedBox(height: 6),
                   Container(
@@ -145,12 +153,17 @@ class _AddProductPageState extends State<AddProductPage> {
                     decoration: BoxDecoration(
                       color: theme.colorScheme.surfaceContainerLowest,
                       borderRadius: BorderRadius.circular(AppRadius.lg),
-                      border: Border.all(color: theme.colorScheme.outlineVariant),
+                      border:
+                          Border.all(color: theme.colorScheme.outlineVariant),
                     ),
                     child: DropdownButtonHideUnderline(
                       child: DropdownButton<String>(
                         isExpanded: true,
-                        value: _selectedCategoryId,
+                        hint: Text('validation.category_required'.lang),
+                        value:
+                            categories.any((c) => c.id == _selectedCategoryId)
+                                ? _selectedCategoryId
+                                : null,
                         items: categories.map((c) {
                           return DropdownMenuItem<String>(
                             value: c.id,
@@ -178,7 +191,9 @@ class _AddProductPageState extends State<AddProductPage> {
                           label: StringsManager.addProductBuyPrice.lang,
                           hint: '0.0',
                           keyboardType: TextInputType.number,
-                          validator: (val) => val == null || val.trim().isEmpty ? StringsManager.commonRequired.lang : null,
+                          validator: (val) => val == null || val.trim().isEmpty
+                              ? StringsManager.commonRequired.lang
+                              : null,
                         ),
                       ),
                       const SizedBox(width: 12),
@@ -188,7 +203,9 @@ class _AddProductPageState extends State<AddProductPage> {
                           label: StringsManager.addProductSellPrice.lang,
                           hint: '0.0',
                           keyboardType: TextInputType.number,
-                          validator: (val) => val == null || val.trim().isEmpty ? StringsManager.commonRequired.lang : null,
+                          validator: (val) => val == null || val.trim().isEmpty
+                              ? StringsManager.commonRequired.lang
+                              : null,
                         ),
                       ),
                     ],

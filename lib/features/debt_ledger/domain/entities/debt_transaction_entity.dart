@@ -1,5 +1,5 @@
 import 'package:equatable/equatable.dart';
-import '../../../../core/enums/enums.dart';
+import 'package:baseet/core/enums/enums.dart';
 
 class DebtTransactionEntity extends Equatable {
   final String id;

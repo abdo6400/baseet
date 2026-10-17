@@ -1,21 +1,22 @@
+import 'package:baseet/features/inventory/domain/entities/inventory_stats.dart';
 import 'package:sqflite/sqflite.dart';
-import 'package:baseet/config/database/local/app_database.dart';
-import 'package:baseet/features/inventory/data/models/category_model.dart';
-import 'package:baseet/features/pos/data/models/product_model.dart';
+import 'package:baseet/core/database/app_database.dart';
+import 'package:baseet/features/catalog/data/models/category_model.dart';
+import 'package:baseet/features/catalog/data/models/product_model.dart';
 
 abstract class InventoryLocalDataSource {
-  Future<List<ProductModel>> getInventory({String? categoryId, String? searchQuery, bool onlyLowStock = false});
-  Future<List<CategoryModel>> getCategories();
+  Future<List<ProductModel>> getInventory(
+      {String? categoryId, String? searchQuery, bool onlyLowStock = false});
   Future<ProductModel> addProduct(ProductModel product);
   Future<CategoryModel> addCategory(CategoryModel category);
-  Future<Map<String, dynamic>> getInventoryStats();
+  Future<InventoryStats> getInventoryStats();
 }
 
 class InventoryLocalDataSourceImpl implements InventoryLocalDataSource {
   final AppDatabase appDatabase;
 
-  InventoryLocalDataSourceImpl({AppDatabase? database})
-      : appDatabase = database ?? AppDatabase();
+  InventoryLocalDataSourceImpl({required AppDatabase database})
+      : appDatabase = database;
 
   @override
   Future<List<ProductModel>> getInventory({
@@ -35,14 +36,19 @@ class InventoryLocalDataSourceImpl implements InventoryLocalDataSource {
 
     if (searchQuery != null && searchQuery.trim().isNotEmpty) {
       final q = '%${searchQuery.trim()}%';
-      final searchCondition = '(name LIKE ? OR barcode LIKE ? OR categoryName LIKE ?)';
-      whereClause = whereClause.isEmpty ? searchCondition : '$whereClause AND $searchCondition';
+      final searchCondition =
+          '(name LIKE ? OR barcode LIKE ? OR categoryName LIKE ?)';
+      whereClause = whereClause.isEmpty
+          ? searchCondition
+          : '$whereClause AND $searchCondition';
       whereArgs.addAll([q, q, q]);
     }
 
     if (onlyLowStock) {
       final lowStockCondition = 'stockQuantity <= minStockLimit';
-      whereClause = whereClause.isEmpty ? lowStockCondition : '$whereClause AND $lowStockCondition';
+      whereClause = whereClause.isEmpty
+          ? lowStockCondition
+          : '$whereClause AND $lowStockCondition';
     }
 
     final maps = await db.query(
@@ -56,21 +62,13 @@ class InventoryLocalDataSourceImpl implements InventoryLocalDataSource {
   }
 
   @override
-  Future<List<CategoryModel>> getCategories() async {
-    final db = await appDatabase.database;
-    final maps = await db.query('categories', orderBy: 'name ASC');
-
-    return maps.map((map) => CategoryModel.fromMap(map)).toList();
-  }
-
-  @override
   Future<ProductModel> addProduct(ProductModel product) async {
     final db = await appDatabase.database;
 
     await db.insert(
       'products',
       product.toMap(),
-      conflictAlgorithm: ConflictAlgorithm.replace,
+      conflictAlgorithm: ConflictAlgorithm.abort,
     );
 
     return product;
@@ -83,17 +81,18 @@ class InventoryLocalDataSourceImpl implements InventoryLocalDataSource {
     await db.insert(
       'categories',
       category.toMap(),
-      conflictAlgorithm: ConflictAlgorithm.replace,
+      conflictAlgorithm: ConflictAlgorithm.abort,
     );
 
     return category;
   }
 
   @override
-  Future<Map<String, dynamic>> getInventoryStats() async {
+  Future<InventoryStats> getInventoryStats() async {
     final db = await appDatabase.database;
 
-    final countResult = await db.rawQuery('SELECT COUNT(*) as count FROM products');
+    final countResult =
+        await db.rawQuery('SELECT COUNT(*) as count FROM products');
     final lowStockResult = await db.rawQuery(
       'SELECT COUNT(*) as lowCount FROM products WHERE stockQuantity <= minStockLimit',
     );
@@ -103,14 +102,14 @@ class InventoryLocalDataSourceImpl implements InventoryLocalDataSource {
 
     final int totalProducts = Sqflite.firstIntValue(countResult) ?? 0;
     final int lowStockCount = Sqflite.firstIntValue(lowStockResult) ?? 0;
-    final double stockValue = (valueResult.isNotEmpty && valueResult.first['valuation'] != null)
-        ? (valueResult.first['valuation'] as num).toDouble()
-        : 0.0;
+    final double stockValue =
+        (valueResult.isNotEmpty && valueResult.first['valuation'] != null)
+            ? (valueResult.first['valuation'] as num).toDouble()
+            : 0.0;
 
-    return {
-      'totalProducts': totalProducts,
-      'lowStockCount': lowStockCount,
-      'stockValue': stockValue,
-    };
+    return InventoryStats(
+        totalProducts: totalProducts,
+        lowStockCount: lowStockCount,
+        stockValue: stockValue);
   }
 }

@@ -1,7 +1,7 @@
 import 'package:dartz/dartz.dart';
-import '../../../../config/database/error/failures.dart';
-import '../../../../core/usecase/usecase.dart';
-import '../repositories/pos_repository.dart';
+import 'package:baseet/core/error/failures.dart';
+import 'package:baseet/core/usecase/usecase.dart';
+import 'package:baseet/features/pos/domain/repositories/pos_repository.dart';
 
 class GetTodaySalesUseCase extends NoParamsUseCase<double> {
   final PosRepository repository;

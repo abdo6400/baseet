@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import '../tokens/app_tokens.dart';
-import 'app_input_theme_builder.dart';
-import 'app_text_theme_builder.dart';
+import 'package:baseet/core/theme/tokens/app_tokens.dart';
+import 'package:baseet/core/theme/builder/app_input_theme_builder.dart';
+import 'package:baseet/core/theme/builder/app_text_theme_builder.dart';
 
 ThemeData buildAppDarkTheme({String? fontFamily, Locale? locale}) {
   final textTheme = buildAppTextTheme(
@@ -60,7 +60,8 @@ ThemeData buildAppDarkTheme({String? fontFamily, Locale? locale}) {
       elevation: 0,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(AppRadius.lg),
-        side: const BorderSide(color: AppDarkSemanticTokens.borderTertiary, width: 1.0),
+        side: const BorderSide(
+            color: AppDarkSemanticTokens.borderTertiary, width: 1.0),
       ),
     ),
     inputDecorationTheme: buildAppInputTheme(

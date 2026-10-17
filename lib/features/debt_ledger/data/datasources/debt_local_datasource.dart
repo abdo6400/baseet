@@ -1,11 +1,18 @@
+import 'package:baseet/features/debt_ledger/domain/entities/debt_policy.dart';
+import 'package:baseet/core/error/exceptions.dart';
+import 'package:baseet/core/services/operation_context.dart';
+import 'package:baseet/features/debt_ledger/domain/entities/debt_stats.dart';
 import 'package:sqflite/sqflite.dart';
-import 'package:baseet/config/database/local/app_database.dart';
+import 'package:baseet/core/database/app_database.dart';
 import 'package:baseet/core/enums/enums.dart';
 import 'package:baseet/features/debt_ledger/data/models/customer_model.dart';
 import 'package:baseet/features/debt_ledger/data/models/debt_transaction_model.dart';
 
 abstract class DebtLocalDataSource {
-  Future<List<CustomerModel>> getCustomers({String? searchQuery, DebtStatus? statusFilter, bool sortByHighest = false});
+  Future<List<CustomerModel>> getCustomers(
+      {String? searchQuery,
+      DebtStatus? statusFilter,
+      bool sortByHighest = false});
   Future<CustomerModel> getCustomerById(String id);
   Future<List<DebtTransactionModel>> getCustomerTransactions(String customerId);
   Future<CustomerModel> addCustomer(CustomerModel customer);
@@ -15,14 +22,16 @@ abstract class DebtLocalDataSource {
     required String? notes,
     String? receiptPath,
   });
-  Future<Map<String, double>> getDebtStats();
+  Future<DebtStats> getDebtStats();
 }
 
 class DebtLocalDataSourceImpl implements DebtLocalDataSource {
   final AppDatabase appDatabase;
+  final OperationContext context;
 
-  DebtLocalDataSourceImpl({AppDatabase? database})
-      : appDatabase = database ?? AppDatabase();
+  DebtLocalDataSourceImpl(
+      {required AppDatabase database, required this.context})
+      : appDatabase = database;
 
   @override
   Future<List<CustomerModel>> getCustomers({
@@ -43,7 +52,9 @@ class DebtLocalDataSourceImpl implements DebtLocalDataSource {
 
     if (statusFilter != null) {
       final statusCondition = 'status = ?';
-      whereClause = whereClause.isEmpty ? statusCondition : '$whereClause AND $statusCondition';
+      whereClause = whereClause.isEmpty
+          ? statusCondition
+          : '$whereClause AND $statusCondition';
       whereArgs.add(statusFilter.name);
     }
 
@@ -70,14 +81,15 @@ class DebtLocalDataSourceImpl implements DebtLocalDataSource {
     );
 
     if (maps.isEmpty) {
-      throw Exception('العميل غير موجود');
+      throw Exception('Ø§Ù„Ø¹Ù…ÙŠÙ„ ØºÙŠØ± Ù…ÙˆØ¬ÙˆØ¯');
     }
 
     return CustomerModel.fromMap(maps.first);
   }
 
   @override
-  Future<List<DebtTransactionModel>> getCustomerTransactions(String customerId) async {
+  Future<List<DebtTransactionModel>> getCustomerTransactions(
+      String customerId) async {
     final db = await appDatabase.database;
     final maps = await db.query(
       'debt_transactions',
@@ -96,7 +108,7 @@ class DebtLocalDataSourceImpl implements DebtLocalDataSource {
     await db.insert(
       'customers',
       customer.toMap(),
-      conflictAlgorithm: ConflictAlgorithm.replace,
+      conflictAlgorithm: ConflictAlgorithm.abort,
     );
 
     return customer;
@@ -122,12 +134,14 @@ class DebtLocalDataSourceImpl implements DebtLocalDataSource {
       );
 
       if (custMaps.isEmpty) {
-        throw Exception('العميل غير موجود');
+        throw Exception('Ø§Ù„Ø¹Ù…ÙŠÙ„ ØºÙŠØ± Ù…ÙˆØ¬ÙˆØ¯');
       }
 
       final cust = CustomerModel.fromMap(custMaps.first);
-      final double newDebt = (cust.totalDebt - amount).clamp(0.0, 999999.0);
-      final now = DateTime.now();
+      final newDebt = DebtPolicy.receivePayment(cust.totalDebt, amount).fold(
+          (failure) => throw ValidationException(message: failure.message),
+          (balance) => balance);
+      final now = context.now();
 
       final newStatus = newDebt == 0 ? DebtStatus.regular : cust.status;
 
@@ -142,14 +156,14 @@ class DebtLocalDataSourceImpl implements DebtLocalDataSource {
         whereArgs: [customerId],
       );
 
-      final txId = 'tx_${now.millisecondsSinceEpoch}';
+      final txId = context.newId('tx');
       createdTx = DebtTransactionModel(
         id: txId,
         customerId: customerId,
         type: TransactionType.paymentVoucher,
         amount: amount,
         date: now,
-        notes: notes ?? 'سند قبض نقدي',
+        notes: notes ?? 'Ø³Ù†Ø¯ Ù‚Ø¨Ø¶ Ù†Ù‚Ø¯ÙŠ',
         remainingBalance: newDebt,
         receiptPath: receiptPath,
       );
@@ -161,15 +175,16 @@ class DebtLocalDataSourceImpl implements DebtLocalDataSource {
   }
 
   @override
-  Future<Map<String, double>> getDebtStats() async {
+  Future<DebtStats> getDebtStats() async {
     final db = await appDatabase.database;
 
-    final totalResult = await db.rawQuery('SELECT SUM(totalDebt) as total FROM customers');
+    final totalResult =
+        await db.rawQuery('SELECT SUM(totalDebt) as total FROM customers');
     final overdueResult = await db.rawQuery(
       "SELECT SUM(totalDebt) as overdue FROM customers WHERE status = 'overdue'",
     );
 
-    final now = DateTime.now();
+    final now = context.now();
     final startOfDay = DateTime(now.year, now.month, now.day).toIso8601String();
 
     final todayCollectionsResult = await db.rawQuery('''
@@ -178,23 +193,22 @@ class DebtLocalDataSourceImpl implements DebtLocalDataSource {
       WHERE type = 'paymentVoucher' AND date >= ?
     ''', [startOfDay]);
 
-    final double total = (totalResult.isNotEmpty && totalResult.first['total'] != null)
-        ? (totalResult.first['total'] as num).toDouble()
-        : 0.0;
+    final double total =
+        (totalResult.isNotEmpty && totalResult.first['total'] != null)
+            ? (totalResult.first['total'] as num).toDouble()
+            : 0.0;
 
-    final double overdue = (overdueResult.isNotEmpty && overdueResult.first['overdue'] != null)
-        ? (overdueResult.first['overdue'] as num).toDouble()
-        : 0.0;
+    final double overdue =
+        (overdueResult.isNotEmpty && overdueResult.first['overdue'] != null)
+            ? (overdueResult.first['overdue'] as num).toDouble()
+            : 0.0;
 
     final double todayCollections = (todayCollectionsResult.isNotEmpty &&
             todayCollectionsResult.first['todayCollections'] != null)
         ? (todayCollectionsResult.first['todayCollections'] as num).toDouble()
         : 0.0;
 
-    return {
-      'total': total,
-      'overdue': overdue,
-      'todayCollections': todayCollections,
-    };
+    return DebtStats(
+        total: total, overdue: overdue, todayCollections: todayCollections);
   }
 }

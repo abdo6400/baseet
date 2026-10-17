@@ -1,6 +1,6 @@
 import 'package:equatable/equatable.dart';
-import '../../../../core/enums/enums.dart';
-import 'cart_item_entity.dart';
+import 'package:baseet/core/enums/enums.dart';
+import 'package:baseet/features/pos/domain/entities/cart_item_entity.dart';
 
 class OrderEntity extends Equatable {
   final String id;

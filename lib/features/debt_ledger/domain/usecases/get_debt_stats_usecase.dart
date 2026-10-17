@@ -1,15 +1,16 @@
+import 'package:baseet/features/debt_ledger/domain/entities/debt_stats.dart';
 import 'package:dartz/dartz.dart';
-import '../../../../config/database/error/failures.dart';
-import '../../../../core/usecase/usecase.dart';
-import '../repositories/debt_repository.dart';
+import 'package:baseet/core/error/failures.dart';
+import 'package:baseet/core/usecase/usecase.dart';
+import 'package:baseet/features/debt_ledger/domain/repositories/debt_repository.dart';
 
-class GetDebtStatsUseCase extends NoParamsUseCase<Map<String, double>> {
+class GetDebtStatsUseCase extends NoParamsUseCase<DebtStats> {
   final DebtRepository repository;
 
   GetDebtStatsUseCase(this.repository);
 
   @override
-  Future<Either<Failure, Map<String, double>>> call() {
+  Future<Either<Failure, DebtStats>> call() {
     return repository.getDebtStats();
   }
 }

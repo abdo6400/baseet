@@ -1,6 +1,6 @@
 import 'package:dartz/dartz.dart';
 import 'package:equatable/equatable.dart';
-import '../../config/database/error/failures.dart';
+import 'package:baseet/core/error/failures.dart';
 
 abstract class ParamsUseCase<T, Params> {
   Future<Either<Failure, T>> call(Params params);

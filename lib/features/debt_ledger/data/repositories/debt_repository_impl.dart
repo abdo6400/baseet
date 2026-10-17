@@ -1,5 +1,7 @@
+import 'package:baseet/features/debt_ledger/domain/entities/debt_stats.dart';
+import 'package:baseet/core/error/repository_call.dart';
 import 'package:dartz/dartz.dart';
-import 'package:baseet/config/database/error/failures.dart';
+import 'package:baseet/core/error/failures.dart';
 import 'package:baseet/core/enums/enums.dart';
 import 'package:baseet/features/debt_ledger/data/datasources/debt_local_datasource.dart';
 import 'package:baseet/features/debt_ledger/data/models/customer_model.dart';
@@ -18,7 +20,7 @@ class DebtRepositoryImpl implements DebtRepository {
     DebtStatus? statusFilter,
     bool sortByHighest = false,
   }) {
-    return Failure.handleCall(() => localDataSource.getCustomers(
+    return repositoryCall(() => localDataSource.getCustomers(
           searchQuery: searchQuery,
           statusFilter: statusFilter,
           sortByHighest: sortByHighest,
@@ -27,17 +29,20 @@ class DebtRepositoryImpl implements DebtRepository {
 
   @override
   Future<Either<Failure, CustomerEntity>> getCustomerById(String id) {
-    return Failure.handleCall(() => localDataSource.getCustomerById(id));
+    return repositoryCall(() => localDataSource.getCustomerById(id));
   }
 
   @override
-  Future<Either<Failure, List<DebtTransactionEntity>>> getCustomerTransactions(String customerId) {
-    return Failure.handleCall(() => localDataSource.getCustomerTransactions(customerId));
+  Future<Either<Failure, List<DebtTransactionEntity>>> getCustomerTransactions(
+      String customerId) {
+    return repositoryCall(
+        () => localDataSource.getCustomerTransactions(customerId));
   }
 
   @override
   Future<Either<Failure, CustomerEntity>> addCustomer(CustomerEntity customer) {
-    return Failure.handleCall(() => localDataSource.addCustomer(CustomerModel.fromEntity(customer)));
+    return repositoryCall(
+        () => localDataSource.addCustomer(CustomerModel.fromEntity(customer)));
   }
 
   @override
@@ -47,7 +52,7 @@ class DebtRepositoryImpl implements DebtRepository {
     required String? notes,
     String? receiptPath,
   }) {
-    return Failure.handleCall(() => localDataSource.addPaymentVoucher(
+    return repositoryCall(() => localDataSource.addPaymentVoucher(
           customerId: customerId,
           amount: amount,
           notes: notes,
@@ -56,7 +61,7 @@ class DebtRepositoryImpl implements DebtRepository {
   }
 
   @override
-  Future<Either<Failure, Map<String, double>>> getDebtStats() {
-    return Failure.handleCall(() => localDataSource.getDebtStats());
+  Future<Either<Failure, DebtStats>> getDebtStats() {
+    return repositoryCall(() => localDataSource.getDebtStats());
   }
 }

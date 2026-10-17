@@ -1,8 +1,10 @@
+import 'package:baseet/features/reports/domain/entities/report_period.dart';
+import 'package:baseet/core/error/repository_call.dart';
 import 'package:dartz/dartz.dart';
-import '../../../../config/database/error/failures.dart';
-import '../../domain/entities/report_summary_entity.dart';
-import '../../domain/repositories/reports_repository.dart';
-import '../datasources/reports_local_datasource.dart';
+import 'package:baseet/core/error/failures.dart';
+import 'package:baseet/features/reports/domain/entities/report_summary_entity.dart';
+import 'package:baseet/features/reports/domain/repositories/reports_repository.dart';
+import 'package:baseet/features/reports/data/datasources/reports_local_datasource.dart';
 
 class ReportsRepositoryImpl implements ReportsRepository {
   final ReportsLocalDataSource localDataSource;
@@ -10,7 +12,8 @@ class ReportsRepositoryImpl implements ReportsRepository {
   ReportsRepositoryImpl(this.localDataSource);
 
   @override
-  Future<Either<Failure, ReportSummaryEntity>> getReportSummary(String period) {
-    return Failure.handleCall(() => localDataSource.getReportSummary(period));
+  Future<Either<Failure, ReportSummaryEntity>> getReportSummary(
+      ReportPeriod period) {
+    return repositoryCall(() => localDataSource.getReportSummary(period));
   }
 }

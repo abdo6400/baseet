@@ -1,8 +1,10 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:baseet/config/database/local/app_database.dart';
-import 'package:baseet/config/locators/global_locator.dart';
+import 'package:baseet/features/more_settings/presentation/blocs/data_management/data_management_bloc.dart';
+import 'package:baseet/core/extensions/state_handle_extension.dart';
+import 'package:baseet/features/pos/presentation/blocs/cart/cart_bloc.dart';
+import 'package:baseet/features/pos/presentation/blocs/cart/cart_event.dart';
 import 'package:baseet/core/common/widgets/icon/app_icon.dart';
 import 'package:baseet/core/extensions/translation_extension.dart';
 import 'package:baseet/core/theme/theme_bloc/theme_bloc.dart';
@@ -54,13 +56,9 @@ class MorePage extends StatelessWidget {
     );
 
     if (confirmed == true && context.mounted) {
-      await sl<AppDatabase>().reseedDemoData();
-      if (context.mounted) {
-        _refreshAllBlocs(context);
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(StringsManager.moreReseedSuccess.lang)),
-        );
-      }
+      context
+          .read<DataManagementBloc>()
+          .add(const DataManagementEvent(DataAction.restoreDemo));
     }
   }
 
@@ -88,13 +86,9 @@ class MorePage extends StatelessWidget {
     );
 
     if (confirmed == true && context.mounted) {
-      await sl<AppDatabase>().clearAllData();
-      if (context.mounted) {
-        _refreshAllBlocs(context);
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(StringsManager.moreClearSuccess.lang)),
-        );
-      }
+      context
+          .read<DataManagementBloc>()
+          .add(const DataManagementEvent(DataAction.clear));
     }
   }
 
@@ -103,195 +97,221 @@ class MorePage extends StatelessWidget {
     final theme = Theme.of(context);
     final isDark = theme.brightness == Brightness.dark;
 
-    return Scaffold(
-      backgroundColor: theme.scaffoldBackgroundColor,
-      appBar: AppBar(
-        backgroundColor: theme.colorScheme.surface,
-        elevation: 0,
-        scrolledUnderElevation: 0.5,
-        title: Text(
-          StringsManager.appName.lang,
-          style: TextStyle(
-            fontSize: 22,
-            fontWeight: FontWeight.w800,
-            color: theme.colorScheme.primary,
-          ),
-        ),
-        centerTitle: true,
-        bottom: PreferredSize(
-          preferredSize: const Size.fromHeight(1.0),
-          child: Container(color: theme.colorScheme.outlineVariant, height: 1.0),
-        ),
-      ),
-      body: SingleChildScrollView(
-        padding: const EdgeInsets.all(16),
-        child: Column(
-          children: [
-            // Store Profile Card
-            Container(
-              padding: const EdgeInsets.all(16),
-              decoration: BoxDecoration(
-                color: theme.colorScheme.surfaceContainerLowest,
-                borderRadius: BorderRadius.circular(AppRadius.lg),
-                border: Border.all(color: theme.colorScheme.outlineVariant),
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.black.withValues(alpha: 0.03),
-                    blurRadius: 6,
-                    offset: const Offset(0, 2),
-                  ),
-                ],
+    return BlocListener<DataManagementBloc, DataManagementState>(
+        listener: (context, state) => context.showStateHandler(
+            isLoading: state.status == DataManagementStatus.loading,
+            isError: state.status == DataManagementStatus.error,
+            isSuccess: state.status == DataManagementStatus.success,
+            errorMessage: state.error,
+            successMessage: (state.action == DataAction.clear
+                    ? StringsManager.moreClearSuccess
+                    : StringsManager.moreReseedSuccess)
+                .lang,
+            onSuccess: () {
+              context.read<CartBloc>().add(ClearCartEvent());
+              _refreshAllBlocs(context);
+            }),
+        child: Scaffold(
+          backgroundColor: theme.scaffoldBackgroundColor,
+          appBar: AppBar(
+            backgroundColor: theme.colorScheme.surface,
+            elevation: 0,
+            scrolledUnderElevation: 0.5,
+            title: Text(
+              StringsManager.appName.lang,
+              style: TextStyle(
+                fontSize: 22,
+                fontWeight: FontWeight.w800,
+                color: theme.colorScheme.primary,
               ),
-              child: Row(
-                children: [
-                  Container(
-                    width: 52,
-                    height: 52,
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(14),
-                      boxShadow: [
-                        BoxShadow(
-                          color: theme.colorScheme.primary.withValues(alpha: 0.15),
-                          blurRadius: 8,
-                          offset: const Offset(0, 2),
-                        ),
-                      ],
-                    ),
-                    child: ClipRRect(
-                      borderRadius: BorderRadius.circular(14),
-                      child: Image.asset(
-                        AssetsManager.appIcon,
+            ),
+            centerTitle: true,
+            bottom: PreferredSize(
+              preferredSize: const Size.fromHeight(1.0),
+              child: Container(
+                  color: theme.colorScheme.outlineVariant, height: 1.0),
+            ),
+          ),
+          body: SingleChildScrollView(
+            padding: const EdgeInsets.all(16),
+            child: Column(
+              children: [
+                // Store Profile Card
+                Container(
+                  padding: const EdgeInsets.all(16),
+                  decoration: BoxDecoration(
+                    color: theme.colorScheme.surfaceContainerLowest,
+                    borderRadius: BorderRadius.circular(AppRadius.lg),
+                    border: Border.all(color: theme.colorScheme.outlineVariant),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withValues(alpha: 0.03),
+                        blurRadius: 6,
+                        offset: const Offset(0, 2),
+                      ),
+                    ],
+                  ),
+                  child: Row(
+                    children: [
+                      Container(
                         width: 52,
                         height: 52,
-                        fit: BoxFit.cover,
-                      ),
-                    ),
-                  ),
-                  const SizedBox(width: 14),
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          StringsManager.moreDefaultStoreName.lang,
-                          style: const TextStyle(fontWeight: FontWeight.w800, fontSize: 16),
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(14),
+                          boxShadow: [
+                            BoxShadow(
+                              color: theme.colorScheme.primary
+                                  .withValues(alpha: 0.15),
+                              blurRadius: 8,
+                              offset: const Offset(0, 2),
+                            ),
+                          ],
                         ),
-                        const SizedBox(height: 2),
-                        Text(
-                          StringsManager.moreDefaultCashierName.lang,
-                          style: TextStyle(
-                            fontSize: 12,
-                            color: theme.colorScheme.onSurfaceVariant,
+                        child: ClipRRect(
+                          borderRadius: BorderRadius.circular(14),
+                          child: Image.asset(
+                            AssetsManager.appIcon,
+                            width: 52,
+                            height: 52,
+                            fit: BoxFit.cover,
                           ),
                         ),
-                      ],
-                    ),
+                      ),
+                      const SizedBox(width: 14),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              StringsManager.moreDefaultStoreName.lang,
+                              style: const TextStyle(
+                                  fontWeight: FontWeight.w800, fontSize: 16),
+                            ),
+                            const SizedBox(height: 2),
+                            Text(
+                              StringsManager.moreDefaultCashierName.lang,
+                              style: TextStyle(
+                                fontSize: 12,
+                                color: theme.colorScheme.onSurfaceVariant,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
                   ),
-                ],
-              ),
-            ),
-            const SizedBox(height: 20),
+                ),
+                const SizedBox(height: 20),
 
-            // Settings Menu Container
-            Material(
-              color: theme.colorScheme.surfaceContainerLowest,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(AppRadius.lg),
-                side: BorderSide(color: theme.colorScheme.outlineVariant),
-              ),
-              clipBehavior: Clip.antiAlias,
-              child: Column(
-                children: [
-                  _buildMenuItem(
-                    context,
-                    title: StringsManager.moreStoreSettings.lang,
-                    icon: AppIcons.store,
-                    onTap: () => _showStoreSettingsDialog(context),
+                // Settings Menu Container
+                Material(
+                  color: theme.colorScheme.surfaceContainerLowest,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(AppRadius.lg),
+                    side: BorderSide(color: theme.colorScheme.outlineVariant),
                   ),
-                  _buildDivider(theme),
-                  _buildMenuItem(
-                    context,
-                    title: StringsManager.morePrinterSettings.lang,
-                    icon: AppIcons.printer,
-                    onTap: () => _showPrinterSettingsDialog(context),
+                  clipBehavior: Clip.antiAlias,
+                  child: Column(
+                    children: [
+                      _buildMenuItem(
+                        context,
+                        title: StringsManager.moreStoreSettings.lang,
+                        icon: AppIcons.store,
+                        onTap: () => _showStoreSettingsDialog(context),
+                      ),
+                      _buildDivider(theme),
+                      _buildMenuItem(
+                        context,
+                        title: StringsManager.morePrinterSettings.lang,
+                        icon: AppIcons.printer,
+                        onTap: () => _showPrinterSettingsDialog(context),
+                      ),
+                      _buildDivider(theme),
+                      _buildMenuItem(
+                        context,
+                        title: StringsManager.moreBackup.lang,
+                        icon: AppIcons.backup,
+                        onTap: () {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(
+                                content: Text(
+                                    StringsManager.moreBackupSuccess.lang)),
+                          );
+                        },
+                      ),
+                      _buildDivider(theme),
+                      _buildMenuItem(
+                        context,
+                        title: StringsManager.moreReseedMenu.lang,
+                        icon: AppIcons.refresh,
+                        onTap: () => _onReseedData(context),
+                      ),
+                      _buildDivider(theme),
+                      _buildMenuItem(
+                        context,
+                        title: StringsManager.moreClearMenu.lang,
+                        icon: AppIcons.clear,
+                        iconColor: AppPrimitiveTokens.red700,
+                        onTap: () => _onClearData(context),
+                      ),
+                      _buildDivider(theme),
+                      _buildMenuItem(
+                        context,
+                        title: StringsManager.moreAppearance.lang,
+                        icon: AppIcons.darkLight,
+                        trailing: Switch.adaptive(
+                          value: isDark,
+                          activeThumbColor: theme.colorScheme.primary,
+                          onChanged: (val) {
+                            context.read<ThemeBloc>().add(
+                                  ToggleThemeEvent(
+                                      val ? ThemeMode.dark : ThemeMode.light),
+                                );
+                          },
+                        ),
+                      ),
+                      _buildDivider(theme),
+                      _buildMenuItem(
+                        context,
+                        title: StringsManager.moreLanguage.lang,
+                        icon: AppIcons.language,
+                        trailing: Text(
+                          context.locale.languageCode == 'ar'
+                              ? 'العربية'
+                              : 'English',
+                          style: const TextStyle(
+                              fontWeight: FontWeight.w600, fontSize: 12),
+                        ),
+                        onTap: () {
+                          final newLocale = context.locale.languageCode == 'ar'
+                              ? const Locale('en')
+                              : const Locale('ar');
+                          context.setLocale(newLocale);
+                        },
+                      ),
+                      _buildDivider(theme),
+                      _buildMenuItem(
+                        context,
+                        title: StringsManager.moreHelp.lang,
+                        icon: AppIcons.help,
+                        onTap: () => _showHelpSupportModal(context),
+                      ),
+                      _buildDivider(theme),
+                      _buildMenuItem(
+                        context,
+                        title: StringsManager.moreAbout.lang,
+                        icon: AppIcons.info,
+                        trailing: const Text('v1.0.0',
+                            style: TextStyle(color: Colors.grey, fontSize: 12)),
+                        onTap: () => _showAboutDialog(context),
+                      ),
+                    ],
                   ),
-                  _buildDivider(theme),
-                  _buildMenuItem(
-                    context,
-                    title: StringsManager.moreBackup.lang,
-                    icon: AppIcons.backup,
-                    onTap: () {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(content: Text(StringsManager.moreBackupSuccess.lang)),
-                      );
-                    },
-                  ),
-                  _buildDivider(theme),
-                  _buildMenuItem(
-                    context,
-                    title: StringsManager.moreReseedMenu.lang,
-                    icon: AppIcons.refresh,
-                    onTap: () => _onReseedData(context),
-                  ),
-                  _buildDivider(theme),
-                  _buildMenuItem(
-                    context,
-                    title: StringsManager.moreClearMenu.lang,
-                    icon: AppIcons.clear,
-                    iconColor: AppPrimitiveTokens.red700,
-                    onTap: () => _onClearData(context),
-                  ),
-                  _buildDivider(theme),
-                  _buildMenuItem(
-                    context,
-                    title: StringsManager.moreAppearance.lang,
-                    icon: AppIcons.darkLight,
-                    trailing: Switch.adaptive(
-                      value: isDark,
-                      activeThumbColor: theme.colorScheme.primary,
-                      onChanged: (val) {
-                        context.read<ThemeBloc>().add(
-                              ToggleThemeEvent(val ? ThemeMode.dark : ThemeMode.light),
-                            );
-                      },
-                    ),
-                  ),
-                  _buildDivider(theme),
-                  _buildMenuItem(
-                    context,
-                    title: StringsManager.moreLanguage.lang,
-                    icon: AppIcons.language,
-                    trailing: Text(
-                      context.locale.languageCode == 'ar' ? 'العربية' : 'English',
-                      style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 12),
-                    ),
-                    onTap: () {
-                      final newLocale = context.locale.languageCode == 'ar' ? const Locale('en') : const Locale('ar');
-                      context.setLocale(newLocale);
-                    },
-                  ),
-                  _buildDivider(theme),
-                  _buildMenuItem(
-                    context,
-                    title: StringsManager.moreHelp.lang,
-                    icon: AppIcons.help,
-                    onTap: () => _showHelpSupportModal(context),
-                  ),
-                  _buildDivider(theme),
-                  _buildMenuItem(
-                    context,
-                    title: StringsManager.moreAbout.lang,
-                    icon: AppIcons.info,
-                    trailing: const Text('v1.0.0', style: TextStyle(color: Colors.grey, fontSize: 12)),
-                    onTap: () => _showAboutDialog(context),
-                  ),
-                ],
-              ),
+                ),
+              ],
             ),
-          ],
-        ),
-      ),
-    );
+          ),
+        ));
   }
 
   Widget _buildMenuItem(
@@ -305,7 +325,8 @@ class MorePage extends StatelessWidget {
     final theme = Theme.of(context);
 
     return ListTile(
-      leading: AppIcon(icon, color: iconColor ?? theme.colorScheme.primary, size: 22),
+      leading: AppIcon(icon,
+          color: iconColor ?? theme.colorScheme.primary, size: 22),
       title: Text(
         title,
         style: TextStyle(
@@ -314,7 +335,8 @@ class MorePage extends StatelessWidget {
           color: iconColor,
         ),
       ),
-      trailing: trailing ?? AppIcon(AppIcons.arrowForward, size: 14, color: Colors.grey),
+      trailing: trailing ??
+          AppIcon(AppIcons.arrowForward, size: 14, color: Colors.grey),
       onTap: onTap,
     );
   }
@@ -329,31 +351,36 @@ class MorePage extends StatelessWidget {
   }
 
   void _showStoreSettingsDialog(BuildContext context) {
-    final storeNameController = TextEditingController(text: 'متجر الأمل للمواد الغذائية');
+    final storeNameController =
+        TextEditingController(text: 'متجر الأمل للمواد الغذائية');
     final phoneController = TextEditingController(text: '01012345678');
     final addressController = TextEditingController(text: 'القاهرة، مصر');
 
     showDialog(
       context: context,
       builder: (dialogContext) => AlertDialog(
-        title: Text(StringsManager.moreStoreSettings.lang, style: const TextStyle(fontWeight: FontWeight.w800)),
+        title: Text(StringsManager.moreStoreSettings.lang,
+            style: const TextStyle(fontWeight: FontWeight.w800)),
         content: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
             TextField(
               controller: storeNameController,
-              decoration: const InputDecoration(labelText: 'اسم المتجر', border: OutlineInputBorder()),
+              decoration: const InputDecoration(
+                  labelText: 'اسم المتجر', border: OutlineInputBorder()),
             ),
             const SizedBox(height: 12),
             TextField(
               controller: phoneController,
-              decoration: const InputDecoration(labelText: 'رقم الهاتف', border: OutlineInputBorder()),
+              decoration: const InputDecoration(
+                  labelText: 'رقم الهاتف', border: OutlineInputBorder()),
               keyboardType: TextInputType.phone,
             ),
             const SizedBox(height: 12),
             TextField(
               controller: addressController,
-              decoration: const InputDecoration(labelText: 'العنوان', border: OutlineInputBorder()),
+              decoration: const InputDecoration(
+                  labelText: 'العنوان', border: OutlineInputBorder()),
             ),
           ],
         ),
@@ -384,7 +411,8 @@ class MorePage extends StatelessWidget {
       context: context,
       builder: (dialogContext) => StatefulBuilder(
         builder: (context, setDialogState) => AlertDialog(
-          title: Text(StringsManager.morePrinterSettings.lang, style: const TextStyle(fontWeight: FontWeight.w800)),
+          title: Text(StringsManager.morePrinterSettings.lang,
+              style: const TextStyle(fontWeight: FontWeight.w800)),
           content: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
@@ -396,10 +424,13 @@ class MorePage extends StatelessWidget {
               const SizedBox(height: 12),
               DropdownButtonFormField<String>(
                 initialValue: paperSize,
-                decoration: const InputDecoration(labelText: 'حجم الورق', border: OutlineInputBorder()),
+                decoration: const InputDecoration(
+                    labelText: 'حجم الورق', border: OutlineInputBorder()),
                 items: const [
-                  DropdownMenuItem(value: '58mm', child: Text('58mm (حراري صغير)')),
-                  DropdownMenuItem(value: '80mm', child: Text('80mm (حراري قياسي)')),
+                  DropdownMenuItem(
+                      value: '58mm', child: Text('58mm (حراري صغير)')),
+                  DropdownMenuItem(
+                      value: '80mm', child: Text('80mm (حراري قياسي)')),
                 ],
                 onChanged: (val) {
                   if (val != null) setDialogState(() => paperSize = val);
@@ -448,13 +479,16 @@ class MorePage extends StatelessWidget {
             ListTile(
               leading: AppIcon(AppIcons.help, color: theme.colorScheme.primary),
               title: const Text('دليل الاستخدام والأسئلة الشائعة'),
-              subtitle: const Text('تعلم كيفية إدارة نقاط البيع والديون والمخزن بسهولة'),
+              subtitle: const Text(
+                  'تعلم كيفية إدارة نقاط البيع والديون والمخزن بسهولة'),
               onTap: () => Navigator.pop(modalContext),
             ),
             ListTile(
-              leading: AppIcon(AppIcons.phone, color: AppPrimitiveTokens.emerald700),
+              leading:
+                  AppIcon(AppIcons.phone, color: AppPrimitiveTokens.emerald700),
               title: const Text('الدعم الفني والخدمة المباشرة'),
-              subtitle: const Text('تواصل معنا للحصول على الدعم الفني والمساعدة'),
+              subtitle:
+                  const Text('تواصل معنا للحصول على الدعم الفني والمساعدة'),
               onTap: () => Navigator.pop(modalContext),
             ),
           ],
@@ -493,7 +527,8 @@ class MorePage extends StatelessWidget {
             const SizedBox(height: 4),
             Text(
               'v1.0.0',
-              style: TextStyle(color: theme.colorScheme.onSurfaceVariant, fontSize: 12),
+              style: TextStyle(
+                  color: theme.colorScheme.onSurfaceVariant, fontSize: 12),
             ),
             const SizedBox(height: 12),
             Text(

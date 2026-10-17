@@ -1,5 +1,5 @@
 import 'package:equatable/equatable.dart';
-import 'package:baseet/features/inventory/domain/entities/category_entity.dart';
+import 'package:baseet/features/catalog/domain/entities/category_entity.dart';
 
 enum AddCategoryStatus { initial, submitting, success, error }
 

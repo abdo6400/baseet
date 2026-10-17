@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import '../../../theme/tokens/app_tokens.dart';
-import '../icon/app_icon.dart';
+import 'package:baseet/core/theme/tokens/app_tokens.dart';
+import 'package:baseet/core/common/widgets/icon/app_icon.dart';
 
 class StatSummaryCard extends StatelessWidget {
   final String title;
@@ -23,7 +23,9 @@ class StatSummaryCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final cardBg = backgroundColor ?? theme.cardTheme.color ?? AppLightSemanticTokens.surface;
+    final cardBg = backgroundColor ??
+        theme.cardTheme.color ??
+        AppLightSemanticTokens.surface;
 
     return Container(
       padding: const EdgeInsets.all(16),

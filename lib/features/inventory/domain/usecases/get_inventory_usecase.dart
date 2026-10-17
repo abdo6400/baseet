@@ -1,9 +1,9 @@
 import 'package:dartz/dartz.dart';
 import 'package:equatable/equatable.dart';
-import 'package:baseet/config/database/error/failures.dart';
+import 'package:baseet/core/error/failures.dart';
 import 'package:baseet/core/usecase/usecase.dart';
 import 'package:baseet/features/inventory/domain/repositories/inventory_repository.dart';
-import 'package:baseet/features/pos/domain/entities/product_entity.dart';
+import 'package:baseet/features/catalog/domain/entities/product_entity.dart';
 
 class GetInventoryParams extends Equatable {
   final String? categoryId;
@@ -20,7 +20,8 @@ class GetInventoryParams extends Equatable {
   List<Object?> get props => [categoryId, searchQuery, onlyLowStock];
 }
 
-class GetInventoryUseCase extends ParamsUseCase<List<ProductEntity>, GetInventoryParams> {
+class GetInventoryUseCase
+    extends ParamsUseCase<List<ProductEntity>, GetInventoryParams> {
   final InventoryRepository repository;
 
   GetInventoryUseCase(this.repository);

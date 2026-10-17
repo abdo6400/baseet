@@ -1,10 +1,10 @@
 import 'package:dartz/dartz.dart';
 import 'package:equatable/equatable.dart';
-import '../../../../config/database/error/failures.dart';
-import '../../../../core/enums/enums.dart';
-import '../../../../core/usecase/usecase.dart';
-import '../entities/customer_entity.dart';
-import '../repositories/debt_repository.dart';
+import 'package:baseet/core/error/failures.dart';
+import 'package:baseet/core/enums/enums.dart';
+import 'package:baseet/core/usecase/usecase.dart';
+import 'package:baseet/features/debt_ledger/domain/entities/customer_entity.dart';
+import 'package:baseet/features/debt_ledger/domain/repositories/debt_repository.dart';
 
 class GetCustomersParams extends Equatable {
   final String? searchQuery;
@@ -21,13 +21,15 @@ class GetCustomersParams extends Equatable {
   List<Object?> get props => [searchQuery, statusFilter, sortByHighest];
 }
 
-class GetCustomersUseCase extends ParamsUseCase<List<CustomerEntity>, GetCustomersParams> {
+class GetCustomersUseCase
+    extends ParamsUseCase<List<CustomerEntity>, GetCustomersParams> {
   final DebtRepository repository;
 
   GetCustomersUseCase(this.repository);
 
   @override
-  Future<Either<Failure, List<CustomerEntity>>> call(GetCustomersParams params) {
+  Future<Either<Failure, List<CustomerEntity>>> call(
+      GetCustomersParams params) {
     return repository.getCustomers(
       searchQuery: params.searchQuery,
       statusFilter: params.statusFilter,

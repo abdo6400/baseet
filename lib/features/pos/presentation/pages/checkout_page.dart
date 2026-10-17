@@ -1,26 +1,26 @@
+import 'package:baseet/app/presentation/cubits/process_lookups_cubit.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
-import '../../../../config/database/local/mock_data.dart';
-import '../../../../core/common/widgets/button/app_button.dart';
-import '../../../../core/common/widgets/form/app_text_field.dart';
-import '../../../../core/common/widgets/form/receipt_attachment_field.dart';
-import '../../../../core/common/widgets/icon/app_icon.dart';
-import '../../../../core/common/widgets/layout/page_header.dart';
-import '../../../../core/enums/enums.dart';
-import '../../../../core/extensions/state_handle_extension.dart';
-import '../../../../core/extensions/translation_extension.dart';
-import '../../../../core/theme/tokens/app_tokens.dart';
-import '../../../../core/utils/app_icons.dart';
-import '../../../../core/utils/strings_manager.dart';
-import '../blocs/cart/cart_bloc.dart';
-import '../blocs/cart/cart_event.dart';
-import '../blocs/cart/cart_state.dart';
-import '../blocs/catalog/pos_catalog_bloc.dart';
-import '../blocs/catalog/pos_catalog_event.dart';
-import '../blocs/checkout/checkout_bloc.dart';
-import '../blocs/checkout/checkout_event.dart';
-import '../blocs/checkout/checkout_state.dart';
+import 'package:baseet/core/common/widgets/button/app_button.dart';
+import 'package:baseet/core/common/widgets/form/app_text_field.dart';
+import 'package:baseet/core/common/widgets/form/receipt_attachment_field.dart';
+import 'package:baseet/core/common/widgets/icon/app_icon.dart';
+import 'package:baseet/core/common/widgets/layout/page_header.dart';
+import 'package:baseet/core/enums/enums.dart';
+import 'package:baseet/core/extensions/state_handle_extension.dart';
+import 'package:baseet/core/extensions/translation_extension.dart';
+import 'package:baseet/core/theme/tokens/app_tokens.dart';
+import 'package:baseet/core/utils/app_icons.dart';
+import 'package:baseet/core/utils/strings_manager.dart';
+import 'package:baseet/features/pos/presentation/blocs/cart/cart_bloc.dart';
+import 'package:baseet/features/pos/presentation/blocs/cart/cart_event.dart';
+import 'package:baseet/features/pos/presentation/blocs/cart/cart_state.dart';
+import 'package:baseet/features/pos/presentation/blocs/catalog/pos_catalog_bloc.dart';
+import 'package:baseet/features/pos/presentation/blocs/catalog/pos_catalog_event.dart';
+import 'package:baseet/features/pos/presentation/blocs/checkout/checkout_bloc.dart';
+import 'package:baseet/features/pos/presentation/blocs/checkout/checkout_event.dart';
+import 'package:baseet/features/pos/presentation/blocs/checkout/checkout_state.dart';
 
 class CheckoutPage extends StatefulWidget {
   const CheckoutPage({super.key});
@@ -89,32 +89,37 @@ class _CheckoutPageState extends State<CheckoutPage> {
                     // Order Summary Box
                     Text(
                       StringsManager.checkoutOrderSummary.lang,
-                      style: const TextStyle(fontSize: 15, fontWeight: FontWeight.w700),
+                      style: const TextStyle(
+                          fontSize: 15, fontWeight: FontWeight.w700),
                     ),
                     const SizedBox(height: 10),
                     Container(
                       decoration: BoxDecoration(
                         color: theme.colorScheme.surfaceContainerLowest,
                         borderRadius: BorderRadius.circular(AppRadius.lg),
-                        border: Border.all(color: theme.colorScheme.outlineVariant),
+                        border:
+                            Border.all(color: theme.colorScheme.outlineVariant),
                       ),
                       child: ListView.separated(
                         shrinkWrap: true,
                         physics: const NeverScrollableScrollPhysics(),
                         itemCount: cartState.items.length,
                         separatorBuilder: (_, __) => Divider(
-                          color: theme.colorScheme.outlineVariant.withValues(alpha: 0.5),
+                          color: theme.colorScheme.outlineVariant
+                              .withValues(alpha: 0.5),
                           height: 1,
                         ),
                         itemBuilder: (context, index) {
                           final item = cartState.items[index];
                           return Padding(
-                            padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 14, vertical: 10),
                             child: Row(
                               children: [
                                 Expanded(
                                   child: Column(
-                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
                                     children: [
                                       Text(
                                         item.product.name,
@@ -128,7 +133,8 @@ class _CheckoutPageState extends State<CheckoutPage> {
                                         '${item.product.sellPrice.toStringAsFixed(0)} ${StringsManager.posCurrency.lang}',
                                         style: TextStyle(
                                           fontSize: 12,
-                                          color: theme.colorScheme.onSurfaceVariant,
+                                          color: theme
+                                              .colorScheme.onSurfaceVariant,
                                         ),
                                       ),
                                     ],
@@ -137,9 +143,13 @@ class _CheckoutPageState extends State<CheckoutPage> {
                                 Row(
                                   children: [
                                     IconButton(
-                                      icon: AppIcon(AppIcons.delete, size: 18, color: theme.colorScheme.error),
+                                      icon: AppIcon(AppIcons.delete,
+                                          size: 18,
+                                          color: theme.colorScheme.error),
                                       onPressed: () {
-                                        context.read<CartBloc>().add(UpdateItemQuantityEvent(
+                                        context
+                                            .read<CartBloc>()
+                                            .add(UpdateItemQuantityEvent(
                                               item.product.id,
                                               item.quantity - 1,
                                             ));
@@ -153,9 +163,13 @@ class _CheckoutPageState extends State<CheckoutPage> {
                                       ),
                                     ),
                                     IconButton(
-                                      icon: AppIcon(AppIcons.add, size: 18, color: theme.colorScheme.primary),
+                                      icon: AppIcon(AppIcons.add,
+                                          size: 18,
+                                          color: theme.colorScheme.primary),
                                       onPressed: () {
-                                        context.read<CartBloc>().add(UpdateItemQuantityEvent(
+                                        context
+                                            .read<CartBloc>()
+                                            .add(UpdateItemQuantityEvent(
                                               item.product.id,
                                               item.quantity + 1,
                                             ));
@@ -184,16 +198,20 @@ class _CheckoutPageState extends State<CheckoutPage> {
                     Container(
                       padding: const EdgeInsets.all(14),
                       decoration: BoxDecoration(
-                        color: theme.colorScheme.primary.withValues(alpha: 0.08),
+                        color:
+                            theme.colorScheme.primary.withValues(alpha: 0.08),
                         borderRadius: BorderRadius.circular(AppRadius.md),
-                        border: Border.all(color: theme.colorScheme.primary.withValues(alpha: 0.2)),
+                        border: Border.all(
+                            color: theme.colorScheme.primary
+                                .withValues(alpha: 0.2)),
                       ),
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           Text(
                             StringsManager.posTotal.lang,
-                            style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w700),
+                            style: const TextStyle(
+                                fontSize: 16, fontWeight: FontWeight.w700),
                           ),
                           Text(
                             '${cartState.totalPrice.toStringAsFixed(0)} ${StringsManager.posCurrency.lang}',
@@ -211,7 +229,8 @@ class _CheckoutPageState extends State<CheckoutPage> {
                     // Payment Method
                     Text(
                       StringsManager.checkoutPaymentMethod.lang,
-                      style: const TextStyle(fontSize: 15, fontWeight: FontWeight.w700),
+                      style: const TextStyle(
+                          fontSize: 15, fontWeight: FontWeight.w700),
                     ),
                     const SizedBox(height: 10),
                     Row(
@@ -221,7 +240,8 @@ class _CheckoutPageState extends State<CheckoutPage> {
                           title: StringsManager.checkoutCash.lang,
                           method: PaymentMethod.cash,
                           icon: AppIcons.payments,
-                          selected: checkoutState.paymentMethod == PaymentMethod.cash,
+                          selected:
+                              checkoutState.paymentMethod == PaymentMethod.cash,
                         ),
                         const SizedBox(width: 8),
                         _buildPaymentMethodOption(
@@ -229,7 +249,8 @@ class _CheckoutPageState extends State<CheckoutPage> {
                           title: StringsManager.checkoutDebt.lang,
                           method: PaymentMethod.debt,
                           icon: AppIcons.debts,
-                          selected: checkoutState.paymentMethod == PaymentMethod.debt,
+                          selected:
+                              checkoutState.paymentMethod == PaymentMethod.debt,
                           isDebt: true,
                         ),
                         const SizedBox(width: 8),
@@ -238,7 +259,8 @@ class _CheckoutPageState extends State<CheckoutPage> {
                           title: StringsManager.checkoutCard.lang,
                           method: PaymentMethod.card,
                           icon: AppIcons.wallet,
-                          selected: checkoutState.paymentMethod == PaymentMethod.card,
+                          selected:
+                              checkoutState.paymentMethod == PaymentMethod.card,
                         ),
                       ],
                     ),
@@ -248,7 +270,8 @@ class _CheckoutPageState extends State<CheckoutPage> {
                     if (checkoutState.paymentMethod == PaymentMethod.debt) ...[
                       Text(
                         StringsManager.checkoutCustomer.lang,
-                        style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w600),
+                        style: const TextStyle(
+                            fontSize: 14, fontWeight: FontWeight.w600),
                       ),
                       const SizedBox(height: 6),
                       Container(
@@ -256,23 +279,43 @@ class _CheckoutPageState extends State<CheckoutPage> {
                         decoration: BoxDecoration(
                           color: theme.colorScheme.surfaceContainerLowest,
                           borderRadius: BorderRadius.circular(AppRadius.lg),
-                          border: Border.all(color: theme.colorScheme.outlineVariant),
+                          border: Border.all(
+                              color: theme.colorScheme.outlineVariant),
                         ),
                         child: DropdownButtonHideUnderline(
                           child: DropdownButton<String>(
                             isExpanded: true,
-                            hint: Text(StringsManager.checkoutSelectCustomer.lang),
-                            value: checkoutState.customerId,
-                            items: BaseetMockData.initialCustomers.map((c) {
+                            hint: Text(
+                                StringsManager.checkoutSelectCustomer.lang),
+                            value: context
+                                    .watch<ProcessLookupsCubit>()
+                                    .state
+                                    .customers
+                                    .any(
+                                        (c) => c.id == checkoutState.customerId)
+                                ? checkoutState.customerId
+                                : null,
+                            items: context
+                                .watch<ProcessLookupsCubit>()
+                                .state
+                                .customers
+                                .map((c) {
                               return DropdownMenuItem<String>(
                                 value: c.id,
-                                child: Text('${c.name} (${c.totalDebt.toStringAsFixed(0)} ${StringsManager.posCurrency.lang} ${StringsManager.debtsDebtSuffix.lang})'),
+                                child: Text(
+                                    '${c.name} (${c.totalDebt.toStringAsFixed(0)} ${StringsManager.posCurrency.lang} ${StringsManager.debtsDebtSuffix.lang})'),
                               );
                             }).toList(),
                             onChanged: (val) {
                               if (val != null) {
-                                final cust = BaseetMockData.initialCustomers.firstWhere((c) => c.id == val);
-                                context.read<CheckoutBloc>().add(SelectCustomerForDebtEvent(
+                                final cust = context
+                                    .read<ProcessLookupsCubit>()
+                                    .state
+                                    .customers
+                                    .firstWhere((c) => c.id == val);
+                                context
+                                    .read<CheckoutBloc>()
+                                    .add(SelectCustomerForDebtEvent(
                                       customerId: cust.id,
                                       customerName: cust.name,
                                     ));
@@ -291,7 +334,9 @@ class _CheckoutPageState extends State<CheckoutPage> {
                         keyboardType: TextInputType.number,
                         onChanged: (val) {
                           final amount = double.tryParse(val) ?? 0.0;
-                          context.read<CheckoutBloc>().add(SetPaidAmountEvent(amount));
+                          context
+                              .read<CheckoutBloc>()
+                              .add(SetPaidAmountEvent(amount));
                         },
                       ),
                       const SizedBox(height: 14),
@@ -345,7 +390,8 @@ class _CheckoutPageState extends State<CheckoutPage> {
     bool isDebt = false,
   }) {
     final theme = Theme.of(context);
-    final activeColor = isDebt ? theme.colorScheme.secondary : theme.colorScheme.primary;
+    final activeColor =
+        isDebt ? theme.colorScheme.secondary : theme.colorScheme.primary;
 
     return Expanded(
       child: GestureDetector(
@@ -356,7 +402,9 @@ class _CheckoutPageState extends State<CheckoutPage> {
           duration: const Duration(milliseconds: 200),
           padding: const EdgeInsets.symmetric(vertical: 12),
           decoration: BoxDecoration(
-            color: selected ? activeColor.withValues(alpha: 0.1) : theme.colorScheme.surfaceContainerLowest,
+            color: selected
+                ? activeColor.withValues(alpha: 0.1)
+                : theme.colorScheme.surfaceContainerLowest,
             borderRadius: BorderRadius.circular(AppRadius.lg),
             border: Border.all(
               color: selected ? activeColor : theme.colorScheme.outlineVariant,
@@ -365,7 +413,11 @@ class _CheckoutPageState extends State<CheckoutPage> {
           ),
           child: Column(
             children: [
-              AppIcon(icon, color: selected ? activeColor : theme.colorScheme.onSurfaceVariant, size: 22),
+              AppIcon(icon,
+                  color: selected
+                      ? activeColor
+                      : theme.colorScheme.onSurfaceVariant,
+                  size: 22),
               const SizedBox(height: 4),
               Text(
                 title,

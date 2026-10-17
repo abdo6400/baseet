@@ -1,5 +1,5 @@
 import 'package:baseet/features/pos/domain/entities/cart_item_entity.dart';
-import 'product_model.dart';
+import 'package:baseet/features/catalog/data/models/product_model.dart';
 
 class CartItemModel extends CartItemEntity {
   CartItemModel({
@@ -8,11 +8,13 @@ class CartItemModel extends CartItemEntity {
     super.customPrice,
   });
 
-  factory CartItemModel.fromMap(Map<String, dynamic> map, ProductModel product) {
+  factory CartItemModel.fromMap(
+      Map<String, dynamic> map, ProductModel product) {
     return CartItemModel(
       product: product,
       quantity: map['quantity'] as int,
-      customPrice: (map['customPrice'] as num?)?.toDouble() ?? product.sellPrice,
+      customPrice:
+          (map['customPrice'] as num?)?.toDouble() ?? product.sellPrice,
     );
   }
 

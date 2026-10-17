@@ -2,20 +2,20 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:url_launcher/url_launcher.dart';
-import '../../../../config/routes/app_routes.dart';
-import '../../../../core/common/widgets/feedback/empty_state_widget.dart';
-import '../../../../core/common/widgets/feedback/status_badge.dart';
-import '../../../../core/common/widgets/icon/app_icon.dart';
-import '../../../../core/common/widgets/layout/page_header.dart';
-import '../../../../core/common/widgets/scanner/receipt_preview_dialog.dart';
-import '../../../../core/enums/enums.dart';
-import '../../../../core/extensions/translation_extension.dart';
-import '../../../../core/theme/tokens/app_tokens.dart';
-import '../../../../core/utils/app_icons.dart';
-import '../../../../core/utils/strings_manager.dart';
-import '../blocs/customer_statement/customer_statement_bloc.dart';
-import '../blocs/customer_statement/customer_statement_event.dart';
-import '../blocs/customer_statement/customer_statement_state.dart';
+import 'package:baseet/app/router/app_routes.dart';
+import 'package:baseet/core/common/widgets/feedback/empty_state_widget.dart';
+import 'package:baseet/core/common/widgets/feedback/status_badge.dart';
+import 'package:baseet/core/common/widgets/icon/app_icon.dart';
+import 'package:baseet/core/common/widgets/layout/page_header.dart';
+import 'package:baseet/core/common/widgets/scanner/receipt_preview_dialog.dart';
+import 'package:baseet/core/enums/enums.dart';
+import 'package:baseet/core/extensions/translation_extension.dart';
+import 'package:baseet/core/theme/tokens/app_tokens.dart';
+import 'package:baseet/core/utils/app_icons.dart';
+import 'package:baseet/core/utils/strings_manager.dart';
+import 'package:baseet/features/debt_ledger/presentation/blocs/customer_statement/customer_statement_bloc.dart';
+import 'package:baseet/features/debt_ledger/presentation/blocs/customer_statement/customer_statement_event.dart';
+import 'package:baseet/features/debt_ledger/presentation/blocs/customer_statement/customer_statement_state.dart';
 
 class CustomerStatementPage extends StatefulWidget {
   final String customerId;
@@ -30,7 +30,9 @@ class _CustomerStatementPageState extends State<CustomerStatementPage> {
   @override
   void initState() {
     super.initState();
-    context.read<CustomerStatementBloc>().add(LoadCustomerStatementEvent(widget.customerId));
+    context
+        .read<CustomerStatementBloc>()
+        .add(LoadCustomerStatementEvent(widget.customerId));
   }
 
   void _callPhone(String phone) async {
@@ -41,9 +43,11 @@ class _CustomerStatementPageState extends State<CustomerStatementPage> {
   }
 
   void _openWhatsApp(String phone, String name, double debt) async {
-    final formattedDebt = debt.toStringAsFixed(debt.truncateToDouble() == debt ? 0 : 2);
+    final formattedDebt =
+        debt.toStringAsFixed(debt.truncateToDouble() == debt ? 0 : 2);
     final message = Uri.encodeComponent(
-      StringsManager.customerWhatsappReminder.trArgs(args: [name, formattedDebt]),
+      StringsManager.customerWhatsappReminder
+          .trArgs(args: [name, formattedDebt]),
     );
     final url = Uri.parse('https://wa.me/20$phone?text=$message');
     if (await canLaunchUrl(url)) {
@@ -69,7 +73,8 @@ class _CustomerStatementPageState extends State<CustomerStatementPage> {
                 showModalBottomSheet(
                   context: context,
                   shape: const RoundedRectangleBorder(
-                    borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+                    borderRadius:
+                        BorderRadius.vertical(top: Radius.circular(20)),
                   ),
                   builder: (modalContext) => Padding(
                     padding: const EdgeInsets.all(20),
@@ -79,7 +84,8 @@ class _CustomerStatementPageState extends State<CustomerStatementPage> {
                       children: [
                         Text(
                           StringsManager.customerStatementShare.lang,
-                          style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w800),
+                          style: const TextStyle(
+                              fontSize: 18, fontWeight: FontWeight.w800),
                         ),
                         const SizedBox(height: 12),
                         Container(
@@ -95,11 +101,13 @@ class _CustomerStatementPageState extends State<CustomerStatementPage> {
                         ),
                         const SizedBox(height: 16),
                         ListTile(
-                          leading: AppIcon(AppIcons.whatsapp, color: AppPrimitiveTokens.emerald700),
+                          leading: AppIcon(AppIcons.whatsapp,
+                              color: AppPrimitiveTokens.emerald700),
                           title: Text(StringsManager.customerWhatsapp.lang),
                           onTap: () {
                             Navigator.pop(modalContext);
-                            _openWhatsApp(cust.phone, cust.name, cust.totalDebt);
+                            _openWhatsApp(
+                                cust.phone, cust.name, cust.totalDebt);
                           },
                         ),
                       ],
@@ -184,7 +192,10 @@ class _CustomerStatementPageState extends State<CustomerStatementPage> {
                         ],
                       ),
                       const SizedBox(height: 16),
-                      Divider(color: theme.colorScheme.outlineVariant.withValues(alpha: 0.5), height: 1),
+                      Divider(
+                          color: theme.colorScheme.outlineVariant
+                              .withValues(alpha: 0.5),
+                          height: 1),
                       const SizedBox(height: 16),
 
                       // Balance & Limit Row
@@ -265,7 +276,8 @@ class _CustomerStatementPageState extends State<CustomerStatementPage> {
                       child: OutlinedButton.icon(
                         style: OutlinedButton.styleFrom(
                           padding: const EdgeInsets.symmetric(vertical: 12),
-                          side: BorderSide(color: theme.colorScheme.outlineVariant),
+                          side: BorderSide(
+                              color: theme.colorScheme.outlineVariant),
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(AppRadius.md),
                           ),
@@ -280,13 +292,16 @@ class _CustomerStatementPageState extends State<CustomerStatementPage> {
                       child: OutlinedButton.icon(
                         style: OutlinedButton.styleFrom(
                           padding: const EdgeInsets.symmetric(vertical: 12),
-                          side: BorderSide(color: theme.colorScheme.outlineVariant),
+                          side: BorderSide(
+                              color: theme.colorScheme.outlineVariant),
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(AppRadius.md),
                           ),
                         ),
-                        onPressed: () => _openWhatsApp(customer.phone, customer.name, customer.totalDebt),
-                        icon: AppIcon(AppIcons.whatsapp, size: 18, color: Colors.green),
+                        onPressed: () => _openWhatsApp(
+                            customer.phone, customer.name, customer.totalDebt),
+                        icon: AppIcon(AppIcons.whatsapp,
+                            size: 18, color: Colors.green),
                         label: Text(StringsManager.customerWhatsapp.lang),
                       ),
                     ),
@@ -302,10 +317,17 @@ class _CustomerStatementPageState extends State<CustomerStatementPage> {
                             borderRadius: BorderRadius.circular(AppRadius.md),
                           ),
                         ),
-                        onPressed: () {
-                          context.push(AppRoutes.paymentVoucherPath(customerId: customer.id));
+                        onPressed: () async {
+                          await context.push(AppRoutes.paymentVoucherPath(
+                              customerId: customer.id));
+                          if (context.mounted) {
+                            context
+                                .read<CustomerStatementBloc>()
+                                .add(LoadCustomerStatementEvent(customer.id));
+                          }
                         },
-                        icon: AppIcon(AppIcons.receipt, size: 18, color: Colors.white),
+                        icon: AppIcon(AppIcons.receipt,
+                            size: 18, color: Colors.white),
                         label: Text(StringsManager.debtsActionVoucher.lang),
                       ),
                     ),
@@ -316,7 +338,8 @@ class _CustomerStatementPageState extends State<CustomerStatementPage> {
                 // Transactions History Section Header
                 Text(
                   StringsManager.customerTransactionsHistory.lang,
-                  style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w800),
+                  style: const TextStyle(
+                      fontSize: 16, fontWeight: FontWeight.w800),
                 ),
                 const SizedBox(height: 12),
 
@@ -337,15 +360,19 @@ class _CustomerStatementPageState extends State<CustomerStatementPage> {
                     separatorBuilder: (_, __) => const SizedBox(height: 10),
                     itemBuilder: (context, index) {
                       final tx = state.transactions[index];
-                      final isPayment = tx.type == TransactionType.paymentVoucher;
-                      final accentColor = isPayment ? AppPrimitiveTokens.emerald700 : AppPrimitiveTokens.red700;
+                      final isPayment =
+                          tx.type == TransactionType.paymentVoucher;
+                      final accentColor = isPayment
+                          ? AppPrimitiveTokens.emerald700
+                          : AppPrimitiveTokens.red700;
 
                       return Container(
                         padding: const EdgeInsets.all(14),
                         decoration: BoxDecoration(
                           color: theme.colorScheme.surfaceContainerLowest,
                           borderRadius: BorderRadius.circular(AppRadius.lg),
-                          border: Border.all(color: theme.colorScheme.outlineVariant),
+                          border: Border.all(
+                              color: theme.colorScheme.outlineVariant),
                         ),
                         child: Row(
                           children: [
@@ -356,7 +383,9 @@ class _CustomerStatementPageState extends State<CustomerStatementPage> {
                                 shape: BoxShape.circle,
                               ),
                               child: AppIcon(
-                                isPayment ? AppIcons.payments : AppIcons.receipt,
+                                isPayment
+                                    ? AppIcons.payments
+                                    : AppIcons.receipt,
                                 color: accentColor,
                                 size: 20,
                               ),
@@ -367,7 +396,10 @@ class _CustomerStatementPageState extends State<CustomerStatementPage> {
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
                                   Text(
-                                    isPayment ? StringsManager.customerTypePayment.lang : StringsManager.customerTypeSale.lang,
+                                    isPayment
+                                        ? StringsManager
+                                            .customerTypePayment.lang
+                                        : StringsManager.customerTypeSale.lang,
                                     style: const TextStyle(
                                       fontWeight: FontWeight.w700,
                                       fontSize: 13,
@@ -379,7 +411,8 @@ class _CustomerStatementPageState extends State<CustomerStatementPage> {
                                       tx.notes!,
                                       style: TextStyle(
                                         fontSize: 11,
-                                        color: theme.colorScheme.onSurfaceVariant,
+                                        color:
+                                            theme.colorScheme.onSurfaceVariant,
                                       ),
                                     ),
                                   ],
@@ -390,35 +423,50 @@ class _CustomerStatementPageState extends State<CustomerStatementPage> {
                                         '${tx.date.day}/${tx.date.month}/${tx.date.year}',
                                         style: TextStyle(
                                           fontSize: 10,
-                                          color: theme.colorScheme.onSurfaceVariant.withValues(alpha: 0.8),
+                                          color: theme
+                                              .colorScheme.onSurfaceVariant
+                                              .withValues(alpha: 0.8),
                                         ),
                                       ),
-                                      if (tx.receiptPath != null && tx.receiptPath!.isNotEmpty) ...[
+                                      if (tx.receiptPath != null &&
+                                          tx.receiptPath!.isNotEmpty) ...[
                                         const SizedBox(width: 8),
                                         InkWell(
-                                          onTap: () => ReceiptPreviewDialog.show(
+                                          onTap: () =>
+                                              ReceiptPreviewDialog.show(
                                             context,
                                             imagePath: tx.receiptPath!,
-                                            title: StringsManager.receiptView.lang,
+                                            title:
+                                                StringsManager.receiptView.lang,
                                           ),
-                                          borderRadius: BorderRadius.circular(AppRadius.sm),
+                                          borderRadius: BorderRadius.circular(
+                                              AppRadius.sm),
                                           child: Container(
-                                            padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                                            padding: const EdgeInsets.symmetric(
+                                                horizontal: 6, vertical: 2),
                                             decoration: BoxDecoration(
-                                              color: theme.colorScheme.primary.withValues(alpha: 0.1),
-                                              borderRadius: BorderRadius.circular(AppRadius.sm),
+                                              color: theme.colorScheme.primary
+                                                  .withValues(alpha: 0.1),
+                                              borderRadius:
+                                                  BorderRadius.circular(
+                                                      AppRadius.sm),
                                             ),
                                             child: Row(
                                               mainAxisSize: MainAxisSize.min,
                                               children: [
-                                                AppIcon(AppIcons.receipt, size: 10, color: theme.colorScheme.primary),
+                                                AppIcon(AppIcons.receipt,
+                                                    size: 10,
+                                                    color: theme
+                                                        .colorScheme.primary),
                                                 const SizedBox(width: 3),
                                                 Text(
-                                                  StringsManager.receiptView.lang,
+                                                  StringsManager
+                                                      .receiptView.lang,
                                                   style: TextStyle(
                                                     fontSize: 9,
                                                     fontWeight: FontWeight.w700,
-                                                    color: theme.colorScheme.primary,
+                                                    color: theme
+                                                        .colorScheme.primary,
                                                   ),
                                                 ),
                                               ],

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:toastification/toastification.dart';
-import 'overlay_loader.dart';
+import 'package:baseet/core/extensions/overlay_loader.dart';
 
 extension StateHandleExtension on BuildContext {
   void showStateHandler({

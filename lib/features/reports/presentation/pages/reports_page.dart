@@ -1,14 +1,15 @@
+import 'package:baseet/features/reports/domain/entities/report_period.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import '../../../../core/common/widgets/button/app_button.dart';
-import '../../../../core/common/widgets/icon/app_icon.dart';
-import '../../../../core/extensions/translation_extension.dart';
-import '../../../../core/theme/tokens/app_tokens.dart';
-import '../../../../core/utils/app_icons.dart';
-import '../../../../core/utils/strings_manager.dart';
-import '../blocs/reports/reports_bloc.dart';
-import '../blocs/reports/reports_event.dart';
-import '../blocs/reports/reports_state.dart';
+import 'package:baseet/core/common/widgets/button/app_button.dart';
+import 'package:baseet/core/common/widgets/icon/app_icon.dart';
+import 'package:baseet/core/extensions/translation_extension.dart';
+import 'package:baseet/core/theme/tokens/app_tokens.dart';
+import 'package:baseet/core/utils/app_icons.dart';
+import 'package:baseet/core/utils/strings_manager.dart';
+import 'package:baseet/features/reports/presentation/blocs/reports/reports_bloc.dart';
+import 'package:baseet/features/reports/presentation/blocs/reports/reports_event.dart';
+import 'package:baseet/features/reports/presentation/blocs/reports/reports_state.dart';
 
 class ReportsPage extends StatefulWidget {
   const ReportsPage({super.key});
@@ -18,12 +19,14 @@ class ReportsPage extends StatefulWidget {
 }
 
 class _ReportsPageState extends State<ReportsPage> {
-  String _selectedPeriod = 'today';
+  ReportPeriod _selectedPeriod = ReportPeriod.today;
 
   @override
   void initState() {
     super.initState();
-    context.read<ReportsBloc>().add(LoadReportsSummaryEvent(period: _selectedPeriod));
+    context
+        .read<ReportsBloc>()
+        .add(LoadReportsSummaryEvent(period: _selectedPeriod));
   }
 
   @override
@@ -47,7 +50,8 @@ class _ReportsPageState extends State<ReportsPage> {
         centerTitle: true,
         bottom: PreferredSize(
           preferredSize: const Size.fromHeight(1.0),
-          child: Container(color: theme.colorScheme.outlineVariant, height: 1.0),
+          child:
+              Container(color: theme.colorScheme.outlineVariant, height: 1.0),
         ),
       ),
       body: BlocBuilder<ReportsBloc, ReportsState>(
@@ -60,7 +64,9 @@ class _ReportsPageState extends State<ReportsPage> {
 
           return RefreshIndicator(
             onRefresh: () async {
-              context.read<ReportsBloc>().add(LoadReportsSummaryEvent(period: _selectedPeriod));
+              context
+                  .read<ReportsBloc>()
+                  .add(LoadReportsSummaryEvent(period: _selectedPeriod));
             },
             child: SingleChildScrollView(
               padding: const EdgeInsets.all(16),
@@ -70,7 +76,8 @@ class _ReportsPageState extends State<ReportsPage> {
                   // Title
                   Text(
                     StringsManager.reportsTitle.lang,
-                    style: const TextStyle(fontSize: 20, fontWeight: FontWeight.w800),
+                    style: const TextStyle(
+                        fontSize: 20, fontWeight: FontWeight.w800),
                   ),
                   const SizedBox(height: 2),
                   Text(
@@ -88,13 +95,17 @@ class _ReportsPageState extends State<ReportsPage> {
                     decoration: BoxDecoration(
                       color: theme.colorScheme.surfaceContainerLowest,
                       borderRadius: BorderRadius.circular(AppRadius.full),
-                      border: Border.all(color: theme.colorScheme.outlineVariant),
+                      border:
+                          Border.all(color: theme.colorScheme.outlineVariant),
                     ),
                     child: Row(
                       children: [
-                        _buildPeriodTab('today', StringsManager.reportsPeriodToday.lang),
-                        _buildPeriodTab('week', StringsManager.reportsPeriodWeek.lang),
-                        _buildPeriodTab('month', StringsManager.reportsPeriodMonth.lang),
+                        _buildPeriodTab(ReportPeriod.today,
+                            StringsManager.reportsPeriodToday.lang),
+                        _buildPeriodTab(ReportPeriod.week,
+                            StringsManager.reportsPeriodWeek.lang),
+                        _buildPeriodTab(ReportPeriod.month,
+                            StringsManager.reportsPeriodMonth.lang),
                       ],
                     ),
                   ),
@@ -108,7 +119,8 @@ class _ReportsPageState extends State<ReportsPage> {
                           child: _buildMetricCard(
                             theme,
                             title: StringsManager.reportsNetProfit.lang,
-                            value: '${summary.netProfit.toStringAsFixed(0)} ${StringsManager.posCurrency.lang}',
+                            value:
+                                '${summary.netProfit.toStringAsFixed(0)} ${StringsManager.posCurrency.lang}',
                             color: AppPrimitiveTokens.emerald700,
                             icon: AppIcons.trendingUp,
                           ),
@@ -118,7 +130,8 @@ class _ReportsPageState extends State<ReportsPage> {
                           child: _buildMetricCard(
                             theme,
                             title: StringsManager.reportsTotalSales.lang,
-                            value: '${summary.totalSales.toStringAsFixed(0)} ${StringsManager.posCurrency.lang}',
+                            value:
+                                '${summary.totalSales.toStringAsFixed(0)} ${StringsManager.posCurrency.lang}',
                             color: theme.colorScheme.primary,
                             icon: AppIcons.pos,
                           ),
@@ -134,7 +147,8 @@ class _ReportsPageState extends State<ReportsPage> {
                           child: _buildMetricCard(
                             theme,
                             title: StringsManager.reportsCashCollected.lang,
-                            value: '${summary.cashSales.toStringAsFixed(0)} ${StringsManager.posCurrency.lang}',
+                            value:
+                                '${summary.cashSales.toStringAsFixed(0)} ${StringsManager.posCurrency.lang}',
                             color: AppPrimitiveTokens.emerald700,
                             icon: AppIcons.payments,
                           ),
@@ -144,7 +158,8 @@ class _ReportsPageState extends State<ReportsPage> {
                           child: _buildMetricCard(
                             theme,
                             title: StringsManager.reportsDebtSales.lang,
-                            value: '${summary.debtSales.toStringAsFixed(0)} ${StringsManager.posCurrency.lang}',
+                            value:
+                                '${summary.debtSales.toStringAsFixed(0)} ${StringsManager.posCurrency.lang}',
                             color: AppPrimitiveTokens.red700,
                             icon: AppIcons.debts,
                           ),
@@ -156,7 +171,8 @@ class _ReportsPageState extends State<ReportsPage> {
                     // Sales Visual Overview
                     Text(
                       StringsManager.reportsSalesOverview.lang,
-                      style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w800),
+                      style: const TextStyle(
+                          fontSize: 16, fontWeight: FontWeight.w800),
                     ),
                     const SizedBox(height: 12),
                     Container(
@@ -164,7 +180,8 @@ class _ReportsPageState extends State<ReportsPage> {
                       decoration: BoxDecoration(
                         color: theme.colorScheme.surfaceContainerLowest,
                         borderRadius: BorderRadius.circular(AppRadius.lg),
-                        border: Border.all(color: theme.colorScheme.outlineVariant),
+                        border:
+                            Border.all(color: theme.colorScheme.outlineVariant),
                       ),
                       child: Column(
                         children: [
@@ -180,7 +197,8 @@ class _ReportsPageState extends State<ReportsPage> {
                               ),
                               Text(
                                 '${summary.totalInvoicesCount} ${StringsManager.reportsInvoiceUnit.lang}',
-                                style: const TextStyle(fontSize: 15, fontWeight: FontWeight.w700),
+                                style: const TextStyle(
+                                    fontSize: 15, fontWeight: FontWeight.w700),
                               ),
                             ],
                           ),
@@ -191,13 +209,28 @@ class _ReportsPageState extends State<ReportsPage> {
                             mainAxisAlignment: MainAxisAlignment.spaceAround,
                             crossAxisAlignment: CrossAxisAlignment.end,
                             children: [
-                              _buildBar(theme, label: StringsManager.daySat.lang, heightPercent: 0.6),
-                              _buildBar(theme, label: StringsManager.daySun.lang, heightPercent: 0.8),
-                              _buildBar(theme, label: StringsManager.dayMon.lang, heightPercent: 0.45),
-                              _buildBar(theme, label: StringsManager.dayTue.lang, heightPercent: 0.9),
-                              _buildBar(theme, label: StringsManager.dayWed.lang, heightPercent: 0.7),
-                              _buildBar(theme, label: StringsManager.dayThu.lang, heightPercent: 1.0, isHighest: true),
-                              _buildBar(theme, label: StringsManager.dayFri.lang, heightPercent: 0.5),
+                              _buildBar(theme,
+                                  label: StringsManager.daySat.lang,
+                                  heightPercent: 0.6),
+                              _buildBar(theme,
+                                  label: StringsManager.daySun.lang,
+                                  heightPercent: 0.8),
+                              _buildBar(theme,
+                                  label: StringsManager.dayMon.lang,
+                                  heightPercent: 0.45),
+                              _buildBar(theme,
+                                  label: StringsManager.dayTue.lang,
+                                  heightPercent: 0.9),
+                              _buildBar(theme,
+                                  label: StringsManager.dayWed.lang,
+                                  heightPercent: 0.7),
+                              _buildBar(theme,
+                                  label: StringsManager.dayThu.lang,
+                                  heightPercent: 1.0,
+                                  isHighest: true),
+                              _buildBar(theme,
+                                  label: StringsManager.dayFri.lang,
+                                  heightPercent: 0.5),
                             ],
                           ),
                         ],
@@ -208,14 +241,16 @@ class _ReportsPageState extends State<ReportsPage> {
                     // Top Selling Products Leaderboard
                     Text(
                       StringsManager.reportsTopProducts.lang,
-                      style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w800),
+                      style: const TextStyle(
+                          fontSize: 16, fontWeight: FontWeight.w800),
                     ),
                     const SizedBox(height: 12),
                     Container(
                       decoration: BoxDecoration(
                         color: theme.colorScheme.surfaceContainerLowest,
                         borderRadius: BorderRadius.circular(AppRadius.lg),
-                        border: Border.all(color: theme.colorScheme.outlineVariant),
+                        border:
+                            Border.all(color: theme.colorScheme.outlineVariant),
                       ),
                       child: ListView.separated(
                         shrinkWrap: true,
@@ -223,14 +258,16 @@ class _ReportsPageState extends State<ReportsPage> {
                         itemCount: summary.topProducts.length,
                         separatorBuilder: (context, index) => Divider(
                           height: 1,
-                          color: theme.colorScheme.outlineVariant.withValues(alpha: 0.5),
+                          color: theme.colorScheme.outlineVariant
+                              .withValues(alpha: 0.5),
                           indent: 16,
                           endIndent: 16,
                         ),
                         itemBuilder: (context, index) {
                           final prod = summary.topProducts[index];
                           return Padding(
-                            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 16, vertical: 12),
                             child: Row(
                               children: [
                                 Container(
@@ -238,8 +275,10 @@ class _ReportsPageState extends State<ReportsPage> {
                                   height: 28,
                                   decoration: BoxDecoration(
                                     color: index == 0
-                                        ? AppPrimitiveTokens.amber500.withValues(alpha: 0.2)
-                                        : theme.colorScheme.surfaceContainerHigh,
+                                        ? AppPrimitiveTokens.amber500
+                                            .withValues(alpha: 0.2)
+                                        : theme
+                                            .colorScheme.surfaceContainerHigh,
                                     shape: BoxShape.circle,
                                   ),
                                   alignment: Alignment.center,
@@ -258,7 +297,9 @@ class _ReportsPageState extends State<ReportsPage> {
                                 Expanded(
                                   child: Text(
                                     prod.productName,
-                                    style: const TextStyle(fontWeight: FontWeight.w700, fontSize: 13),
+                                    style: const TextStyle(
+                                        fontWeight: FontWeight.w700,
+                                        fontSize: 13),
                                   ),
                                 ),
                                 Column(
@@ -276,7 +317,8 @@ class _ReportsPageState extends State<ReportsPage> {
                                       '${StringsManager.reportsSoldUnit.lang}: ${prod.soldQuantity}',
                                       style: TextStyle(
                                         fontSize: 11,
-                                        color: theme.colorScheme.onSurfaceVariant,
+                                        color:
+                                            theme.colorScheme.onSurfaceVariant,
                                       ),
                                     ),
                                   ],
@@ -295,7 +337,9 @@ class _ReportsPageState extends State<ReportsPage> {
                       icon: AppIcons.pdf,
                       onPressed: () {
                         ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(content: Text(StringsManager.reportsExportPdfSuccess.lang)),
+                          SnackBar(
+                              content: Text(
+                                  StringsManager.reportsExportPdfSuccess.lang)),
                         );
                       },
                     ),
@@ -309,7 +353,7 @@ class _ReportsPageState extends State<ReportsPage> {
     );
   }
 
-  Widget _buildPeriodTab(String key, String title) {
+  Widget _buildPeriodTab(ReportPeriod key, String title) {
     final theme = Theme.of(context);
     final isSelected = _selectedPeriod == key;
 
@@ -334,7 +378,9 @@ class _ReportsPageState extends State<ReportsPage> {
             style: TextStyle(
               fontSize: 13,
               fontWeight: isSelected ? FontWeight.w700 : FontWeight.w500,
-              color: isSelected ? Colors.white : theme.colorScheme.onSurfaceVariant,
+              color: isSelected
+                  ? Colors.white
+                  : theme.colorScheme.onSurfaceVariant,
             ),
           ),
         ),
@@ -364,7 +410,10 @@ class _ReportsPageState extends State<ReportsPage> {
             children: [
               Text(
                 title,
-                style: TextStyle(fontSize: 12, color: theme.colorScheme.onSurfaceVariant, fontWeight: FontWeight.w600),
+                style: TextStyle(
+                    fontSize: 12,
+                    color: theme.colorScheme.onSurfaceVariant,
+                    fontWeight: FontWeight.w600),
               ),
               AppIcon(icon, size: 18, color: color),
             ],
@@ -372,14 +421,18 @@ class _ReportsPageState extends State<ReportsPage> {
           const SizedBox(height: 8),
           Text(
             value,
-            style: TextStyle(fontSize: 18, fontWeight: FontWeight.w800, color: color),
+            style: TextStyle(
+                fontSize: 18, fontWeight: FontWeight.w800, color: color),
           ),
         ],
       ),
     );
   }
 
-  Widget _buildBar(ThemeData theme, {required String label, required double heightPercent, bool isHighest = false}) {
+  Widget _buildBar(ThemeData theme,
+      {required String label,
+      required double heightPercent,
+      bool isHighest = false}) {
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: [
@@ -387,14 +440,17 @@ class _ReportsPageState extends State<ReportsPage> {
           width: 24,
           height: 90 * heightPercent,
           decoration: BoxDecoration(
-            color: isHighest ? theme.colorScheme.primary : theme.colorScheme.primary.withValues(alpha: 0.35),
+            color: isHighest
+                ? theme.colorScheme.primary
+                : theme.colorScheme.primary.withValues(alpha: 0.35),
             borderRadius: BorderRadius.circular(AppRadius.xs),
           ),
         ),
         const SizedBox(height: 6),
         Text(
           label,
-          style: TextStyle(fontSize: 10, color: theme.colorScheme.onSurfaceVariant),
+          style: TextStyle(
+              fontSize: 10, color: theme.colorScheme.onSurfaceVariant),
         ),
       ],
     );

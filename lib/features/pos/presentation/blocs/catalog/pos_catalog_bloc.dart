@@ -1,10 +1,10 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:baseet/features/inventory/domain/entities/category_entity.dart';
-import 'package:baseet/features/inventory/domain/usecases/get_categories_usecase.dart';
+import 'package:baseet/features/catalog/domain/entities/category_entity.dart';
+import 'package:baseet/features/catalog/domain/usecases/get_categories_usecase.dart';
 import 'package:baseet/features/pos/domain/usecases/get_pos_catalog_usecase.dart';
 import 'package:baseet/features/pos/domain/usecases/get_today_sales_usecase.dart';
-import 'pos_catalog_event.dart';
-import 'pos_catalog_state.dart';
+import 'package:baseet/features/pos/presentation/blocs/catalog/pos_catalog_event.dart';
+import 'package:baseet/features/pos/presentation/blocs/catalog/pos_catalog_state.dart';
 
 class PosCatalogBloc extends Bloc<PosCatalogEvent, PosCatalogState> {
   final GetPosCatalogUseCase getCatalogUseCase;
@@ -21,15 +21,32 @@ class PosCatalogBloc extends Bloc<PosCatalogEvent, PosCatalogState> {
     on<SearchCatalogEvent>(_onSearchCatalog);
   }
 
-  Future<void> _onLoadCatalog(LoadPosCatalogEvent event, Emitter<PosCatalogState> emit) async {
+  Future<void> _onLoadCatalog(
+      LoadPosCatalogEvent event, Emitter<PosCatalogState> emit) async {
     emit(state.copyWith(status: PosCatalogStatus.loading));
 
     final salesResult = await getTodaySalesUseCase();
+    if (salesResult.isLeft()) {
+      salesResult.fold(
+          (failure) => emit(state.copyWith(
+              status: PosCatalogStatus.error, errorMessage: failure.message)),
+          (_) {});
+      return;
+    }
     final double sales = salesResult.fold((l) => 0.0, (r) => r);
 
     final categoriesResult = await getCategoriesUseCase();
+    if (categoriesResult.isLeft()) {
+      categoriesResult.fold(
+          (failure) => emit(state.copyWith(
+              status: PosCatalogStatus.error, errorMessage: failure.message)),
+          (_) {});
+      return;
+    }
     final allCats = categoriesResult.fold(
-      (l) => <CategoryEntity>[const CategoryEntity(id: 'cat_0', name: 'الكل', iconName: 'grid')],
+      (l) => <CategoryEntity>[
+        const CategoryEntity(id: 'cat_0', name: 'الكل', iconName: 'grid')
+      ],
       (cats) => [
         const CategoryEntity(id: 'cat_0', name: 'الكل', iconName: 'grid'),
         ...cats.where((c) => c.id != 'cat_0'),
@@ -55,13 +72,17 @@ class PosCatalogBloc extends Bloc<PosCatalogEvent, PosCatalogState> {
     );
   }
 
-  Future<void> _onSelectCategory(SelectCategoryEvent event, Emitter<PosCatalogState> emit) async {
+  Future<void> _onSelectCategory(
+      SelectCategoryEvent event, Emitter<PosCatalogState> emit) async {
     emit(state.copyWith(selectedCategoryId: event.categoryId));
-    add(LoadPosCatalogEvent(categoryId: event.categoryId, searchQuery: state.searchQuery));
+    add(LoadPosCatalogEvent(
+        categoryId: event.categoryId, searchQuery: state.searchQuery));
   }
 
-  Future<void> _onSearchCatalog(SearchCatalogEvent event, Emitter<PosCatalogState> emit) async {
+  Future<void> _onSearchCatalog(
+      SearchCatalogEvent event, Emitter<PosCatalogState> emit) async {
     emit(state.copyWith(searchQuery: event.query));
-    add(LoadPosCatalogEvent(categoryId: state.selectedCategoryId, searchQuery: event.query));
+    add(LoadPosCatalogEvent(
+        categoryId: state.selectedCategoryId, searchQuery: event.query));
   }
 }

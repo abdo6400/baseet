@@ -1,9 +1,10 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:baseet/features/debt_ledger/domain/usecases/get_customer_statement_usecase.dart';
-import 'customer_statement_event.dart';
-import 'customer_statement_state.dart';
+import 'package:baseet/features/debt_ledger/presentation/blocs/customer_statement/customer_statement_event.dart';
+import 'package:baseet/features/debt_ledger/presentation/blocs/customer_statement/customer_statement_state.dart';
 
-class CustomerStatementBloc extends Bloc<CustomerStatementEvent, CustomerStatementState> {
+class CustomerStatementBloc
+    extends Bloc<CustomerStatementEvent, CustomerStatementState> {
   final GetCustomerStatementUseCase getCustomerStatementUseCase;
 
   CustomerStatementBloc({required this.getCustomerStatementUseCase})
@@ -17,7 +18,8 @@ class CustomerStatementBloc extends Bloc<CustomerStatementEvent, CustomerStateme
   ) async {
     emit(state.copyWith(status: CustomerStatementStatus.loading));
 
-    final result = await getCustomerStatementUseCase(GetCustomerStatementParams(event.customerId));
+    final result = await getCustomerStatementUseCase(
+        GetCustomerStatementParams(event.customerId));
 
     result.fold(
       (failure) => emit(state.copyWith(

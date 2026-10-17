@@ -1,5 +1,5 @@
 import 'package:equatable/equatable.dart';
-import '../../../../core/enums/enums.dart';
+import 'package:baseet/core/enums/enums.dart';
 
 class CustomerEntity extends Equatable {
   final String id;
@@ -26,7 +26,8 @@ class CustomerEntity extends Equatable {
 
   bool get isOverdue => status == DebtStatus.overdue;
   bool get isLimitExceeded => totalDebt > creditLimit;
-  double get limitUsagePercent => creditLimit > 0 ? (totalDebt / creditLimit).clamp(0.0, 1.0) : 0.0;
+  double get limitUsagePercent =>
+      creditLimit > 0 ? (totalDebt / creditLimit).clamp(0.0, 1.0) : 0.0;
 
   CustomerEntity copyWith({
     String? id,

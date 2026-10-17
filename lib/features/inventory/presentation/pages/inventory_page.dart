@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
-import 'package:baseet/config/routes/app_routes.dart';
+import 'package:baseet/app/router/app_routes.dart';
 import 'package:baseet/core/common/widgets/feedback/empty_state_widget.dart';
 import 'package:baseet/core/common/widgets/form/app_search_field.dart';
 import 'package:baseet/core/common/widgets/icon/app_icon.dart';
@@ -69,7 +69,8 @@ class _InventoryPageState extends State<InventoryPage> {
         ],
         bottom: PreferredSize(
           preferredSize: const Size.fromHeight(1.0),
-          child: Container(color: theme.colorScheme.outlineVariant, height: 1.0),
+          child:
+              Container(color: theme.colorScheme.outlineVariant, height: 1.0),
         ),
       ),
       floatingActionButton: FloatingActionButton.extended(
@@ -85,7 +86,8 @@ class _InventoryPageState extends State<InventoryPage> {
       ),
       body: BlocBuilder<InventoryListBloc, InventoryListState>(
         builder: (context, state) {
-          if (state.status == InventoryListStatus.loading && state.products.isEmpty) {
+          if (state.status == InventoryListStatus.loading &&
+              state.products.isEmpty) {
             return const Center(child: CircularProgressIndicator());
           }
 
@@ -105,7 +107,8 @@ class _InventoryPageState extends State<InventoryPage> {
                         // Title
                         Text(
                           StringsManager.inventoryTitle.lang,
-                          style: const TextStyle(fontSize: 20, fontWeight: FontWeight.w800),
+                          style: const TextStyle(
+                              fontSize: 20, fontWeight: FontWeight.w800),
                         ),
                         const SizedBox(height: 2),
                         Text(
@@ -124,18 +127,23 @@ class _InventoryPageState extends State<InventoryPage> {
                               child: Container(
                                 padding: const EdgeInsets.all(14),
                                 decoration: BoxDecoration(
-                                  color: theme.colorScheme.surfaceContainerLowest,
-                                  borderRadius: BorderRadius.circular(AppRadius.lg),
-                                  border: Border.all(color: theme.colorScheme.outlineVariant),
+                                  color:
+                                      theme.colorScheme.surfaceContainerLowest,
+                                  borderRadius:
+                                      BorderRadius.circular(AppRadius.lg),
+                                  border: Border.all(
+                                      color: theme.colorScheme.outlineVariant),
                                 ),
                                 child: Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
                                     Text(
-                                      StringsManager.inventoryTotalProducts.lang,
+                                      StringsManager
+                                          .inventoryTotalProducts.lang,
                                       style: TextStyle(
                                         fontSize: 12,
-                                        color: theme.colorScheme.onSurfaceVariant,
+                                        color:
+                                            theme.colorScheme.onSurfaceVariant,
                                       ),
                                     ),
                                     const SizedBox(height: 4),
@@ -155,15 +163,20 @@ class _InventoryPageState extends State<InventoryPage> {
                             Expanded(
                               child: GestureDetector(
                                 onTap: () {
-                                  context.read<InventoryListBloc>().add(ToggleLowStockFilterEvent());
+                                  context
+                                      .read<InventoryListBloc>()
+                                      .add(ToggleLowStockFilterEvent());
                                 },
                                 child: Container(
                                   padding: const EdgeInsets.all(14),
                                   decoration: BoxDecoration(
                                     color: state.onlyLowStock
-                                        ? AppPrimitiveTokens.red700.withValues(alpha: 0.12)
-                                        : theme.colorScheme.surfaceContainerLowest,
-                                    borderRadius: BorderRadius.circular(AppRadius.lg),
+                                        ? AppPrimitiveTokens.red700
+                                            .withValues(alpha: 0.12)
+                                        : theme
+                                            .colorScheme.surfaceContainerLowest,
+                                    borderRadius:
+                                        BorderRadius.circular(AppRadius.lg),
                                     border: Border.all(
                                       color: state.onlyLowStock
                                           ? AppPrimitiveTokens.red700
@@ -171,20 +184,27 @@ class _InventoryPageState extends State<InventoryPage> {
                                     ),
                                   ),
                                   child: Column(
-                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
                                     children: [
                                       Row(
-                                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.spaceBetween,
                                         children: [
                                           Text(
-                                            StringsManager.inventoryLowStock.lang,
+                                            StringsManager
+                                                .inventoryLowStock.lang,
                                             style: TextStyle(
                                               fontSize: 12,
-                                              color: theme.colorScheme.onSurfaceVariant,
+                                              color: theme
+                                                  .colorScheme.onSurfaceVariant,
                                             ),
                                           ),
                                           if (state.onlyLowStock)
-                                            AppIcon(AppIcons.check, size: 14, color: AppPrimitiveTokens.red700),
+                                            AppIcon(AppIcons.check,
+                                                size: 14,
+                                                color:
+                                                    AppPrimitiveTokens.red700),
                                         ],
                                       ),
                                       const SizedBox(height: 4),
@@ -210,7 +230,9 @@ class _InventoryPageState extends State<InventoryPage> {
                           controller: _searchController,
                           hint: StringsManager.inventorySearch.lang,
                           onChanged: (q) {
-                            context.read<InventoryListBloc>().add(SearchInventoryEvent(q));
+                            context
+                                .read<InventoryListBloc>()
+                                .add(SearchInventoryEvent(q));
                           },
                         ),
                         const SizedBox(height: 14),
@@ -221,7 +243,9 @@ class _InventoryPageState extends State<InventoryPage> {
                             categories: state.categories,
                             selectedCategoryId: state.selectedCategoryId,
                             onSelect: (catId) {
-                              context.read<InventoryListBloc>().add(SelectInventoryCategoryEvent(catId));
+                              context
+                                  .read<InventoryListBloc>()
+                                  .add(SelectInventoryCategoryEvent(catId));
                             },
                           ),
                       ],
@@ -254,8 +278,10 @@ class _InventoryPageState extends State<InventoryPage> {
                               padding: const EdgeInsets.all(12),
                               decoration: BoxDecoration(
                                 color: theme.colorScheme.surfaceContainerLowest,
-                                borderRadius: BorderRadius.circular(AppRadius.lg),
-                                border: Border.all(color: theme.colorScheme.outlineVariant),
+                                borderRadius:
+                                    BorderRadius.circular(AppRadius.lg),
+                                border: Border.all(
+                                    color: theme.colorScheme.outlineVariant),
                               ),
                               child: Row(
                                 children: [
@@ -264,21 +290,28 @@ class _InventoryPageState extends State<InventoryPage> {
                                     height: 50,
                                     decoration: BoxDecoration(
                                       color: theme.colorScheme.surfaceContainer,
-                                      borderRadius: BorderRadius.circular(AppRadius.md),
+                                      borderRadius:
+                                          BorderRadius.circular(AppRadius.md),
                                     ),
                                     clipBehavior: Clip.antiAlias,
                                     child: product.imageUrl != null
                                         ? Image.network(
                                             product.imageUrl!,
                                             fit: BoxFit.cover,
-                                            errorBuilder: (_, __, ___) => AppIcon(AppIcons.inventory, color: theme.colorScheme.onSurfaceVariant),
+                                            errorBuilder: (_, __, ___) =>
+                                                AppIcon(AppIcons.inventory,
+                                                    color: theme.colorScheme
+                                                        .onSurfaceVariant),
                                           )
-                                        : AppIcon(AppIcons.inventory, color: theme.colorScheme.onSurfaceVariant),
+                                        : AppIcon(AppIcons.inventory,
+                                            color: theme
+                                                .colorScheme.onSurfaceVariant),
                                   ),
                                   const SizedBox(width: 12),
                                   Expanded(
                                     child: Column(
-                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
                                       children: [
                                         Text(
                                           product.name,
@@ -294,17 +327,25 @@ class _InventoryPageState extends State<InventoryPage> {
                                               product.categoryName,
                                               style: TextStyle(
                                                 fontSize: 11,
-                                                color: theme.colorScheme.onSurfaceVariant,
+                                                color: theme.colorScheme
+                                                    .onSurfaceVariant,
                                               ),
                                             ),
                                             const SizedBox(width: 8),
                                             Container(
-                                              padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                                              padding:
+                                                  const EdgeInsets.symmetric(
+                                                      horizontal: 6,
+                                                      vertical: 2),
                                               decoration: BoxDecoration(
                                                 color: product.isLowStock
-                                                    ? AppPrimitiveTokens.red700.withValues(alpha: 0.1)
-                                                    : theme.colorScheme.primary.withValues(alpha: 0.1),
-                                                borderRadius: BorderRadius.circular(AppRadius.full),
+                                                    ? AppPrimitiveTokens.red700
+                                                        .withValues(alpha: 0.1)
+                                                    : theme.colorScheme.primary
+                                                        .withValues(alpha: 0.1),
+                                                borderRadius:
+                                                    BorderRadius.circular(
+                                                        AppRadius.full),
                                               ),
                                               child: Text(
                                                 '${StringsManager.inventoryStockQuantityLabel.lang}: ${product.stockQuantity}',
@@ -312,8 +353,10 @@ class _InventoryPageState extends State<InventoryPage> {
                                                   fontSize: 10,
                                                   fontWeight: FontWeight.w700,
                                                   color: product.isLowStock
-                                                      ? AppPrimitiveTokens.red700
-                                                      : theme.colorScheme.primary,
+                                                      ? AppPrimitiveTokens
+                                                          .red700
+                                                      : theme
+                                                          .colorScheme.primary,
                                                 ),
                                               ),
                                             ),
@@ -337,7 +380,8 @@ class _InventoryPageState extends State<InventoryPage> {
                                         '${StringsManager.inventoryBuyPriceLabel.lang}: ${product.buyPrice.toStringAsFixed(0)} ${StringsManager.posCurrency.lang}',
                                         style: TextStyle(
                                           fontSize: 11,
-                                          color: theme.colorScheme.onSurfaceVariant,
+                                          color: theme
+                                              .colorScheme.onSurfaceVariant,
                                         ),
                                       ),
                                     ],

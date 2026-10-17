@@ -1,21 +1,21 @@
+import 'package:baseet/app/presentation/cubits/process_lookups_cubit.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
-import '../../../../config/database/local/mock_data.dart';
-import '../../../../core/common/widgets/button/app_button.dart';
-import '../../../../core/common/widgets/form/app_text_field.dart';
-import '../../../../core/common/widgets/form/receipt_attachment_field.dart';
-import '../../../../core/common/widgets/layout/page_header.dart';
-import '../../../../core/extensions/state_handle_extension.dart';
-import '../../../../core/extensions/translation_extension.dart';
-import '../../../../core/theme/tokens/app_tokens.dart';
-import '../../../../core/utils/app_icons.dart';
-import '../../../../core/utils/strings_manager.dart';
-import '../blocs/customers_list/customers_list_bloc.dart';
-import '../blocs/customers_list/customers_list_event.dart';
-import '../blocs/payment_voucher/payment_voucher_bloc.dart';
-import '../blocs/payment_voucher/payment_voucher_event.dart';
-import '../blocs/payment_voucher/payment_voucher_state.dart';
+import 'package:baseet/core/common/widgets/button/app_button.dart';
+import 'package:baseet/core/common/widgets/form/app_text_field.dart';
+import 'package:baseet/core/common/widgets/form/receipt_attachment_field.dart';
+import 'package:baseet/core/common/widgets/layout/page_header.dart';
+import 'package:baseet/core/extensions/state_handle_extension.dart';
+import 'package:baseet/core/extensions/translation_extension.dart';
+import 'package:baseet/core/theme/tokens/app_tokens.dart';
+import 'package:baseet/core/utils/app_icons.dart';
+import 'package:baseet/core/utils/strings_manager.dart';
+import 'package:baseet/features/debt_ledger/presentation/blocs/customers_list/customers_list_bloc.dart';
+import 'package:baseet/features/debt_ledger/presentation/blocs/customers_list/customers_list_event.dart';
+import 'package:baseet/features/debt_ledger/presentation/blocs/payment_voucher/payment_voucher_bloc.dart';
+import 'package:baseet/features/debt_ledger/presentation/blocs/payment_voucher/payment_voucher_event.dart';
+import 'package:baseet/features/debt_ledger/presentation/blocs/payment_voucher/payment_voucher_state.dart';
 
 class PaymentVoucherPage extends StatefulWidget {
   final String? customerId;
@@ -37,7 +37,9 @@ class _PaymentVoucherPageState extends State<PaymentVoucherPage> {
     super.initState();
     _selectedCustomerId = widget.customerId;
     if (_selectedCustomerId != null) {
-      context.read<PaymentVoucherBloc>().add(SelectVoucherCustomerEvent(_selectedCustomerId!));
+      context
+          .read<PaymentVoucherBloc>()
+          .add(SelectVoucherCustomerEvent(_selectedCustomerId!));
     }
   }
 
@@ -51,7 +53,8 @@ class _PaymentVoucherPageState extends State<PaymentVoucherPage> {
   void _onSave() {
     if (_selectedCustomerId == null) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(StringsManager.checkoutErrorSelectCustomer.lang)),
+        SnackBar(
+            content: Text(StringsManager.checkoutErrorSelectCustomer.lang)),
       );
       return;
     }
@@ -67,7 +70,9 @@ class _PaymentVoucherPageState extends State<PaymentVoucherPage> {
     context.read<PaymentVoucherBloc>().add(SubmitPaymentVoucherEvent(
           customerId: _selectedCustomerId!,
           amount: amount,
-          notes: _notesController.text.trim().isNotEmpty ? _notesController.text.trim() : null,
+          notes: _notesController.text.trim().isNotEmpty
+              ? _notesController.text.trim()
+              : null,
           receiptPath: _receiptPath,
         ));
   }
@@ -85,23 +90,25 @@ class _PaymentVoucherPageState extends State<PaymentVoucherPage> {
           errorMessage: state.errorMessage,
           successMessage: StringsManager.voucherSuccess.lang,
           onSuccess: () {
-            context.read<CustomersListBloc>().add(const LoadCustomersListEvent());
+            context
+                .read<CustomersListBloc>()
+                .add(const LoadCustomersListEvent());
             context.pop();
           },
         );
       },
       builder: (context, state) {
-        final currentCustomer = state.selectedCustomer ??
-            (_selectedCustomerId != null
-                ? BaseetMockData.initialCustomers.firstWhere(
-                    (c) => c.id == _selectedCustomerId,
-                    orElse: () => BaseetMockData.initialCustomers.first,
-                  )
-                : null);
+        final matches = context
+            .watch<ProcessLookupsCubit>()
+            .state
+            .customers
+            .where((c) => c.id == _selectedCustomerId);
+        final currentCustomer = matches.isEmpty ? null : matches.first;
 
         final double currentDebt = currentCustomer?.totalDebt ?? 0.0;
         final double enteredAmount = state.amount;
-        final double remaining = (currentDebt - enteredAmount).clamp(0.0, 999999.0);
+        final double remaining =
+            (currentDebt - enteredAmount).clamp(0.0, 999999.0);
 
         return Scaffold(
           backgroundColor: theme.scaffoldBackgroundColor,
@@ -117,7 +124,8 @@ class _PaymentVoucherPageState extends State<PaymentVoucherPage> {
                 // Customer Selector
                 Text(
                   StringsManager.voucherCustomer.lang,
-                  style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w600),
+                  style: const TextStyle(
+                      fontSize: 14, fontWeight: FontWeight.w600),
                 ),
                 const SizedBox(height: 6),
                 Container(
@@ -131,11 +139,22 @@ class _PaymentVoucherPageState extends State<PaymentVoucherPage> {
                     child: DropdownButton<String>(
                       isExpanded: true,
                       hint: Text(StringsManager.voucherSelectCustomer.lang),
-                      value: _selectedCustomerId,
-                      items: BaseetMockData.initialCustomers.map((c) {
+                      value: context
+                              .watch<ProcessLookupsCubit>()
+                              .state
+                              .customers
+                              .any((c) => c.id == _selectedCustomerId)
+                          ? _selectedCustomerId
+                          : null,
+                      items: context
+                          .watch<ProcessLookupsCubit>()
+                          .state
+                          .customers
+                          .map((c) {
                         return DropdownMenuItem<String>(
                           value: c.id,
-                          child: Text('${c.name} (${StringsManager.debtsDebtSuffix.lang}: ${c.totalDebt.toStringAsFixed(0)} ${StringsManager.posCurrency.lang})'),
+                          child: Text(
+                              '${c.name} (${StringsManager.debtsDebtSuffix.lang}: ${c.totalDebt.toStringAsFixed(0)} ${StringsManager.posCurrency.lang})'),
                         );
                       }).toList(),
                       onChanged: (val) {
@@ -143,7 +162,9 @@ class _PaymentVoucherPageState extends State<PaymentVoucherPage> {
                           setState(() {
                             _selectedCustomerId = val;
                           });
-                          context.read<PaymentVoucherBloc>().add(SelectVoucherCustomerEvent(val));
+                          context
+                              .read<PaymentVoucherBloc>()
+                              .add(SelectVoucherCustomerEvent(val));
                         }
                       },
                     ),
@@ -158,14 +179,17 @@ class _PaymentVoucherPageState extends State<PaymentVoucherPage> {
                     decoration: BoxDecoration(
                       color: AppPrimitiveTokens.red700.withValues(alpha: 0.08),
                       borderRadius: BorderRadius.circular(AppRadius.md),
-                      border: Border.all(color: AppPrimitiveTokens.red700.withValues(alpha: 0.2)),
+                      border: Border.all(
+                          color:
+                              AppPrimitiveTokens.red700.withValues(alpha: 0.2)),
                     ),
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         Text(
                           '${StringsManager.debtsTotal.lang}:',
-                          style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 13),
+                          style: const TextStyle(
+                              fontWeight: FontWeight.w600, fontSize: 13),
                         ),
                         Text(
                           '${currentDebt.toStringAsFixed(0)} ${StringsManager.posCurrency.lang}',
@@ -189,7 +213,9 @@ class _PaymentVoucherPageState extends State<PaymentVoucherPage> {
                   keyboardType: TextInputType.number,
                   onChanged: (val) {
                     final amount = double.tryParse(val) ?? 0.0;
-                    context.read<PaymentVoucherBloc>().add(SetVoucherAmountEvent(amount));
+                    context
+                        .read<PaymentVoucherBloc>()
+                        .add(SetVoucherAmountEvent(amount));
                   },
                 ),
                 const SizedBox(height: 16),
@@ -199,16 +225,20 @@ class _PaymentVoucherPageState extends State<PaymentVoucherPage> {
                   Container(
                     padding: const EdgeInsets.all(14),
                     decoration: BoxDecoration(
-                      color: AppPrimitiveTokens.emerald700.withValues(alpha: 0.08),
+                      color:
+                          AppPrimitiveTokens.emerald700.withValues(alpha: 0.08),
                       borderRadius: BorderRadius.circular(AppRadius.md),
-                      border: Border.all(color: AppPrimitiveTokens.emerald700.withValues(alpha: 0.2)),
+                      border: Border.all(
+                          color: AppPrimitiveTokens.emerald700
+                              .withValues(alpha: 0.2)),
                     ),
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         Text(
                           StringsManager.voucherRemaining.lang,
-                          style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 13),
+                          style: const TextStyle(
+                              fontWeight: FontWeight.w600, fontSize: 13),
                         ),
                         Text(
                           '${remaining.toStringAsFixed(0)} ${StringsManager.posCurrency.lang}',

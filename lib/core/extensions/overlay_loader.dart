@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../theme/tokens/app_tokens.dart';
+import 'package:baseet/core/theme/tokens/app_tokens.dart';
 
 class OverlayLoader {
   static OverlayEntry? _currentLoader;
@@ -25,7 +25,8 @@ class OverlayLoader {
               ],
             ),
             child: const CircularProgressIndicator(
-              valueColor: AlwaysStoppedAnimation<Color>(AppLightSemanticTokens.primary),
+              valueColor:
+                  AlwaysStoppedAnimation<Color>(AppLightSemanticTokens.primary),
             ),
           ),
         ),

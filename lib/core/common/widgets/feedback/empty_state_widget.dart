@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../icon/app_icon.dart';
+import 'package:baseet/core/common/widgets/icon/app_icon.dart';
 
 class EmptyStateWidget extends StatelessWidget {
   final String title;

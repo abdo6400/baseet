@@ -18,7 +18,8 @@ class OrderModel extends OrderEntity {
     super.receiptPath,
   });
 
-  factory OrderModel.fromMap(Map<String, dynamic> map, List<CartItemEntity> items) {
+  factory OrderModel.fromMap(
+      Map<String, dynamic> map, List<CartItemEntity> items) {
     return OrderModel(
       id: map['id'] as String,
       invoiceNumber: map['invoiceNumber'] as String,

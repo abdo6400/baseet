@@ -1,8 +1,8 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:baseet/features/debt_ledger/domain/usecases/get_customers_usecase.dart';
 import 'package:baseet/features/debt_ledger/domain/usecases/get_debt_stats_usecase.dart';
-import 'customers_list_event.dart';
-import 'customers_list_state.dart';
+import 'package:baseet/features/debt_ledger/presentation/blocs/customers_list/customers_list_event.dart';
+import 'package:baseet/features/debt_ledger/presentation/blocs/customers_list/customers_list_state.dart';
 
 class CustomersListBloc extends Bloc<CustomersListEvent, CustomersListState> {
   final GetCustomersUseCase getCustomersUseCase;
@@ -24,10 +24,15 @@ class CustomersListBloc extends Bloc<CustomersListEvent, CustomersListState> {
     emit(state.copyWith(status: CustomersListStatus.loading));
 
     final statsResult = await getDebtStatsUseCase();
-    final stats = statsResult.fold(
-      (l) => {'total': 45200.0, 'overdue': 12500.0, 'todayCollections': 3400.0},
-      (r) => r,
-    );
+    if (statsResult.isLeft()) {
+      statsResult.fold(
+          (failure) => emit(state.copyWith(
+              status: CustomersListStatus.error,
+              errorMessage: failure.message)),
+          (_) {});
+      return;
+    }
+    final stats = statsResult.getOrElse(() => throw StateError('Unreachable'));
 
     final customersResult = await getCustomersUseCase(GetCustomersParams(
       searchQuery: event.searchQuery ?? state.searchQuery,
@@ -43,9 +48,9 @@ class CustomersListBloc extends Bloc<CustomersListEvent, CustomersListState> {
       (customers) => emit(state.copyWith(
         status: CustomersListStatus.loaded,
         customers: customers,
-        totalDebt: stats['total'] ?? 45200.0,
-        overdueDebt: stats['overdue'] ?? 12500.0,
-        todayCollections: stats['todayCollections'] ?? 3400.0,
+        totalDebt: stats.total,
+        overdueDebt: stats.overdue,
+        todayCollections: stats.todayCollections,
       )),
     );
   }

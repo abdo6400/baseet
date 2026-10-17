@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../tokens/app_tokens.dart';
+import 'package:baseet/core/theme/tokens/app_tokens.dart';
 
 InputDecorationTheme buildAppInputTheme({
   required Color fillColor,

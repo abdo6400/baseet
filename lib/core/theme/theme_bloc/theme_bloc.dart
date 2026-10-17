@@ -1,8 +1,8 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter/material.dart';
-import 'theme_event.dart';
-import 'theme_state.dart';
+import 'package:baseet/core/theme/theme_bloc/theme_event.dart';
+import 'package:baseet/core/theme/theme_bloc/theme_state.dart';
 
 class ThemeBloc extends Bloc<ThemeEvent, ThemeState> {
   static const String _themeKey = 'app_theme_mode';
@@ -19,8 +19,10 @@ class ThemeBloc extends Bloc<ThemeEvent, ThemeState> {
     return ThemeMode.light;
   }
 
-  Future<void> _onToggleTheme(ToggleThemeEvent event, Emitter<ThemeState> emit) async {
+  Future<void> _onToggleTheme(
+      ToggleThemeEvent event, Emitter<ThemeState> emit) async {
     emit(state.copyWith(mode: event.mode));
-    await _prefs.setString(_themeKey, event.mode == ThemeMode.dark ? 'dark' : 'light');
+    await _prefs.setString(
+        _themeKey, event.mode == ThemeMode.dark ? 'dark' : 'light');
   }
 }

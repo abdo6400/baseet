@@ -1,12 +1,11 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:baseet/core/extensions/translation_extension.dart';
-import 'package:baseet/core/utils/strings_manager.dart';
 import 'package:baseet/features/debt_ledger/domain/usecases/add_payment_voucher_usecase.dart';
 import 'package:baseet/features/debt_ledger/domain/usecases/get_customers_usecase.dart';
-import 'payment_voucher_event.dart';
-import 'payment_voucher_state.dart';
+import 'package:baseet/features/debt_ledger/presentation/blocs/payment_voucher/payment_voucher_event.dart';
+import 'package:baseet/features/debt_ledger/presentation/blocs/payment_voucher/payment_voucher_state.dart';
 
-class PaymentVoucherBloc extends Bloc<PaymentVoucherEvent, PaymentVoucherState> {
+class PaymentVoucherBloc
+    extends Bloc<PaymentVoucherEvent, PaymentVoucherState> {
   final AddPaymentVoucherUseCase addPaymentVoucherUseCase;
   final GetCustomersUseCase getCustomersUseCase;
 
@@ -15,7 +14,8 @@ class PaymentVoucherBloc extends Bloc<PaymentVoucherEvent, PaymentVoucherState> 
     required this.getCustomersUseCase,
   }) : super(const PaymentVoucherState()) {
     on<SelectVoucherCustomerEvent>(_onSelectCustomer);
-    on<SetVoucherAmountEvent>((event, emit) => emit(state.copyWith(amount: event.amount)));
+    on<SetVoucherAmountEvent>(
+        (event, emit) => emit(state.copyWith(amount: event.amount)));
     on<SubmitPaymentVoucherEvent>(_onSubmit);
   }
 
@@ -23,11 +23,20 @@ class PaymentVoucherBloc extends Bloc<PaymentVoucherEvent, PaymentVoucherState> 
     SelectVoucherCustomerEvent event,
     Emitter<PaymentVoucherState> emit,
   ) async {
-    final result = await getCustomersUseCase(const GetCustomersParams(searchQuery: null));
+    final result =
+        await getCustomersUseCase(const GetCustomersParams(searchQuery: null));
     result.fold(
-      (l) => null,
+      (failure) => emit(state.copyWith(
+          status: PaymentVoucherStatus.error, errorMessage: failure.message)),
       (customers) {
-        final cust = customers.firstWhere((c) => c.id == event.customerId);
+        final matches = customers.where((c) => c.id == event.customerId);
+        if (matches.isEmpty) {
+          emit(state.copyWith(
+              status: PaymentVoucherStatus.error,
+              errorMessage: 'validation.customer_missing'));
+          return;
+        }
+        final cust = matches.first;
         emit(state.copyWith(selectedCustomer: cust));
       },
     );
@@ -37,11 +46,8 @@ class PaymentVoucherBloc extends Bloc<PaymentVoucherEvent, PaymentVoucherState> 
     SubmitPaymentVoucherEvent event,
     Emitter<PaymentVoucherState> emit,
   ) async {
-    if (event.amount <= 0) {
-      emit(state.copyWith(
-        status: PaymentVoucherStatus.error,
-        errorMessage: StringsManager.voucherErrorInvalidAmount.lang,
-      ));
+    if (state.status == PaymentVoucherStatus.submitting ||
+        state.status == PaymentVoucherStatus.success) {
       return;
     }
 

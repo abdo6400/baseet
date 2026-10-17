@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../tokens/app_tokens.dart';
+import 'package:baseet/core/theme/tokens/app_tokens.dart';
 
 TextTheme buildAppTextTheme({
   required Color defaultColor,
@@ -17,21 +17,24 @@ TextTheme buildAppTextTheme({
       fontSize: AppTypographyTokens.displayLarge,
       fontWeight: AppTypographyTokens.weightBold,
       color: defaultColor,
-      height: AppTypographyTokens.lineDisplayLarge / AppTypographyTokens.displayLarge,
+      height: AppTypographyTokens.lineDisplayLarge /
+          AppTypographyTokens.displayLarge,
     ),
     displayMedium: TextStyle(
       fontFamily: resolvedFont,
       fontSize: AppTypographyTokens.displayMedium,
       fontWeight: AppTypographyTokens.weightBold,
       color: defaultColor,
-      height: AppTypographyTokens.lineDisplayMedium / AppTypographyTokens.displayMedium,
+      height: AppTypographyTokens.lineDisplayMedium /
+          AppTypographyTokens.displayMedium,
     ),
     displaySmall: TextStyle(
       fontFamily: resolvedFont,
       fontSize: AppTypographyTokens.displaySmall,
       fontWeight: AppTypographyTokens.weightBold,
       color: defaultColor,
-      height: AppTypographyTokens.lineDisplaySmall / AppTypographyTokens.displaySmall,
+      height: AppTypographyTokens.lineDisplaySmall /
+          AppTypographyTokens.displaySmall,
     ),
     headlineLarge: TextStyle(
       fontFamily: resolvedFont,

@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:baseet/core/extensions/translation_extension.dart';
 import 'package:baseet/core/utils/strings_manager.dart';
-import '../../../../core/theme/tokens/app_tokens.dart';
-import '../../../inventory/domain/entities/category_entity.dart';
+import 'package:baseet/core/theme/tokens/app_tokens.dart';
+import 'package:baseet/features/catalog/domain/entities/category_entity.dart';
 
 class PosCategoryFilterRow extends StatelessWidget {
   final List<CategoryEntity> categories;
@@ -29,7 +29,9 @@ class PosCategoryFilterRow extends StatelessWidget {
         itemBuilder: (context, index) {
           final cat = categories[index];
           final isSelected = cat.id == selectedCategoryId;
-          final displayName = cat.id == 'cat_0' ? StringsManager.posAllCategories.lang : cat.name;
+          final displayName = cat.id == 'cat_0'
+              ? StringsManager.posAllCategories.lang
+              : cat.name;
 
           return GestureDetector(
             onTap: () => onSelect(cat.id),
@@ -49,7 +51,8 @@ class PosCategoryFilterRow extends StatelessWidget {
                 boxShadow: isSelected
                     ? [
                         BoxShadow(
-                          color: theme.colorScheme.primary.withValues(alpha: 0.2),
+                          color:
+                              theme.colorScheme.primary.withValues(alpha: 0.2),
                           blurRadius: 6,
                           offset: const Offset(0, 2),
                         ),

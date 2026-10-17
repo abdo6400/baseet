@@ -61,7 +61,9 @@ class _BarcodeScannerModalState extends State<BarcodeScannerModal>
   void _onBarcodeDetected(BarcodeCapture capture) {
     if (_isScanned) return;
     final barcode = capture.barcodes.firstOrNull;
-    if (barcode != null && barcode.rawValue != null && barcode.rawValue!.isNotEmpty) {
+    if (barcode != null &&
+        barcode.rawValue != null &&
+        barcode.rawValue!.isNotEmpty) {
       _isScanned = true;
       HapticFeedback.heavyImpact();
       Navigator.of(context).pop(barcode.rawValue);
@@ -73,7 +75,8 @@ class _BarcodeScannerModalState extends State<BarcodeScannerModal>
     showDialog(
       context: context,
       builder: (ctx) => AlertDialog(
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(AppRadius.lg)),
+        shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(AppRadius.lg)),
         title: Text(
           StringsManager.barcodeScannerManual.lang,
           style: const TextStyle(fontWeight: FontWeight.w700, fontSize: 16),
@@ -83,7 +86,8 @@ class _BarcodeScannerModalState extends State<BarcodeScannerModal>
           autofocus: true,
           decoration: InputDecoration(
             hintText: '6281001234567',
-            border: OutlineInputBorder(borderRadius: BorderRadius.circular(AppRadius.md)),
+            border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(AppRadius.md)),
           ),
           keyboardType: TextInputType.text,
         ),
@@ -116,7 +120,8 @@ class _BarcodeScannerModalState extends State<BarcodeScannerModal>
       height: size.height * 0.85,
       decoration: BoxDecoration(
         color: theme.colorScheme.surface,
-        borderRadius: const BorderRadius.vertical(top: Radius.circular(AppRadius.xl)),
+        borderRadius:
+            const BorderRadius.vertical(top: Radius.circular(AppRadius.xl)),
       ),
       clipBehavior: Clip.antiAlias,
       child: Column(
@@ -126,7 +131,8 @@ class _BarcodeScannerModalState extends State<BarcodeScannerModal>
             padding: const EdgeInsets.fromLTRB(16, 12, 16, 12),
             decoration: BoxDecoration(
               color: theme.colorScheme.surface,
-              border: Border(bottom: BorderSide(color: theme.colorScheme.outlineVariant)),
+              border: Border(
+                  bottom: BorderSide(color: theme.colorScheme.outlineVariant)),
             ),
             child: Column(
               children: [
@@ -135,7 +141,8 @@ class _BarcodeScannerModalState extends State<BarcodeScannerModal>
                     width: 40,
                     height: 4,
                     decoration: BoxDecoration(
-                      color: theme.colorScheme.onSurfaceVariant.withValues(alpha: 0.3),
+                      color: theme.colorScheme.onSurfaceVariant
+                          .withValues(alpha: 0.3),
                       borderRadius: BorderRadius.circular(AppRadius.full),
                     ),
                   ),
@@ -146,7 +153,8 @@ class _BarcodeScannerModalState extends State<BarcodeScannerModal>
                   children: [
                     Text(
                       StringsManager.barcodeScannerTitle.lang,
-                      style: const TextStyle(fontSize: 17, fontWeight: FontWeight.w800),
+                      style: const TextStyle(
+                          fontSize: 17, fontWeight: FontWeight.w800),
                     ),
                     IconButton(
                       icon: AppIcon(AppIcons.close, size: 20),
@@ -173,7 +181,8 @@ class _BarcodeScannerModalState extends State<BarcodeScannerModal>
                         child: Column(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
-                            AppIcon(AppIcons.barcode, size: 54, color: theme.colorScheme.error),
+                            AppIcon(AppIcons.barcode,
+                                size: 54, color: theme.colorScheme.error),
                             const SizedBox(height: 12),
                             Text(
                               'Camera is not available on this device or permission was denied.',
@@ -200,8 +209,10 @@ class _BarcodeScannerModalState extends State<BarcodeScannerModal>
                 LayoutBuilder(
                   builder: (context, constraints) {
                     final scanWindowSize = constraints.maxWidth * 0.72;
-                    final topOffset = (constraints.maxHeight - scanWindowSize) / 2;
-                    final leftOffset = (constraints.maxWidth - scanWindowSize) / 2;
+                    final topOffset =
+                        (constraints.maxHeight - scanWindowSize) / 2;
+                    final leftOffset =
+                        (constraints.maxWidth - scanWindowSize) / 2;
 
                     return Stack(
                       children: [
@@ -220,7 +231,8 @@ class _BarcodeScannerModalState extends State<BarcodeScannerModal>
                               ),
                               boxShadow: [
                                 BoxShadow(
-                                  color: theme.colorScheme.primary.withValues(alpha: 0.15),
+                                  color: theme.colorScheme.primary
+                                      .withValues(alpha: 0.15),
                                   blurRadius: 16,
                                   spreadRadius: 2,
                                 ),
@@ -230,10 +242,12 @@ class _BarcodeScannerModalState extends State<BarcodeScannerModal>
                               animation: _animation,
                               builder: (context, child) {
                                 return Align(
-                                  alignment: Alignment(0, (_animation.value * 2) - 1),
+                                  alignment:
+                                      Alignment(0, (_animation.value * 2) - 1),
                                   child: Container(
                                     height: 2.5,
-                                    margin: const EdgeInsets.symmetric(horizontal: 16),
+                                    margin: const EdgeInsets.symmetric(
+                                        horizontal: 16),
                                     decoration: BoxDecoration(
                                       color: theme.colorScheme.primary,
                                       boxShadow: [
@@ -257,10 +271,12 @@ class _BarcodeScannerModalState extends State<BarcodeScannerModal>
                           left: 20,
                           right: 20,
                           child: Container(
-                            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 16, vertical: 10),
                             decoration: BoxDecoration(
                               color: Colors.black.withValues(alpha: 0.65),
-                              borderRadius: BorderRadius.circular(AppRadius.full),
+                              borderRadius:
+                                  BorderRadius.circular(AppRadius.full),
                             ),
                             child: Text(
                               StringsManager.barcodeScannerInstruction.lang,
@@ -286,7 +302,8 @@ class _BarcodeScannerModalState extends State<BarcodeScannerModal>
             padding: const EdgeInsets.fromLTRB(16, 12, 16, 24),
             decoration: BoxDecoration(
               color: theme.colorScheme.surface,
-              border: Border(top: BorderSide(color: theme.colorScheme.outlineVariant)),
+              border: Border(
+                  top: BorderSide(color: theme.colorScheme.outlineVariant)),
             ),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -295,7 +312,9 @@ class _BarcodeScannerModalState extends State<BarcodeScannerModal>
                 IconButton.filledTonal(
                   icon: AppIcon(
                     AppIcons.warning,
-                    color: _isTorchOn ? theme.colorScheme.primary : theme.colorScheme.onSurfaceVariant,
+                    color: _isTorchOn
+                        ? theme.colorScheme.primary
+                        : theme.colorScheme.onSurfaceVariant,
                     size: 22,
                   ),
                   tooltip: StringsManager.barcodeScannerTorch.lang,
@@ -310,14 +329,17 @@ class _BarcodeScannerModalState extends State<BarcodeScannerModal>
                 // Manual Entry Button
                 OutlinedButton.icon(
                   style: OutlinedButton.styleFrom(
-                    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
-                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(AppRadius.md)),
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 16, vertical: 10),
+                    shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(AppRadius.md)),
                   ),
                   onPressed: _onManualEntry,
                   icon: AppIcon(AppIcons.edit, size: 18),
                   label: Text(
                     StringsManager.barcodeScannerManual.lang,
-                    style: const TextStyle(fontWeight: FontWeight.w700, fontSize: 13),
+                    style: const TextStyle(
+                        fontWeight: FontWeight.w700, fontSize: 13),
                   ),
                 ),
 

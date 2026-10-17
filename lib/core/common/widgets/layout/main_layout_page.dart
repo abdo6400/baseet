@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:baseet/core/extensions/dialog_extension.dart';
-import 'custom_bottom_nav_bar.dart';
+import 'package:baseet/core/common/widgets/layout/custom_bottom_nav_bar.dart';
 
 class MainLayoutPage extends StatelessWidget {
   final StatefulNavigationShell navigationShell;

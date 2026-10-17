@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'app_primitive_tokens.dart';
+import 'package:baseet/core/theme/tokens/app_primitive_tokens.dart';
 
 abstract class AppLightSemanticTokens {
   static const Color primary = AppPrimitiveTokens.emerald800;

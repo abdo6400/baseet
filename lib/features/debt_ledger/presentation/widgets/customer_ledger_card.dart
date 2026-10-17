@@ -1,14 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:url_launcher/url_launcher.dart';
-import '../../../../core/common/widgets/feedback/status_badge.dart';
-import '../../../../core/common/widgets/icon/app_icon.dart';
-import '../../../../core/enums/enums.dart';
-import '../../../../core/extensions/translation_extension.dart';
-import '../../../../core/theme/tokens/app_tokens.dart';
-import '../../../../core/utils/app_icons.dart';
-import '../../../../core/utils/strings_manager.dart';
-import '../../domain/entities/customer_entity.dart';
+import 'package:baseet/core/common/widgets/feedback/status_badge.dart';
+import 'package:baseet/core/common/widgets/icon/app_icon.dart';
+import 'package:baseet/core/enums/enums.dart';
+import 'package:baseet/core/extensions/translation_extension.dart';
+import 'package:baseet/core/theme/tokens/app_tokens.dart';
+import 'package:baseet/core/utils/app_icons.dart';
+import 'package:baseet/core/utils/strings_manager.dart';
+import 'package:baseet/features/debt_ledger/domain/entities/customer_entity.dart';
 
 class CustomerLedgerCard extends StatelessWidget {
   final CustomerEntity customer;
@@ -23,9 +23,11 @@ class CustomerLedgerCard extends StatelessWidget {
   });
 
   void _sendWhatsAppReminder(BuildContext context) async {
-    final debtStr = customer.totalDebt.toStringAsFixed(customer.totalDebt.truncateToDouble() == customer.totalDebt ? 0 : 2);
+    final debtStr = customer.totalDebt.toStringAsFixed(
+        customer.totalDebt.truncateToDouble() == customer.totalDebt ? 0 : 2);
     final message = Uri.encodeComponent(
-      StringsManager.customerWhatsappReminder.trArgs(args: [customer.name, debtStr]),
+      StringsManager.customerWhatsappReminder
+          .trArgs(args: [customer.name, debtStr]),
     );
     final url = Uri.parse('https://wa.me/20${customer.phone}?text=$message');
     if (await canLaunchUrl(url)) {
@@ -57,7 +59,8 @@ class CustomerLedgerCard extends StatelessWidget {
     }
 
     final isHighDebt = customer.isOverdue || customer.isLimitExceeded;
-    final debtColor = isHighDebt ? AppPrimitiveTokens.red700 : AppPrimitiveTokens.emerald700;
+    final debtColor =
+        isHighDebt ? AppPrimitiveTokens.red700 : AppPrimitiveTokens.emerald700;
 
     return GestureDetector(
       onTap: onTap,
@@ -137,7 +140,8 @@ class CustomerLedgerCard extends StatelessWidget {
                           '${StringsManager.debtsLastPayment.lang}: ${customer.lastPaymentDate!.day}/${customer.lastPaymentDate!.month}/${customer.lastPaymentDate!.year}',
                           style: TextStyle(
                             fontSize: 10,
-                            color: theme.colorScheme.onSurfaceVariant.withValues(alpha: 0.8),
+                            color: theme.colorScheme.onSurfaceVariant
+                                .withValues(alpha: 0.8),
                           ),
                         ),
                       ],
@@ -147,7 +151,8 @@ class CustomerLedgerCard extends StatelessWidget {
 
                 // Debt Amount Badge
                 Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
                   decoration: BoxDecoration(
                     color: debtColor.withValues(alpha: 0.08),
                     borderRadius: BorderRadius.circular(AppRadius.md),
@@ -177,7 +182,9 @@ class CustomerLedgerCard extends StatelessWidget {
               ],
             ),
             const SizedBox(height: 12),
-            Divider(color: theme.colorScheme.outlineVariant.withValues(alpha: 0.5), height: 1),
+            Divider(
+                color: theme.colorScheme.outlineVariant.withValues(alpha: 0.5),
+                height: 1),
             const SizedBox(height: 8),
 
             // Action buttons row
@@ -187,7 +194,8 @@ class CustomerLedgerCard extends StatelessWidget {
                 // WhatsApp reminder button
                 OutlinedButton.icon(
                   style: OutlinedButton.styleFrom(
-                    padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                    padding:
+                        const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
                     side: BorderSide(color: theme.colorScheme.outlineVariant),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(AppRadius.sm),
@@ -197,7 +205,8 @@ class CustomerLedgerCard extends StatelessWidget {
                   icon: AppIcon(AppIcons.whatsapp, size: 14),
                   label: Text(
                     StringsManager.debtsActionRemind.lang,
-                    style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w600),
+                    style: const TextStyle(
+                        fontSize: 12, fontWeight: FontWeight.w600),
                   ),
                 ),
                 const SizedBox(width: 8),
@@ -207,7 +216,8 @@ class CustomerLedgerCard extends StatelessWidget {
                   style: ElevatedButton.styleFrom(
                     backgroundColor: theme.colorScheme.primary,
                     foregroundColor: Colors.white,
-                    padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 6),
+                    padding:
+                        const EdgeInsets.symmetric(horizontal: 14, vertical: 6),
                     elevation: 0,
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(AppRadius.sm),
@@ -217,10 +227,12 @@ class CustomerLedgerCard extends StatelessWidget {
                     HapticFeedback.lightImpact();
                     onVoucherTap();
                   },
-                  icon: AppIcon(AppIcons.receipt, size: 14, color: Colors.white),
+                  icon:
+                      AppIcon(AppIcons.receipt, size: 14, color: Colors.white),
                   label: Text(
                     StringsManager.debtsActionVoucher.lang,
-                    style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w700),
+                    style: const TextStyle(
+                        fontSize: 12, fontWeight: FontWeight.w700),
                   ),
                 ),
               ],

@@ -1,19 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
-import '../../../../config/routes/app_routes.dart';
-import '../../../../core/common/widgets/feedback/empty_state_widget.dart';
-import '../../../../core/common/widgets/form/app_search_field.dart';
-import '../../../../core/common/widgets/icon/app_icon.dart';
-import '../../../../core/extensions/translation_extension.dart';
-import '../../../../core/utils/app_icons.dart';
-import '../../../../core/utils/strings_manager.dart';
-import '../blocs/customers_list/customers_list_bloc.dart';
-import '../blocs/customers_list/customers_list_event.dart';
-import '../blocs/customers_list/customers_list_state.dart';
-import '../widgets/customer_ledger_card.dart';
-import '../widgets/debt_filter_chips_row.dart';
-import '../widgets/debt_summary_carousel.dart';
+import 'package:baseet/app/router/app_routes.dart';
+import 'package:baseet/core/common/widgets/feedback/empty_state_widget.dart';
+import 'package:baseet/core/common/widgets/form/app_search_field.dart';
+import 'package:baseet/core/common/widgets/icon/app_icon.dart';
+import 'package:baseet/core/extensions/translation_extension.dart';
+import 'package:baseet/core/utils/app_icons.dart';
+import 'package:baseet/core/utils/strings_manager.dart';
+import 'package:baseet/features/debt_ledger/presentation/blocs/customers_list/customers_list_bloc.dart';
+import 'package:baseet/features/debt_ledger/presentation/blocs/customers_list/customers_list_event.dart';
+import 'package:baseet/features/debt_ledger/presentation/blocs/customers_list/customers_list_state.dart';
+import 'package:baseet/features/debt_ledger/presentation/widgets/customer_ledger_card.dart';
+import 'package:baseet/features/debt_ledger/presentation/widgets/debt_filter_chips_row.dart';
+import 'package:baseet/features/debt_ledger/presentation/widgets/debt_summary_carousel.dart';
 
 class DebtLedgerPage extends StatefulWidget {
   const DebtLedgerPage({super.key});
@@ -64,7 +64,8 @@ class _DebtLedgerPageState extends State<DebtLedgerPage> {
         ],
         bottom: PreferredSize(
           preferredSize: const Size.fromHeight(1.0),
-          child: Container(color: theme.colorScheme.outlineVariant, height: 1.0),
+          child:
+              Container(color: theme.colorScheme.outlineVariant, height: 1.0),
         ),
       ),
       floatingActionButton: FloatingActionButton.extended(
@@ -80,13 +81,16 @@ class _DebtLedgerPageState extends State<DebtLedgerPage> {
       ),
       body: BlocBuilder<CustomersListBloc, CustomersListState>(
         builder: (context, state) {
-          if (state.status == CustomersListStatus.loading && state.customers.isEmpty) {
+          if (state.status == CustomersListStatus.loading &&
+              state.customers.isEmpty) {
             return const Center(child: CircularProgressIndicator());
           }
 
           return RefreshIndicator(
             onRefresh: () async {
-              context.read<CustomersListBloc>().add(const LoadCustomersListEvent());
+              context
+                  .read<CustomersListBloc>()
+                  .add(const LoadCustomersListEvent());
             },
             child: CustomScrollView(
               physics: const AlwaysScrollableScrollPhysics(),
@@ -100,7 +104,8 @@ class _DebtLedgerPageState extends State<DebtLedgerPage> {
                         // Page Header
                         Text(
                           StringsManager.debtsTitle.lang,
-                          style: const TextStyle(fontSize: 20, fontWeight: FontWeight.w800),
+                          style: const TextStyle(
+                              fontSize: 20, fontWeight: FontWeight.w800),
                         ),
                         const SizedBox(height: 2),
                         Text(
@@ -117,7 +122,9 @@ class _DebtLedgerPageState extends State<DebtLedgerPage> {
                           controller: _searchController,
                           hint: StringsManager.debtsSearchCustomer.lang,
                           onChanged: (q) {
-                            context.read<CustomersListBloc>().add(SearchCustomersEvent(q));
+                            context
+                                .read<CustomersListBloc>()
+                                .add(SearchCustomersEvent(q));
                           },
                         ),
                       ],
@@ -142,7 +149,9 @@ class _DebtLedgerPageState extends State<DebtLedgerPage> {
                       selectedStatus: state.statusFilter,
                       sortByHighest: state.sortByHighest,
                       onFilterSelected: (status, sortByHighest) {
-                        context.read<CustomersListBloc>().add(FilterCustomersByStatusEvent(
+                        context
+                            .read<CustomersListBloc>()
+                            .add(FilterCustomersByStatusEvent(
                               status: status,
                               sortByHighest: sortByHighest,
                             ));
@@ -175,10 +184,12 @@ class _DebtLedgerPageState extends State<DebtLedgerPage> {
                             child: CustomerLedgerCard(
                               customer: customer,
                               onTap: () {
-                                context.push(AppRoutes.customerStatementPath(customer.id));
+                                context.push(AppRoutes.customerStatementPath(
+                                    customer.id));
                               },
                               onVoucherTap: () {
-                                context.push(AppRoutes.paymentVoucherPath(customerId: customer.id));
+                                context.push(AppRoutes.paymentVoucherPath(
+                                    customerId: customer.id));
                               },
                             ),
                           );

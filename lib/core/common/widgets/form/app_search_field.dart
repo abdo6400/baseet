@@ -63,7 +63,8 @@ class AppSearchField extends StatelessWidget {
               size: 22,
             ),
           ),
-          prefixIconConstraints: const BoxConstraints(minWidth: 46, minHeight: 22),
+          prefixIconConstraints:
+              const BoxConstraints(minWidth: 46, minHeight: 22),
           suffixIcon: Row(
             mainAxisSize: MainAxisSize.min,
             children: [

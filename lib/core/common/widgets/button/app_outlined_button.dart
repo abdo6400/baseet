@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import '../../../theme/tokens/app_tokens.dart';
-import '../icon/app_icon.dart';
+import 'package:baseet/core/theme/tokens/app_tokens.dart';
+import 'package:baseet/core/common/widgets/icon/app_icon.dart';
 
 class AppOutlinedButton extends StatelessWidget {
   final String text;

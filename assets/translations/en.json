@@ -7,7 +7,6 @@
   "nav_inventory": "Inventory",
   "nav_reports": "Reports",
   "nav_more": "More",
-
   "pos_title": "Point of Sale",
   "pos_daily_sales": "Today's Sales",
   "pos_all_categories": "All",
@@ -20,7 +19,6 @@
   "pos_empty_cart": "Cart is empty",
   "pos_add_to_cart": "Add to Cart",
   "pos_no_products_found": "No products found",
-
   "checkout_title": "Complete Checkout",
   "checkout_order_summary": "Order Summary",
   "checkout_payment_method": "Payment Method",
@@ -36,7 +34,6 @@
   "checkout_confirm": "Confirm & Issue Invoice",
   "checkout_success": "Invoice saved successfully",
   "checkout_error_select_customer": "Please select a customer for credit sales",
-
   "debts_title": "Debt & Credit Ledger",
   "debts_subtitle": "Customer accounts tracking",
   "debts_total": "Total Debts",
@@ -56,7 +53,6 @@
   "debts_add_customer": "Add New Customer",
   "debts_no_customers_found": "No registered customers found",
   "debts_debt_suffix": "debt",
-
   "customer_statement_title": "Customer Statement",
   "customer_total_balance": "Total Balance Due",
   "customer_credit_limit": "Credit Limit",
@@ -71,7 +67,6 @@
   "customer_type_sale": "Credit Invoice",
   "customer_type_payment": "Payment (Settlement)",
   "customer_no_transactions": "No transactions found for this customer",
-
   "add_customer_title": "Add New Customer",
   "add_customer_name": "Customer Name",
   "add_customer_name_hint": "e.g. John Doe",
@@ -85,7 +80,6 @@
   "add_customer_notes_hint": "Any extra details...",
   "add_customer_save": "Save Customer",
   "add_customer_success": "Customer added successfully",
-
   "voucher_title": "New Payment Voucher",
   "voucher_amount": "Collected Amount",
   "voucher_customer": "Customer",
@@ -98,7 +92,6 @@
   "voucher_save": "Record Voucher & Print",
   "voucher_success": "Payment voucher recorded successfully",
   "voucher_error_invalid_amount": "Please enter a valid payment amount",
-
   "inventory_title": "Inventory & Products",
   "inventory_subtitle": "Stock & Price Management",
   "inventory_total_products": "Total Products",
@@ -113,7 +106,6 @@
   "inventory_no_products_found": "No products registered in inventory",
   "inventory_stock_quantity_label": "Quantity",
   "inventory_buy_price_label": "Cost",
-
   "add_product_title": "Add New Product",
   "add_product_name": "Product Name",
   "add_product_example_hint": "e.g. Tea Pack 250g",
@@ -126,7 +118,6 @@
   "add_product_min_stock": "Low Stock Threshold",
   "add_product_save": "Save Product to Inventory",
   "add_product_success": "Product added successfully",
-
   "add_category_title": "Add New Category",
   "add_category_name": "Category Name",
   "add_category_example_hint": "e.g. Beverages & Sweets",
@@ -134,7 +125,6 @@
   "add_category_color": "Accent Color",
   "add_category_save": "Save Category",
   "add_category_success": "Category added successfully",
-
   "reports_title": "Reports & Analytics",
   "reports_subtitle": "Performance & Sales Insights",
   "reports_period_today": "Today",
@@ -152,7 +142,6 @@
   "reports_sales_overview": "Weekly Sales Trend",
   "reports_export": "Export Report (PDF)",
   "reports_export_pdf_success": "Report exported successfully as PDF",
-
   "day_sat": "Sat",
   "day_sun": "Sun",
   "day_mon": "Mon",
@@ -160,7 +149,6 @@
   "day_wed": "Wed",
   "day_thu": "Thu",
   "day_fri": "Fri",
-
   "more_title": "Settings & More",
   "more_default_store_name": "Al-Baraka Grocery",
   "more_default_cashier_name": "Cashier: Admin",
@@ -181,7 +169,6 @@
   "more_current_language": "English",
   "more_help": "Help & Support",
   "more_about": "About بسيط App",
-
   "common_save": "Save",
   "common_cancel": "Cancel",
   "common_confirm": "Confirm",
@@ -196,7 +183,6 @@
   "common_exit_message": "Are you sure you want to exit the app?",
   "common_required": "This field is required",
   "common_clear_all": "Delete All",
-
   "barcode_scanner_title": "Camera Barcode Scanner",
   "barcode_scanner_instruction": "Point your camera at the barcode to scan",
   "barcode_scanner_torch": "Flash",
@@ -205,7 +191,6 @@
   "barcode_product_added": "Added '{0}' to cart",
   "barcode_product_not_found": "No product found with barcode: {0}",
   "barcode_scanner_simulate": "Test Scan",
-
   "receipt_scanner_title": "Attach Receipt / Invoice",
   "receipt_scanner_camera": "Take Photo with Camera",
   "receipt_scanner_gallery": "Choose from Gallery",
@@ -215,5 +200,20 @@
   "receipt_view": "View Receipt",
   "receipt_view_invoice": "View Attached Invoice",
   "receipt_preview": "Attached Document Preview",
-  "receipt_photo_or_doc": "Receipt or Invoice Photo"
+  "receipt_photo_or_doc": "Receipt or Invoice Photo",
+  "validation": {
+    "invalid_cart": "Cart quantities and prices must be valid.",
+    "invalid_amount": "Enter a valid paid amount within the invoice total.",
+    "customer_required": "Select a customer for credit sales.",
+    "customer_missing": "The customer no longer exists.",
+    "insufficient_stock": "A product is unavailable or has insufficient stock.",
+    "invalid_payment": "Payment must be positive and cannot exceed the debt.",
+    "credit_limit": "This sale exceeds the customer credit limit.",
+    "invalid_product": "Check the product name, category, prices and quantities.",
+    "invalid_customer": "Check the customer name, debt and credit limit.",
+    "invalid_category": "Enter a category name.",
+    "category_required": "Select a category.",
+    "duplicate_record": "A record with these details already exists.",
+    "storage_error": "Unable to save or load data. Please try again."
+  }
 }

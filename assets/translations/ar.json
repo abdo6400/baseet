@@ -7,7 +7,6 @@
   "nav_inventory": "المخزن",
   "nav_reports": "التقارير",
   "nav_more": "المزيد",
-
   "pos_title": "نقطة البيع",
   "pos_daily_sales": "مبيعات اليوم",
   "pos_all_categories": "الكل",
@@ -20,7 +19,6 @@
   "pos_empty_cart": "السلة فارغة",
   "pos_add_to_cart": "إضافة للسلة",
   "pos_no_products_found": "لم يتم العثور على أي منتجات",
-
   "checkout_title": "إتمام الدفع",
   "checkout_order_summary": "ملخص الطلب",
   "checkout_payment_method": "طريقة الدفع",
@@ -36,7 +34,6 @@
   "checkout_confirm": "تأكيد وإصدار الفاتورة",
   "checkout_success": "تم حفظ الفاتورة بنجاح",
   "checkout_error_select_customer": "يرجى اختيار العميل لتسجيل الفاتورة كآجل",
-
   "debts_title": "دفتر الديون والآجل",
   "debts_subtitle": "متابعة حسابات العملاء",
   "debts_total": "إجمالي الديون",
@@ -56,7 +53,6 @@
   "debts_add_customer": "إضافة عميل جديد",
   "debts_no_customers_found": "لا يوجد عملاء مسجلين",
   "debts_debt_suffix": "دين",
-
   "customer_statement_title": "كشف حساب العميل",
   "customer_total_balance": "الرصيد المستحق",
   "customer_credit_limit": "الحد الائتماني",
@@ -71,7 +67,6 @@
   "customer_type_sale": "فاتورة آجل",
   "customer_type_payment": "سند قبض (سداد)",
   "customer_no_transactions": "لا توجد حركات مسجلة لهذا العميل",
-
   "add_customer_title": "إضافة عميل جديد",
   "add_customer_name": "اسم العميل",
   "add_customer_name_hint": "مثال: أحمد محمد",
@@ -85,7 +80,6 @@
   "add_customer_notes_hint": "أي تفاصيل إضافية...",
   "add_customer_save": "حفظ العميل",
   "add_customer_success": "تمت إضافة العميل بنجاح",
-
   "voucher_title": "سند قبض جديد",
   "voucher_amount": "المبلغ المحصل",
   "voucher_customer": "العميل",
@@ -98,7 +92,6 @@
   "voucher_save": "تسجيل السند وطباعة",
   "voucher_success": "تم تسجيل سند القبض بنجاح",
   "voucher_error_invalid_amount": "يرجى إدخال مبلغ صحيح للسداد",
-
   "inventory_title": "المخزن والمنتجات",
   "inventory_subtitle": "متابعة المخزون والأسعار",
   "inventory_total_products": "إجمالي الأصناف",
@@ -113,7 +106,6 @@
   "inventory_no_products_found": "لا توجد منتجات مسجلة في المخزن",
   "inventory_stock_quantity_label": "الكمية",
   "inventory_buy_price_label": "شراء",
-
   "add_product_title": "إضافة منتج جديد",
   "add_product_name": "اسم المنتج",
   "add_product_example_hint": "مثال: علبة شاي 250 جم",
@@ -126,7 +118,6 @@
   "add_product_min_stock": "حد التنبيه بالنواقص",
   "add_product_save": "حفظ المنتج في المخزن",
   "add_product_success": "تمت إضافة المنتج بنجاح",
-
   "add_category_title": "إضافة تصنيف جديد",
   "add_category_name": "اسم القسم / التصنيف",
   "add_category_example_hint": "مثال: الحلويات والعصائر",
@@ -134,7 +125,6 @@
   "add_category_color": "اللون التعريفي",
   "add_category_save": "حفظ التصنيف",
   "add_category_success": "تمت إضافة القسم بنجاح",
-
   "reports_title": "التقارير والأرباح",
   "reports_subtitle": "تحليل الأداء والمبيعات",
   "reports_period_today": "اليوم",
@@ -152,7 +142,6 @@
   "reports_sales_overview": "حركة المبيعات الأسبوعية",
   "reports_export": "تصدير التقرير (PDF)",
   "reports_export_pdf_success": "تم تصدير التقرير بنجاح بصيغة PDF",
-
   "day_sat": "السبت",
   "day_sun": "الأحد",
   "day_mon": "الإثنين",
@@ -160,7 +149,6 @@
   "day_wed": "الأربعاء",
   "day_thu": "الخميس",
   "day_fri": "الجمعة",
-
   "more_title": "الإعدادات والمزيد",
   "more_default_store_name": "بقالة البركة والخير",
   "more_default_cashier_name": "كاشير: محمد عبد الله (مدير)",
@@ -181,7 +169,6 @@
   "more_current_language": "العربية",
   "more_help": "المساعدة والدعم الفني",
   "more_about": "عن تطبيق بسيط",
-
   "common_save": "حفظ",
   "common_cancel": "إلغاء",
   "common_confirm": "تأكيد",
@@ -196,7 +183,6 @@
   "common_exit_message": "هل أنت متأكد من رغبتك في إغلاق التطبيق؟",
   "common_required": "هذا الحقل مطلوب",
   "common_clear_all": "مسح الكل",
-
   "barcode_scanner_title": "ماسح الباركود بالكاميرا",
   "barcode_scanner_instruction": "وجّه الكاميرا نحو رمز الباركود للمسح الفوري",
   "barcode_scanner_torch": "الفلاش",
@@ -205,7 +191,6 @@
   "barcode_product_added": "تمت إضافة '{0}' إلى السلة",
   "barcode_product_not_found": "لم يتم العثور على منتج بالباركود: {0}",
   "barcode_scanner_simulate": "مسح تجريبي",
-
   "receipt_scanner_title": "إرفاق إيصال / فاتورة",
   "receipt_scanner_camera": "تصوير بالكاميرا",
   "receipt_scanner_gallery": "اختيار من المعرض",
@@ -215,5 +200,20 @@
   "receipt_view": "عرض الإيصال",
   "receipt_view_invoice": "عرض الفاتورة المرفقة",
   "receipt_preview": "معاينة المستند المرفق",
-  "receipt_photo_or_doc": "صورة الإيصال أو الفاتورة"
+  "receipt_photo_or_doc": "صورة الإيصال أو الفاتورة",
+  "validation": {
+    "invalid_cart": "يجب أن تكون كميات وأسعار السلة صحيحة.",
+    "invalid_amount": "أدخل مبلغ دفع صحيحًا لا يتجاوز إجمالي الفاتورة.",
+    "customer_required": "اختر عميلًا للبيع الآجل.",
+    "customer_missing": "العميل غير موجود.",
+    "insufficient_stock": "أحد المنتجات غير موجود أو كميته غير كافية.",
+    "invalid_payment": "يجب أن يكون مبلغ السداد موجبًا ولا يتجاوز الدين.",
+    "credit_limit": "هذه الفاتورة تتجاوز حد ائتمان العميل.",
+    "invalid_product": "راجع اسم المنتج والتصنيف والأسعار والكميات.",
+    "invalid_customer": "راجع اسم العميل والدين وحد الائتمان.",
+    "invalid_category": "أدخل اسم التصنيف.",
+    "category_required": "اختر تصنيفًا.",
+    "duplicate_record": "يوجد سجل بهذه البيانات بالفعل.",
+    "storage_error": "تعذر حفظ أو تحميل البيانات. حاول مرة أخرى."
+  }
 }

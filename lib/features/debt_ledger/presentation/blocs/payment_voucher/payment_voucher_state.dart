@@ -19,8 +19,9 @@ class PaymentVoucherState extends Equatable {
     this.errorMessage,
   });
 
-  double get remainingDebtAfterPayment =>
-      selectedCustomer != null ? (selectedCustomer!.totalDebt - amount).clamp(0.0, 999999.0) : 0.0;
+  double get remainingDebtAfterPayment => selectedCustomer != null
+      ? (selectedCustomer!.totalDebt - amount).clamp(0.0, 999999.0)
+      : 0.0;
 
   PaymentVoucherState copyWith({
     PaymentVoucherStatus? status,

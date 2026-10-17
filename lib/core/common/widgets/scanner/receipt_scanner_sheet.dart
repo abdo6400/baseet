@@ -55,7 +55,8 @@ class ReceiptScannerSheet extends StatelessWidget {
                 width: 40,
                 height: 4,
                 decoration: BoxDecoration(
-                  color: theme.colorScheme.onSurfaceVariant.withValues(alpha: 0.3),
+                  color:
+                      theme.colorScheme.onSurfaceVariant.withValues(alpha: 0.3),
                   borderRadius: BorderRadius.circular(AppRadius.full),
                 ),
               ),
@@ -81,13 +82,16 @@ class ReceiptScannerSheet extends StatelessWidget {
                   color: theme.colorScheme.primary.withValues(alpha: 0.1),
                   shape: BoxShape.circle,
                 ),
-                child: AppIcon(AppIcons.barcode, size: 22, color: theme.colorScheme.primary),
+                child: AppIcon(AppIcons.barcode,
+                    size: 22, color: theme.colorScheme.primary),
               ),
               title: Text(
                 StringsManager.receiptScannerCamera.lang,
-                style: const TextStyle(fontWeight: FontWeight.w700, fontSize: 15),
+                style:
+                    const TextStyle(fontWeight: FontWeight.w700, fontSize: 15),
               ),
-              trailing: AppIcon(AppIcons.arrowForward, size: 16, color: Colors.grey),
+              trailing:
+                  AppIcon(AppIcons.arrowForward, size: 16, color: Colors.grey),
               onTap: () => _pickImage(context, ImageSource.camera),
             ),
             const SizedBox(height: 12),
@@ -105,13 +109,16 @@ class ReceiptScannerSheet extends StatelessWidget {
                   color: AppPrimitiveTokens.emerald700.withValues(alpha: 0.1),
                   shape: BoxShape.circle,
                 ),
-                child: AppIcon(AppIcons.pdf, size: 22, color: AppPrimitiveTokens.emerald700),
+                child: AppIcon(AppIcons.pdf,
+                    size: 22, color: AppPrimitiveTokens.emerald700),
               ),
               title: Text(
                 StringsManager.receiptScannerGallery.lang,
-                style: const TextStyle(fontWeight: FontWeight.w700, fontSize: 15),
+                style:
+                    const TextStyle(fontWeight: FontWeight.w700, fontSize: 15),
               ),
-              trailing: AppIcon(AppIcons.arrowForward, size: 16, color: Colors.grey),
+              trailing:
+                  AppIcon(AppIcons.arrowForward, size: 16, color: Colors.grey),
               onTap: () => _pickImage(context, ImageSource.gallery),
             ),
           ],

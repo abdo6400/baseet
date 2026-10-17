@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
-import '../../../../config/routes/app_routes.dart';
-import '../../../../core/extensions/translation_extension.dart';
-import '../../../../core/utils/assets_manager.dart';
-import '../../../../core/utils/strings_manager.dart';
+import 'package:baseet/app/router/app_routes.dart';
+import 'package:baseet/core/extensions/translation_extension.dart';
+import 'package:baseet/core/utils/assets_manager.dart';
+import 'package:baseet/core/utils/strings_manager.dart';
 
 class SplashPage extends StatefulWidget {
   const SplashPage({super.key});
@@ -13,7 +13,8 @@ class SplashPage extends StatefulWidget {
   State<SplashPage> createState() => _SplashPageState();
 }
 
-class _SplashPageState extends State<SplashPage> with SingleTickerProviderStateMixin {
+class _SplashPageState extends State<SplashPage>
+    with SingleTickerProviderStateMixin {
   late AnimationController _controller;
   late Animation<double> _fadeAnimation;
   late Animation<double> _scaleAnimation;
@@ -67,7 +68,8 @@ class _SplashPageState extends State<SplashPage> with SingleTickerProviderStateM
               height: 260,
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
-                color: theme.colorScheme.primary.withValues(alpha: isDark ? 0.12 : 0.06),
+                color: theme.colorScheme.primary
+                    .withValues(alpha: isDark ? 0.12 : 0.06),
               ),
             ),
           ),
@@ -85,7 +87,8 @@ class _SplashPageState extends State<SplashPage> with SingleTickerProviderStateM
                         borderRadius: BorderRadius.circular(26),
                         boxShadow: [
                           BoxShadow(
-                            color: theme.colorScheme.primary.withValues(alpha: 0.2),
+                            color: theme.colorScheme.primary
+                                .withValues(alpha: 0.2),
                             blurRadius: 24,
                             spreadRadius: 2,
                             offset: const Offset(0, 8),
@@ -141,7 +144,8 @@ class _SplashPageState extends State<SplashPage> with SingleTickerProviderStateM
                   height: 24,
                   child: CircularProgressIndicator(
                     strokeWidth: 2.5,
-                    valueColor: AlwaysStoppedAnimation<Color>(theme.colorScheme.primary),
+                    valueColor: AlwaysStoppedAnimation<Color>(
+                        theme.colorScheme.primary),
                   ),
                 ),
               ),

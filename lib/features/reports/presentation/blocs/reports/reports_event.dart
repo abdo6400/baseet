@@ -1,3 +1,4 @@
+import 'package:baseet/features/reports/domain/entities/report_period.dart';
 import 'package:equatable/equatable.dart';
 
 abstract class ReportsEvent extends Equatable {
@@ -8,9 +9,9 @@ abstract class ReportsEvent extends Equatable {
 }
 
 class LoadReportsSummaryEvent extends ReportsEvent {
-  final String period;
+  final ReportPeriod period;
 
-  const LoadReportsSummaryEvent({this.period = 'today'});
+  const LoadReportsSummaryEvent({this.period = ReportPeriod.today});
 
   @override
   List<Object?> get props => [period];

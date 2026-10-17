@@ -39,7 +39,8 @@ abstract class StringsManager {
   static const String checkoutNotesHint = 'checkout_notes_hint';
   static const String checkoutConfirm = 'checkout_confirm';
   static const String checkoutSuccess = 'checkout_success';
-  static const String checkoutErrorSelectCustomer = 'checkout_error_select_customer';
+  static const String checkoutErrorSelectCustomer =
+      'checkout_error_select_customer';
 
   // Debts
   static const String debtsTitle = 'debts_title';
@@ -70,7 +71,8 @@ abstract class StringsManager {
   static const String customerCall = 'customer_call';
   static const String customerWhatsapp = 'customer_whatsapp';
   static const String customerWhatsappReminder = 'customer_whatsapp_reminder';
-  static const String customerTransactionsHistory = 'customer_transactions_history';
+  static const String customerTransactionsHistory =
+      'customer_transactions_history';
   static const String customerAddDebt = 'customer_add_debt';
   static const String customerSettleDebt = 'customer_settle_debt';
   static const String customerStatementShare = 'customer_statement_share';
@@ -105,7 +107,8 @@ abstract class StringsManager {
   static const String voucherNotesHint = 'voucher_notes_hint';
   static const String voucherSave = 'voucher_save';
   static const String voucherSuccess = 'voucher_success';
-  static const String voucherErrorInvalidAmount = 'voucher_error_invalid_amount';
+  static const String voucherErrorInvalidAmount =
+      'voucher_error_invalid_amount';
 
   // Inventory
   static const String inventoryTitle = 'inventory_title';
@@ -120,7 +123,8 @@ abstract class StringsManager {
   static const String inventorySellPrice = 'inventory_sell_price';
   static const String inventoryStockCount = 'inventory_stock_count';
   static const String inventoryNoProductsFound = 'inventory_no_products_found';
-  static const String inventoryStockQuantityLabel = 'inventory_stock_quantity_label';
+  static const String inventoryStockQuantityLabel =
+      'inventory_stock_quantity_label';
   static const String inventoryBuyPriceLabel = 'inventory_buy_price_label';
 
   // Add Product

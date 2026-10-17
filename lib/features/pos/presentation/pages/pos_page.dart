@@ -1,25 +1,25 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
-import '../../../../config/routes/app_routes.dart';
-import '../../../../core/common/widgets/feedback/empty_state_widget.dart';
-import '../../../../core/common/widgets/form/app_search_field.dart';
-import '../../../../core/common/widgets/icon/app_icon.dart';
-import '../../../../core/common/widgets/scanner/barcode_scanner_modal.dart';
-import '../../../../core/extensions/translation_extension.dart';
-import '../../../../core/theme/tokens/app_tokens.dart';
-import '../../../../core/utils/app_icons.dart';
-import '../../../../core/utils/strings_manager.dart';
-import '../blocs/cart/cart_bloc.dart';
-import '../blocs/cart/cart_event.dart';
-import '../blocs/cart/cart_state.dart';
-import '../blocs/catalog/pos_catalog_bloc.dart';
-import '../blocs/catalog/pos_catalog_event.dart';
-import '../blocs/catalog/pos_catalog_state.dart';
-import '../widgets/pos_category_filter_row.dart';
-import '../widgets/pos_floating_cart_bar.dart';
-import '../widgets/pos_header_sales_card.dart';
-import '../widgets/pos_product_grid_card.dart';
+import 'package:baseet/app/router/app_routes.dart';
+import 'package:baseet/core/common/widgets/feedback/empty_state_widget.dart';
+import 'package:baseet/core/common/widgets/form/app_search_field.dart';
+import 'package:baseet/core/common/widgets/icon/app_icon.dart';
+import 'package:baseet/core/common/widgets/scanner/barcode_scanner_modal.dart';
+import 'package:baseet/core/extensions/translation_extension.dart';
+import 'package:baseet/core/theme/tokens/app_tokens.dart';
+import 'package:baseet/core/utils/app_icons.dart';
+import 'package:baseet/core/utils/strings_manager.dart';
+import 'package:baseet/features/pos/presentation/blocs/cart/cart_bloc.dart';
+import 'package:baseet/features/pos/presentation/blocs/cart/cart_event.dart';
+import 'package:baseet/features/pos/presentation/blocs/cart/cart_state.dart';
+import 'package:baseet/features/pos/presentation/blocs/catalog/pos_catalog_bloc.dart';
+import 'package:baseet/features/pos/presentation/blocs/catalog/pos_catalog_event.dart';
+import 'package:baseet/features/pos/presentation/blocs/catalog/pos_catalog_state.dart';
+import 'package:baseet/features/pos/presentation/widgets/pos_category_filter_row.dart';
+import 'package:baseet/features/pos/presentation/widgets/pos_floating_cart_bar.dart';
+import 'package:baseet/features/pos/presentation/widgets/pos_header_sales_card.dart';
+import 'package:baseet/features/pos/presentation/widgets/pos_product_grid_card.dart';
 
 class PosPage extends StatefulWidget {
   const PosPage({super.key});
@@ -47,12 +47,15 @@ class _PosPageState extends State<PosPage> {
     final scannedBarcode = await BarcodeScannerModal.show(context);
     if (scannedBarcode != null && scannedBarcode.isNotEmpty && mounted) {
       final catalogState = context.read<PosCatalogBloc>().state;
-      final product = catalogState.products.where((p) => p.barcode == scannedBarcode).firstOrNull;
+      final product = catalogState.products
+          .where((p) => p.barcode == scannedBarcode)
+          .firstOrNull;
       if (product != null) {
         context.read<CartBloc>().add(AddProductToCartEvent(product));
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text(StringsManager.barcodeProductAdded.trArgs(args: [product.name])),
+            content: Text(StringsManager.barcodeProductAdded
+                .trArgs(args: [product.name])),
             backgroundColor: AppPrimitiveTokens.emerald700,
             duration: const Duration(seconds: 2),
           ),
@@ -62,7 +65,8 @@ class _PosPageState extends State<PosPage> {
         context.read<PosCatalogBloc>().add(SearchCatalogEvent(scannedBarcode));
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text(StringsManager.barcodeProductNotFound.trArgs(args: [scannedBarcode])),
+            content: Text(StringsManager.barcodeProductNotFound
+                .trArgs(args: [scannedBarcode])),
             backgroundColor: AppPrimitiveTokens.red700,
             duration: const Duration(seconds: 3),
           ),
@@ -127,13 +131,16 @@ class _PosPageState extends State<PosPage> {
         children: [
           BlocBuilder<PosCatalogBloc, PosCatalogState>(
             builder: (context, state) {
-              if (state.status == PosCatalogStatus.loading && state.products.isEmpty) {
+              if (state.status == PosCatalogStatus.loading &&
+                  state.products.isEmpty) {
                 return const Center(child: CircularProgressIndicator());
               }
 
               return RefreshIndicator(
                 onRefresh: () async {
-                  context.read<PosCatalogBloc>().add(const LoadPosCatalogEvent());
+                  context
+                      .read<PosCatalogBloc>()
+                      .add(const LoadPosCatalogEvent());
                 },
                 child: CustomScrollView(
                   physics: const AlwaysScrollableScrollPhysics(),
@@ -153,7 +160,9 @@ class _PosPageState extends State<PosPage> {
                               hint: StringsManager.posSearchProduct.lang,
                               onBarcodeTap: _startBarcodeScanning,
                               onChanged: (q) {
-                                context.read<PosCatalogBloc>().add(SearchCatalogEvent(q));
+                                context
+                                    .read<PosCatalogBloc>()
+                                    .add(SearchCatalogEvent(q));
                               },
                             ),
                             const SizedBox(height: 14),
@@ -164,7 +173,9 @@ class _PosPageState extends State<PosPage> {
                                 categories: state.categories,
                                 selectedCategoryId: state.selectedCategoryId,
                                 onSelect: (catId) {
-                                  context.read<PosCatalogBloc>().add(SelectCategoryEvent(catId));
+                                  context
+                                      .read<PosCatalogBloc>()
+                                      .add(SelectCategoryEvent(catId));
                                 },
                               ),
                           ],
@@ -188,7 +199,8 @@ class _PosPageState extends State<PosPage> {
                       SliverPadding(
                         padding: const EdgeInsets.fromLTRB(16, 0, 16, 100),
                         sliver: SliverGrid(
-                          gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                          gridDelegate:
+                              const SliverGridDelegateWithFixedCrossAxisCount(
                             crossAxisCount: 2,
                             crossAxisSpacing: 12,
                             mainAxisSpacing: 12,
@@ -200,7 +212,9 @@ class _PosPageState extends State<PosPage> {
                               return PosProductGridCard(
                                 product: product,
                                 onAddToCart: () {
-                                  context.read<CartBloc>().add(AddProductToCartEvent(product));
+                                  context
+                                      .read<CartBloc>()
+                                      .add(AddProductToCartEvent(product));
                                 },
                               );
                             },

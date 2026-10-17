@@ -1,9 +1,9 @@
 import 'package:dartz/dartz.dart';
 import 'package:equatable/equatable.dart';
-import '../../../../config/database/error/failures.dart';
-import '../../../../core/usecase/usecase.dart';
-import '../entities/debt_transaction_entity.dart';
-import '../repositories/debt_repository.dart';
+import 'package:baseet/core/error/failures.dart';
+import 'package:baseet/core/usecase/usecase.dart';
+import 'package:baseet/features/debt_ledger/domain/entities/debt_transaction_entity.dart';
+import 'package:baseet/features/debt_ledger/domain/repositories/debt_repository.dart';
 
 class AddPaymentVoucherParams extends Equatable {
   final String customerId;
@@ -22,13 +22,21 @@ class AddPaymentVoucherParams extends Equatable {
   List<Object?> get props => [customerId, amount, notes, receiptPath];
 }
 
-class AddPaymentVoucherUseCase extends ParamsUseCase<DebtTransactionEntity, AddPaymentVoucherParams> {
+class AddPaymentVoucherUseCase
+    extends ParamsUseCase<DebtTransactionEntity, AddPaymentVoucherParams> {
   final DebtRepository repository;
 
   AddPaymentVoucherUseCase(this.repository);
 
   @override
-  Future<Either<Failure, DebtTransactionEntity>> call(AddPaymentVoucherParams params) {
+  Future<Either<Failure, DebtTransactionEntity>> call(
+      AddPaymentVoucherParams params) {
+    if (params.customerId.isEmpty ||
+        !params.amount.isFinite ||
+        params.amount <= 0) {
+      return Future.value(
+          const Left(ValidationFailure(message: 'validation.invalid_payment')));
+    }
     return repository.addPaymentVoucher(
       customerId: params.customerId,
       amount: params.amount,

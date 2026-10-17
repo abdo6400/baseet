@@ -15,10 +15,12 @@ class ReceiptPreviewDialog extends StatelessWidget {
     this.title,
   });
 
-  static void show(BuildContext context, {required String imagePath, String? title}) {
+  static void show(BuildContext context,
+      {required String imagePath, String? title}) {
     showDialog(
       context: context,
-      builder: (ctx) => ReceiptPreviewDialog(imagePath: imagePath, title: title),
+      builder: (ctx) =>
+          ReceiptPreviewDialog(imagePath: imagePath, title: title),
     );
   }
 

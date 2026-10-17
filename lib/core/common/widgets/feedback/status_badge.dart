@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../../../theme/tokens/app_tokens.dart';
+import 'package:baseet/core/theme/tokens/app_tokens.dart';
 
 enum StatusBadgeVariant { success, warning, error, neutral }
 

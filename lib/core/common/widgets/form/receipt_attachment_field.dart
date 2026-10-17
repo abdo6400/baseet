@@ -59,7 +59,8 @@ class ReceiptAttachmentField extends StatelessWidget {
                       color: theme.colorScheme.primary.withValues(alpha: 0.1),
                       shape: BoxShape.circle,
                     ),
-                    child: AppIcon(AppIcons.receipt, size: 20, color: theme.colorScheme.primary),
+                    child: AppIcon(AppIcons.receipt,
+                        size: 20, color: theme.colorScheme.primary),
                   ),
                   const SizedBox(width: 10),
                   Text(
@@ -80,7 +81,8 @@ class ReceiptAttachmentField extends StatelessWidget {
             decoration: BoxDecoration(
               color: theme.colorScheme.surfaceContainerLowest,
               borderRadius: BorderRadius.circular(AppRadius.lg),
-              border: Border.all(color: AppPrimitiveTokens.emerald700.withValues(alpha: 0.4)),
+              border: Border.all(
+                  color: AppPrimitiveTokens.emerald700.withValues(alpha: 0.4)),
             ),
             child: Row(
               children: [
@@ -94,9 +96,12 @@ class ReceiptAttachmentField extends StatelessWidget {
                         ? Image.file(
                             File(receiptPath!),
                             fit: BoxFit.cover,
-                            errorBuilder: (_, __, ___) => AppIcon(AppIcons.receipt, color: AppPrimitiveTokens.emerald700),
+                            errorBuilder: (_, __, ___) => AppIcon(
+                                AppIcons.receipt,
+                                color: AppPrimitiveTokens.emerald700),
                           )
-                        : AppIcon(AppIcons.receipt, color: AppPrimitiveTokens.emerald700),
+                        : AppIcon(AppIcons.receipt,
+                            color: AppPrimitiveTokens.emerald700),
                   ),
                 ),
                 const SizedBox(width: 12),
@@ -126,14 +131,16 @@ class ReceiptAttachmentField extends StatelessWidget {
                   ),
                 ),
                 IconButton(
-                  icon: AppIcon(AppIcons.info, size: 18, color: theme.colorScheme.primary),
+                  icon: AppIcon(AppIcons.info,
+                      size: 18, color: theme.colorScheme.primary),
                   tooltip: StringsManager.receiptView.lang,
                   onPressed: () {
                     ReceiptPreviewDialog.show(context, imagePath: receiptPath!);
                   },
                 ),
                 IconButton(
-                  icon: AppIcon(AppIcons.delete, size: 18, color: theme.colorScheme.error),
+                  icon: AppIcon(AppIcons.delete,
+                      size: 18, color: theme.colorScheme.error),
                   tooltip: StringsManager.receiptRemove.lang,
                   onPressed: () => onChanged(null),
                 ),

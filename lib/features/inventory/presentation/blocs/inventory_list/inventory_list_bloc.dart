@@ -1,10 +1,10 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:baseet/features/inventory/domain/entities/category_entity.dart';
-import 'package:baseet/features/inventory/domain/usecases/get_categories_usecase.dart';
+import 'package:baseet/features/catalog/domain/entities/category_entity.dart';
+import 'package:baseet/features/catalog/domain/usecases/get_categories_usecase.dart';
 import 'package:baseet/features/inventory/domain/usecases/get_inventory_stats_usecase.dart';
 import 'package:baseet/features/inventory/domain/usecases/get_inventory_usecase.dart';
-import 'inventory_list_event.dart';
-import 'inventory_list_state.dart';
+import 'package:baseet/features/inventory/presentation/blocs/inventory_list/inventory_list_event.dart';
+import 'package:baseet/features/inventory/presentation/blocs/inventory_list/inventory_list_state.dart';
 
 class InventoryListBloc extends Bloc<InventoryListEvent, InventoryListState> {
   final GetInventoryUseCase getInventoryUseCase;
@@ -29,14 +29,29 @@ class InventoryListBloc extends Bloc<InventoryListEvent, InventoryListState> {
     emit(state.copyWith(status: InventoryListStatus.loading));
 
     final statsResult = await getInventoryStatsUseCase();
-    final stats = statsResult.fold(
-      (l) => {'totalProducts': 0, 'lowStockCount': 0, 'stockValue': 0.0},
-      (r) => r,
-    );
+    if (statsResult.isLeft()) {
+      statsResult.fold(
+          (failure) => emit(state.copyWith(
+              status: InventoryListStatus.error,
+              errorMessage: failure.message)),
+          (_) {});
+      return;
+    }
+    final stats = statsResult.getOrElse(() => throw StateError('Unreachable'));
 
     final categoriesResult = await getCategoriesUseCase();
+    if (categoriesResult.isLeft()) {
+      categoriesResult.fold(
+          (failure) => emit(state.copyWith(
+              status: InventoryListStatus.error,
+              errorMessage: failure.message)),
+          (_) {});
+      return;
+    }
     final allCats = categoriesResult.fold(
-      (l) => <CategoryEntity>[const CategoryEntity(id: 'cat_0', name: 'الكل', iconName: 'grid')],
+      (l) => <CategoryEntity>[
+        const CategoryEntity(id: 'cat_0', name: 'الكل', iconName: 'grid')
+      ],
       (cats) => [
         const CategoryEntity(id: 'cat_0', name: 'الكل', iconName: 'grid'),
         ...cats.where((c) => c.id != 'cat_0'),
@@ -58,9 +73,9 @@ class InventoryListBloc extends Bloc<InventoryListEvent, InventoryListState> {
         status: InventoryListStatus.loaded,
         products: products,
         categories: allCats,
-        totalProductsCount: stats['totalProducts'] as int? ?? 0,
-        lowStockCount: stats['lowStockCount'] as int? ?? 0,
-        stockValue: (stats['stockValue'] as num?)?.toDouble() ?? 0.0,
+        totalProductsCount: stats.totalProducts,
+        lowStockCount: stats.lowStockCount,
+        stockValue: stats.stockValue,
       )),
     );
   }

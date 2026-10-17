@@ -1,10 +1,10 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'app.dart';
-import 'config/locators/locator.dart';
-import 'core/utils/assets_manager.dart';
-import 'core/utils/constants_manager.dart';
+import 'package:baseet/app/app.dart';
+import 'package:baseet/app/di/locator.dart';
+import 'package:baseet/core/utils/assets_manager.dart';
+import 'package:baseet/core/utils/constants_manager.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
