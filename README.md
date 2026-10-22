@@ -1,6 +1,36 @@
 # بسيط — Baseet
 
-A simple Arabic-first shop app for local sales, stock, customer debt and payments. English is also available.
+Baseet is an Arabic-first business management system planned for mobile, desktop, and web. This repository is currently a clean Flutter foundation: the previous proof-of-concept sales, inventory, debt, reports, backup, and transfer implementations were removed so the full system can be built against one agreed architecture.
+
+## Current state
+
+The app contains only:
+
+- the existing Flutter platform projects for Android, iOS, and Windows;
+- the application bootstrap and a localized foundation screen;
+- shared theme tokens, error contracts, and use-case contracts;
+- architecture rules and automated dependency-boundary tests;
+- the approved system, platform, commercial, and requirements plans.
+
+No business feature is represented as complete yet.
+
+## Product direction
+
+Baseet will support three operating modes through the same domain contracts:
+
+1. standalone offline use on a phone or computer;
+2. clients connected to a shop-local Baseet server over the LAN;
+3. clients connected to a remotely hosted Baseet server.
+
+Mobile, desktop, and web share business rules and API contracts. Device-specific storage, networking, printing, scanning, and secure credential handling stay behind platform adapters. Subscription administration remains manual for the first release; Baseet records entitlements and license state without integrating automated billing.
+
+Read the planning set before starting a feature:
+
+- [System plan](docs/BASEET_SYSTEM_PLAN.md)
+- [Requirements register](docs/BASEET_REQUIREMENTS_REGISTER.md)
+- [Platform and commercial plan](docs/BASEET_PLATFORM_AND_COMMERCIAL_PLAN.md)
+- [Repository review](docs/BASEET_REPOSITORY_REVIEW.md)
+- [Architecture rules](rules/architecture_rules.md)
 
 ## Run
 
@@ -9,45 +39,7 @@ flutter pub get
 flutter run
 ```
 
-Start on Home, add a product with just its name, selling price and quantity, and record your first sale. A category is created automatically; barcodes, purchase costs and other details are optional. Customers require only a name and can have an optional previous balance.
-
-Daily work is offline. SQLite records are stored in application-support storage outside the Windows installation folder. Schema version 2 migrates existing version 1 records without clearing them. Mobile databases from the previous location are preserved during migration.
-
-## Backup and QR transfer
-
-Open **Backup & device transfer** to save/open a `.baseet` backup or transfer a complete snapshot on the same Wi-Fi. One device shows a five-minute QR code; the other scans it or pastes the code, previews counts, and confirms replacement. QR transfer uses AES-GCM encryption. Backup files themselves are not encrypted.
-
-Transfers replace the receiver's records; they do not merge independent edits. A recovery backup is retained before replacement. Use one device as the current source of truth. Windows supports USB scanners and pasted codes rather than camera scanning.
-
-## Test builds
-
-- **Windows test installer**: automatic on `main` pushes/PRs, plus manual runs. Downloads are available as `Baseet-Windows-Installer` and `Baseet-Windows-Portable` GitHub Actions artifacts. The workflow bundles the C++ runtime, packages an Inno Setup EXE, and performs an install/start smoke test.
-- **Android test APK**: manual run or `v*` tag. Artifact: `Baseet-Android-Test-APK`. Current signing is for testing, not store distribution.
-- To build Windows locally, install Visual Studio's **Desktop development with C++** workload, then run `flutter build windows --release`.
-- Installer and APK workflows are test delivery workflows. Public distribution needs release signing and device acceptance tests.
-
-## Architecture
-
-```text
-lib/
-  main.dart
-  app/                     # Dependency composition, routing and shared UI coordination
-  core/                    # Database, errors, services, money, theme and common widgets
-  features/
-    business/              # Home, product editing, invoice history and shop settings
-    catalog/               # Shared product/category domain types
-    device_transfer/       # Validated backups and encrypted local QR transfer
-    inventory/
-    pos/
-    debt_ledger/
-    reports/
-    more_settings/         # Data-management domain and process BLoC
-    splash/
-```
-
-Features use `presentation → domain` and `data → domain`. Presentation never accesses the database. Business validation lives in domain policies and use cases; SQLite queries and atomic writes stay in data. Process BLoCs/Cubits are scoped to routes; cart/list state is shared at app level.
-
-## Checks
+## Required checks
 
 ```sh
 dart format --output=none --set-exit-if-changed lib test
@@ -55,6 +47,4 @@ flutter analyze
 flutter test
 ```
 
-The suite covers architecture boundaries, business validation, money precision, real SQLite transactions and rollback, backups with attachments, local encrypted HTTP transfer, migration, and Arabic phone/desktop layouts using the real router.
-
-Read [the readiness review](docs/readiness.md) for minimum data, supported flows, transfer behavior and remaining production gaps. Returns/refunds, thermal printing, stock-movement audit history, simultaneous two-way sync and full accounting are not implemented. Estimated profit excludes expenses and depends on recorded purchase costs.
+Platform release builds are also checked by GitHub Actions. New feature work must add tests for its business rules, failure paths, persistence or synchronization behavior, and affected user flows.

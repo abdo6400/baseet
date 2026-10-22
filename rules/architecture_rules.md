@@ -1,67 +1,90 @@
-# Baseet Architecture & BLoC Standard Rules
+# Baseet architecture rules
 
-This document outlines the mandatory architectural rules, folder structure, and implementation patterns for the Baseet (بسيط) project.
+These rules are binding for all Baseet code. The planning documents define product scope; this file defines how that scope is implemented.
 
----
+## 1. Dependency direction
 
-## 1. Clean Architecture Layers & Flow
+Baseet uses feature-oriented Clean Architecture. Dependencies point inward:
 
-All features MUST adhere to Clean Architecture with 3 distinct layers:
-
-```
-lib/features/<feature_name>/
-├── data/
-│   ├── datasources/        # Remote & Local data sources (Mock/DB/API)
-│   ├── models/             # Data models with storage serialization and explicit domain mapping where needed
-│   └── repositories/       # Repository implementations using repositoryCall
-├── domain/
-│   ├── entities/           # Pure Dart business entities
-│   ├── repositories/       # Abstract repository interfaces
-│   └── usecases/           # Feature use cases extending ParamsUseCase or NoParamsUseCase
-└── presentation/
-    ├── blocs/              # Feature BLoCs grouped in process-specific subfolders
-    │   ├── <process_1>/    # e.g., catalog/
-    │   └── <process_2>/    # e.g., cart/
-    ├── cubits/             # UI state cubits
-    ├── pages/              # Screen pages
-    └── widgets/            # Reusable page components
+```text
+presentation -> domain <- data
+app -> feature composition and platform adapters
 ```
 
----
+- `domain` is pure Dart business behavior. It must not import Flutter, app composition, data implementations, databases, HTTP clients, or platform plugins.
+- `data` implements domain repositories and maps storage or transport models to domain entities. It must not contain UI behavior.
+- `presentation` calls domain use cases through scoped BLoCs or Cubits. It must not import data models, repository implementations, databases, or transport clients.
+- `app` owns dependency composition, routing, session scope, and application lifecycle coordination.
+- `core` contains only stable cross-feature contracts and design foundations. Feature-specific behavior does not belong in `core`.
 
-## 2. UseCases Standards (`ParamsUseCase`)
+Every feature containing Dart source uses this structure:
 
-- Every UseCase taking parameters MUST extend `ParamsUseCase<T, Params>`.
-- Parameters MUST be encapsulated in a dedicated `Params` class extending `Equatable`.
-- UseCases without parameters MUST extend `NoParamsUseCase<T>`.
+```text
+lib/features/<feature>/
+  data/
+    datasources/
+    models/
+    repositories/
+  domain/
+    entities/
+    repositories/
+    usecases/
+  presentation/
+    blocs/ or cubits/
+    pages/
+    widgets/
+```
 
----
+## 2. Domain and use cases
 
-## 3. Data Layer Error Handling (`repositoryCall`)
+- Use cases with input extend `ParamsUseCase<Result, Params>`.
+- Their parameter value object extends `Equatable` and validates domain-relevant invariants.
+- Use cases without input extend `NoParamsUseCase<Result>`.
+- Repository contracts return `Either<Failure, T>` for expected failures.
+- Money uses an exact representation with an explicit currency. Floating-point values must not represent financial amounts.
+- Posted financial and stock movements are append-only. Corrections use reversal or adjustment records with an audit trail.
+- Tenant, business, branch, user, and device ownership must be explicit wherever their absence could expose or corrupt another scope's data.
 
-- Repository implementations MUST wrap all data calls inside `repositoryCall`.
-- Repository methods return `Either<Failure, T>`.
+## 3. Data, synchronization, and operating modes
 
----
+- Repository implementations wrap fallible calls with `repositoryCall` or an equivalent reviewed boundary mapper.
+- Local storage, LAN transport, and remote transport implement the same domain repository contracts.
+- Offline writes use durable local identifiers, idempotency keys, and an outbox. Synchronization must tolerate retries, interruption, duplicate delivery, and stale clients.
+- Conflict policy is explicit per aggregate. Silent last-write-wins is forbidden for financial records, stock movements, entitlements, and audit events.
+- Migrations are forward-only, versioned, tested with data from the previous released schema, and never silently discard user data.
+- Transport uses authenticated TLS outside an explicitly isolated local development environment. Credentials and refresh tokens use platform secure storage.
+- Data received from networks, files, deep links, scanners, and other processes is untrusted and validated at the boundary.
 
-## 4. UI State Listener Standard (`context.showStateHandler`)
+## 4. Presentation and design system
 
-- UI screens consume state updates via `BlocListener` and `context.showStateHandler`.
-- Automatically handles loading overlays, error snackbars (with `.lang` translation fallback), and success callbacks.
+- A BLoC or Cubit owns one user process or cohesive screen state. Do not create a feature-wide state object for unrelated workflows.
+- Business rules and persistence calls do not run in widgets.
+- Reuse shared colors, typography, spacing, radii, icons, and components. Do not hardcode visual values when a token exists.
+- User-facing text is localized. Arabic and right-to-left layout are first-class and covered by tests.
+- Layouts must adapt to phone, tablet, desktop, and web widths without separate business logic.
+- Permissions are requested only when a user starts the feature that needs them, with a usable denied-permission path.
 
----
+## 5. Security, tenancy, and licensing
 
-## 5. BLoC Process Scoping
+- Every protected operation verifies the current session and tenant scope at the server or trusted local-server boundary.
+- Cached data, background work, and credentials are cleared when the account or tenant changes.
+- Logs, analytics, crash reports, and error payloads must not contain secrets, tokens, government IDs, customer contact details, addresses, or document images.
+- Authorization is deny-by-default and based on roles plus explicit permissions.
+- License and subscription state is signed or server-verifiable, cached for a bounded offline grace period, and cannot depend on a client-controlled clock alone.
+- Manual subscription administration changes entitlement records through audited administrative commands. Billing provider integration is not required for the first release.
 
-- Do NOT create giant monolithic BLoCs handling multiple unrelated processes.
-- Every distinct user process MUST have its own dedicated BLoC located in a process-named subfolder under `presentation/blocs/`.
+## 6. Composition and shared code
 
-## 6. Dependency boundaries
+- Platform plugins are accessed through interfaces. Domain and presentation code must remain usable in every supported client.
+- Cross-feature interaction uses domain contracts, application services, or events with documented ownership. Features do not import another feature's data layer.
+- Shared server and client contracts must be versioned and backward compatible during a supported upgrade window.
+- Dependency registration belongs in `app`, grouped by bounded context rather than one global service-locator file.
 
-- Domain code may depend on Dart, Equatable, dartz, domain contracts, core errors, services and use cases. It must not import Flutter, data implementations, SQLite, or app composition code.
-- Presentation calls use cases through BLoCs/Cubits. It must not import databases, data models, demo fixtures, or repository implementations.
-- Shared product/category types belong to `features/catalog`; consumers may use its domain contracts. Storage models remain in data layers.
-- `core/error/failures.dart` contains pure failure values. `repositoryCall` maps data exceptions at repository boundaries.
-- App composition, dependency registration, routing, and cross-feature lookup UI belong in `app/`.
-- Process BLoCs belong to their routes. Shared cart/list state belongs to the app shell.
-- Demo seeding is explicit (`--dart-define=DEMO_MODE=true` or the settings restore action). Empty production results must stay empty.
+## 7. Verification required for every change
+
+- Format, analyze, run the architecture test, and run the full test suite.
+- Add tests for changed behavior and applicable failures, retries, cancellation, offline recovery, authorization, migrations, and concurrency.
+- Build or exercise affected platforms and user flows. Record any platform that could not be checked.
+- Review the diff for secrets, personal-data leakage, unsafe transport, untrusted input, excessive permissions, dependency advisories, and tenant isolation.
+- Map callers and stored formats affected by the change and prove previous behavior remains safe.
+- Keep plans, requirements, API documentation, migrations, and operating instructions aligned with behavior.
