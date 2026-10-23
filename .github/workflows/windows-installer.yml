@@ -26,8 +26,15 @@ jobs:
         run: |
           $vswhere = "${env:ProgramFiles(x86)}\Microsoft Visual Studio\Installer\vswhere.exe"
           $install = & $vswhere -latest -products * -property installationPath
-          $runtime = Get-ChildItem -LiteralPath "$install\VC\Redist\MSVC" -Directory | Sort-Object Name -Descending | Select-Object -First 1
-          $crt = Get-ChildItem -LiteralPath "$($runtime.FullName)\x64" -Directory -Filter '*.CRT' | Select-Object -First 1
+          $redistRoot = Join-Path $install 'VC\Redist\MSVC'
+          $crt = Get-ChildItem -LiteralPath $redistRoot -Directory -Recurse |
+            Where-Object {
+              $_.Name -like 'Microsoft.VC*.CRT' -and
+              $_.FullName -match '[\\/]x64[\\/]' -and
+              $_.FullName -notmatch '[\\/]onecore[\\/]'
+            } |
+            Sort-Object FullName -Descending |
+            Select-Object -First 1
           if (-not $crt) { throw 'C++ runtime directory was not found.' }
           Copy-Item -Path "$($crt.FullName)\*.dll" -Destination 'build\windows\x64\runner\Release'
       - name: Package installer
